@@ -3,7 +3,7 @@ package com.agriguardian.util;
 import com.agriguardian.exception.BadRequestException;
 import org.springframework.validation.Errors;
 
-public class DtoValidationUtil {
+public class ValidationDto {
 
     public static void handleErrors(Errors errors) {
         if (errors.hasErrors()) {
