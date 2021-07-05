@@ -1,12 +1,14 @@
 package com.agriguardian.entity;
 
 import com.agriguardian.enums.Status;
+import com.agriguardian.enums.UserRole;
 import lombok.Builder;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "users")
@@ -25,19 +27,22 @@ public class User {
 
     private String firstName;
     private String lastName;
-    private String phone;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private Address address;
+    private UserInfo userInfo;
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private CreditCard card;
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private TeamGroup teamGroup;
 
     private long createdOnMs;
     private long updatedOnMs;
     private long otpCreatedOnMs;
 
-    private String guardianInviteCode;
-    private String vulnerableInviteCode;
-
     @Enumerated(EnumType.STRING)
     private Status status;
+    @Enumerated(EnumType.STRING)
+    private UserRole userRole;
+
+    @OneToMany(mappedBy = "user")
+    private Set<UserTeamGroup> userTeamGroups;
 }

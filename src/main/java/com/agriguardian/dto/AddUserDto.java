@@ -1,6 +1,6 @@
 package com.agriguardian.dto;
 
-import com.agriguardian.entity.Address;
+import com.agriguardian.entity.UserInfo;
 import com.agriguardian.entity.CreditCard;
 import com.agriguardian.entity.User;
 import com.agriguardian.util.ValidationString;
@@ -45,8 +45,8 @@ public class AddUserDto {
         return ValidationString.isNotBlank(creditCard) ? CreditCard.builder().number(creditCard).build() : null;
     }
 
-    public Address buildAddress() {
-        return Address.builder()
+    public UserInfo buildAddress() {
+        return UserInfo.builder()
 //                .city(city)
 //                .street(street)
 //                .number(number)
