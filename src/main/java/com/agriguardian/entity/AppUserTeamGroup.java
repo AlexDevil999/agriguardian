@@ -10,22 +10,20 @@ import lombok.Setter;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "user_team_groups")
+@Table(name = "app_user_team_groups")
 @Getter
 @Setter
 @Builder
 @EqualsAndHashCode(of = "id")
-public class UserTeamGroup {
+public class AppUserTeamGroup {
     @Id
-    @SequenceGenerator(name = "userTeamGroupsSequence", sequenceName = "user_team_groups_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "userTeamGroupsSequence")
+    @SequenceGenerator(name = "appUserTeamGroupsSequence", sequenceName = "app_user_team_groups_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appUserTeamGroupsSequence")
     private long id;
-    private String number;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User user;
-
+    @JoinColumn(name = "app_user_id")
+    private AppUser appUser;
     @ManyToOne
     @JoinColumn(name = "team_group_id")
     private TeamGroup teamGroup;

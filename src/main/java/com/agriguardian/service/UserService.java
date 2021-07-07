@@ -1,6 +1,6 @@
 package com.agriguardian.service;
 
-import com.agriguardian.entity.User;
+import com.agriguardian.entity.AppUser;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.repository.UserRepository;
@@ -16,16 +16,16 @@ import java.util.Optional;
 public class UserService {
     private final UserRepository userRepo;
 
-    public User save(User user) {
+    public AppUser save(AppUser appUser) {
         try {
-            return userRepo.save(user);
+            return userRepo.save(appUser);
         } catch (Exception e) {
-            log.error("[save] failed to save a user {}; rsn: {}", user, e.getMessage());
+            log.error("[save] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
         }
     }
 
-    public Optional<User> findById(Long id) {
+    public Optional<AppUser> findById(Long id) {
         try {
             return userRepo.findById(id);
         } catch (IllegalArgumentException e) {

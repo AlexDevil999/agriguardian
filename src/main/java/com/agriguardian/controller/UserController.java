@@ -1,6 +1,6 @@
 package com.agriguardian.controller;
 
-import com.agriguardian.dto.AddUserDto;
+import com.agriguardian.dto.AddUserMasterDto;
 import com.agriguardian.util.ValidationDto;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.ResponseEntity;
@@ -19,7 +19,7 @@ import java.security.Principal;
 public class UserController {
 
     @PostMapping
-    public ResponseEntity<?> addUser(@Valid @RequestBody AddUserDto dto, Errors errors, Principal principal) {
+    public ResponseEntity<?> addUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
 

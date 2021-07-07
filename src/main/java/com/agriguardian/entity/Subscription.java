@@ -16,4 +16,8 @@ public class Subscription {
     @SequenceGenerator(name = "subscriptionsSequence", sequenceName = "subscriptions_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "subscriptionsSequence")
     private long id;
+
+    @OneToOne
+    @JoinColumn(name = "app_user_id")
+    private AppUser appUser;
 }

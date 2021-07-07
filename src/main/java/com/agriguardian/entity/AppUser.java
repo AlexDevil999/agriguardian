@@ -11,25 +11,26 @@ import javax.persistence.*;
 import java.util.Set;
 
 @Entity
-@Table(name = "users")
+@Table(name = "app_users")
 @Getter
 @Setter
 @Builder
 @EqualsAndHashCode(of = "id")
-public class User {
+public class AppUser {
     @Id
-    @SequenceGenerator(name = "usersSequence", sequenceName = "users_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "usersSequence")
+    @SequenceGenerator(name = "appUsersSequence", sequenceName = "app_users_id_seq", allocationSize = 1)
+    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appUsersSequence")
     private long id;
     private String username;
     private String password;
     private String otp;
 
-    private String firstName;
-    private String lastName;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private String name;
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserInfo userInfo;
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private Subscription subscription;
+    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private CreditCard card;
     @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private TeamGroup teamGroup;
@@ -43,6 +44,6 @@ public class User {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
-    @OneToMany(mappedBy = "user")
-    private Set<UserTeamGroup> userTeamGroups;
+    @OneToMany(mappedBy = "appUser")
+    private Set<AppUserTeamGroup> appUserTeamGroups;
 }

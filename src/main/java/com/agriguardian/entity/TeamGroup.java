@@ -21,12 +21,14 @@ public class TeamGroup {
     private long id;
     private String name;
 
+    @Column(name = "guardian_code")
     private String guardianInvitationCode;
+    @Column(name = "vulnerable_code")
     private String vulnerableInvitationCode;
     @OneToOne
     @JoinColumn(name = "owner_id")
-    private User owner;
+    private AppUser owner;
 
     @OneToMany(mappedBy = "teamGroup")
-    private Set<UserTeamGroup> userTeamGroups;
+    private Set<AppUserTeamGroup> appUserTeamGroups;
 }
