@@ -20,4 +20,9 @@ public class Subscription {
     @OneToOne
     @JoinColumn(name = "app_user_id")
     private AppUser appUser;
+
+
+    public void addAppUser(AppUser user) {
+        user.addSubscription(this);
+    }
 }

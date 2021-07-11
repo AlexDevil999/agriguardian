@@ -5,9 +5,9 @@ create table if not exists app_users
     password       text,
     otp            text,
     name           text,
-    created_on     timestamp,
-    updated_on     timestamp,
-    otp_created_on timestamp,
+    created_on     bigint,
+    updated_on     bigint,
+    otp_created_on bigint,
     status         text,
     user_role      text
 );

@@ -31,4 +31,9 @@ public class UserInfo {
     @OneToOne
     @JoinColumn(name = "app_user_id")
     private AppUser appUser;
+
+
+    public void addAppUser(AppUser user) {
+        user.addUserInfo(this);
+    }
 }

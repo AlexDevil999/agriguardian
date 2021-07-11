@@ -35,3 +35,9 @@ out/
 
 ### VS Code ###
 .vscode/
+
+###development files
+aplication.yml
+
+temp/*
+logs/*

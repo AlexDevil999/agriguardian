@@ -21,4 +21,9 @@ public class CreditCard {
     @OneToOne
     @JoinColumn(name = "app_user_id")
     private AppUser appUser;
+
+
+    public void addAppUser(AppUser u) {
+        u.addCreditCard(this);
+    }
 }

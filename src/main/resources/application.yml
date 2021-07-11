@@ -1,1 +1,8 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://db-url:5432/db
+    username: username
 
+
+logging:
+  config: ./logback.xml
