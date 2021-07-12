@@ -29,7 +29,7 @@ public class AppUser {
     private String username;
     private String password;
     private String otp;
-    @Column (name = "refresh_token")
+    @Column(name = "refresh_token")
     private String refreshToken;
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -69,7 +69,7 @@ public class AppUser {
         subscription.setAppUser(this);
     }
 
-    public void  addCreditCard(CreditCard cc) {
+    public void addCreditCard(CreditCard cc) {
         if (cc == null) return;
 
         this.setCard(cc);
@@ -84,20 +84,6 @@ public class AppUser {
                 .build();
     }
 
-//    public TeamGroup createTeamGroup() {
-//        if (teamGroup != null) {
-//            throw new BadRequestException("user " + username + "already have group (id " + teamGroup.getId() + ")");
-//        }
-//        TeamGroup tg = TeamGroup.builder()
-//                .vulnerableInvitationCode(RandomCodeGenerator.generateInvitationCode())
-//                .guardianInvitationCode(RandomCodeGenerator.generateInvitationCode())
-//                .name(getUserInfo().getName() + "'s group")
-//                .owner(this)
-//                .appUserTeamGroups(new HashSet())
-//                .build();
-//
-//        return addTeamGroup(tg, GroupRole.GUARDIAN);
-//    }
 
     public AppUserTeamGroup addTeamGroup(TeamGroup tg, GroupRole role) {
         AppUserTeamGroup teamGroup = AppUserTeamGroup.builder()
@@ -122,9 +108,9 @@ public class AppUser {
     public Map<Long, GroupRole> defineTeamGroups() {
         return appUserTeamGroups == null ? new HashMap<>() :
                 appUserTeamGroups.stream()
-                .collect(Collectors.toMap(
-                value -> value.getTeamGroup().getId(),
-                        AppUserTeamGroup::getGroupRole));
+                        .collect(Collectors.toMap(
+                                value -> value.getTeamGroup().getId(),
+                                AppUserTeamGroup::getGroupRole));
     }
 
     public Long getOwnGroup() {

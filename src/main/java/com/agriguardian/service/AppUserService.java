@@ -105,7 +105,7 @@ public class AppUserService {
         if (u.getTeamGroup() != null) {
             throw new BadRequestException("user " + u.getUsername() + "already have group (id " + u.getTeamGroup().getId() + ")");
         }
-        TeamGroup tg =  TeamGroup.builder()
+        TeamGroup tg = TeamGroup.builder()
                 .vulnerableInvitationCode(RandomCodeGenerator.generateInvitationCode())
                 .guardianInvitationCode(RandomCodeGenerator.generateInvitationCode())
                 .name(u.getUserInfo().getName() + "'s group")

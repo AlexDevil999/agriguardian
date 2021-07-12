@@ -1,7 +1,7 @@
 package com.agriguardian.dto;
 
-import com.agriguardian.entity.CreditCard;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.CreditCard;
 import com.agriguardian.entity.UserInfo;
 import com.agriguardian.util.ValidationString;
 import lombok.Getter;
@@ -21,6 +21,8 @@ public class AddUserMasterDto {
 
     @NotBlank(message = "field 'country' is mandatory")
     private String country;
+    @NotBlank(message = "field 'county' is mandatory")
+    private String county;
     @NotBlank(message = "field 'city' is mandatory")
     private String city;
     @NotBlank(message = "field 'street' is mandatory")
@@ -32,8 +34,6 @@ public class AddUserMasterDto {
     @NotBlank(message = "field 'phoneNumber' is mandatory")
     private String phoneNumber;
     private Boolean withTeamGroup;
-
-
     private String creditCard;
 
 
@@ -52,6 +52,7 @@ public class AddUserMasterDto {
         return UserInfo.builder()
                 .name(name)
                 .country(country)
+                .county(county)
                 .city(city)
                 .street(street)
                 .zipAreaCode(zipAreaCode)

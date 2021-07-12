@@ -18,6 +18,7 @@ public class UserInfo {
     private long id;
     private String name;
     private String country;
+    private String county;
     private String city;
     private String street;
     @Column(name = "zip_area_code")

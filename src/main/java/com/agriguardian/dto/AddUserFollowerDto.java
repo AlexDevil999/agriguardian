@@ -20,8 +20,6 @@ public class AddUserFollowerDto {
     private Set<Long> teamGroups;
 
 
-
-
     public AppUser buildUser() {
         return AppUser.builder()
                 .username(username)

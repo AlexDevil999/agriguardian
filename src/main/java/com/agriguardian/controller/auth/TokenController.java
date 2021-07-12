@@ -39,7 +39,7 @@ class TokenController {
         Optional<AppUser> user = appUserService.findByUsername(request.getUsername().toLowerCase().trim());
 
         if (!user.isPresent() || !passwordEncryptor.matches(request.getPassword(), user.get().getPassword())) {
-            throw new BadCredentialsException("Bad credentials") ;
+            throw new BadCredentialsException("Bad credentials");
         }
 
         if (Status.REGISTRATION == user.get().getStatus()) {

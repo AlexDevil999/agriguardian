@@ -50,7 +50,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 .addResourceLocations("/", "/resources/", "/resources/static/**")
                 .setCachePeriod(3600).resourceChain(true)
                 .addResolver(new PathResourceResolver());
-
         registry.addResourceHandler("swagger-ui.html")
                 .addResourceLocations("classpath:/META-INF/resources/");
         registry.addResourceHandler("/webjars/**")

@@ -10,7 +10,7 @@ public class SubscriptionDto {
     public static SubscriptionDto of(Subscription subscription) {
         return subscription == null ? null :
                 SubscriptionDto.builder()
-                .id(subscription.getId())
-                .build();
+                        .id(subscription.getId())
+                        .build();
     }
 }

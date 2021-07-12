@@ -8,6 +8,7 @@ import lombok.Getter;
 @Getter
 public class UserInfoDto {
     private String name;
+    private String country;
     private String county;
     private String city;
     private String street;
@@ -20,12 +21,13 @@ public class UserInfoDto {
         return ui == null ? null :
                 UserInfoDto.builder()
                         .name(ui.getName())
-        .county(ui.getCountry())
-        .city(ui.getCity())
-        .street(ui.getStreet())
-        .zipAreaCode(ui.getZipAreaCode())
-        .phoneCode(ui.getPhoneCode())
-        .phoneNumber(ui.getPhoneNumber())
-                .build();
+                        .country(ui.getCountry())
+                        .county(ui.getCounty())
+                        .city(ui.getCity())
+                        .street(ui.getStreet())
+                        .zipAreaCode(ui.getZipAreaCode())
+                        .phoneCode(ui.getPhoneCode())
+                        .phoneNumber(ui.getPhoneNumber())
+                        .build();
     }
 }

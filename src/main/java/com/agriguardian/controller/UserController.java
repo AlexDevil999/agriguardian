@@ -6,7 +6,6 @@ import com.agriguardian.dto.ResponseUserDto;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.enums.Status;
 import com.agriguardian.exception.BadTokenException;
-import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
@@ -30,8 +29,6 @@ import java.util.stream.Collectors;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final AppUserService appUserService;
-    private final AppUserTeamGroupRepository appUserTeamGroupRepository;
-
 
     @PostMapping("/master")
     public ResponseUserDto addUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {

@@ -12,18 +12,15 @@ import java.util.Map;
 @Builder
 @Getter
 public class ResponseUserDto {
-    private long id;
+    private Long id;
     private String username;
-    private SubscriptionDto subscription;
     private Long ownerOfGroup;
     private Map<Long, GroupRole> groups;
-
-    private long createdOnMs;
-
     private Status status;
     private UserRole userRole;
-
     private UserInfoDto userInfo;
+    private Long createdOnMs;
+    private SubscriptionDto subscription;
 
 
     public static ResponseUserDto of(AppUser u) {
