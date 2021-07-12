@@ -12,7 +12,7 @@ import java.util.Optional;
 @Service
 @AllArgsConstructor
 public class TeamGroupService {
-//    private final TeamGroupRepository teamGroupRepository;
+    private final TeamGroupRepository teamGroupRepository;
 
     //todo logs and ...
     public TeamGroup save(TeamGroup tg) {
@@ -21,7 +21,6 @@ public class TeamGroupService {
     }
 
     public Optional<TeamGroup> findById(Long id) {
-//        return teamGroupRepository.findById(id);
-        return null;
+        return teamGroupRepository.findById(id);
     }
 }

@@ -6,6 +6,7 @@ import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.Set;
 
 @Getter
 public class AddUserFollowerDto {
@@ -15,6 +16,8 @@ public class AddUserFollowerDto {
     private String password;
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
+    @NotNull(message = "field 'teamGroups' is mandatory")
+    private Set<Long> teamGroups;
 
 
 

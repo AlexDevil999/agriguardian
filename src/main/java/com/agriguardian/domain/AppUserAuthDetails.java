@@ -34,7 +34,7 @@ public class AppUserAuthDetails extends AppUser implements UserDetails {
 
     @Override
     public String getUsername() {
-        return getUsername();
+        return super.getUsername();
     }
 
     @Override

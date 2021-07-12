@@ -8,6 +8,7 @@ import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
+import com.agriguardian.exception.BadTokenException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.service.AppUserService;
@@ -15,11 +16,17 @@ import com.agriguardian.util.RandomCodeGenerator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Log4j2
 @AllArgsConstructor
@@ -29,14 +36,6 @@ public class UserController {
     private final AppUserService appUserService;
     private final AppUserTeamGroupRepository appUserTeamGroupRepository;
 
-
-    @GetMapping(value = "/current")
-    public AppUser getCurrentUser(Principal principal) {
-        log.debug("[getCurrentUser] for: " + principal.getName());
-        return appUserService.findByUsername(principal.getName())
-                .orElseThrow(() -> new NotFoundException("User not found"));
-
-    }
 
     @PostMapping("/master")
     public ResponseUserDto addUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
@@ -51,23 +50,26 @@ public class UserController {
         return ResponseUserDto.of(saved);
     }
 
-//    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/follower")
-    public ResponseUserDto addUserFollower(@Valid @RequestBody AddUserFollowerDto dto, Errors errors) {
-//            , Errors errors, Principal principal) {
+    public ResponseUserDto addUserFollower(@Valid @RequestBody AddUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
-        //todo move to service
-//        AppUser admin = appUserService.findByUsername(principal.getName()).get();
-//        AppUserTeamGroup aptg = admin.getAppUserTeamGroups().stream().filter(utg -> dto.getGroupId().equals(utg.getTeamGroup().getId()))
-//                .findAny().orElseThrow(() -> new NotFoundException("group " + dto.getGroupId() + " not found"));
+        //todo move to service; split admin's and child's groups
+        AppUser admin = appUserService.findByUsername(principal.getName()).orElseThrow(() -> new BadTokenException("token is invalid; rsn: user does not exist: " + principal.getName()));
 
+        Set<Long> tGroups = admin.getAppUserTeamGroups().stream().map(utg -> utg.getTeamGroup().getId()).collect(Collectors.toSet());
 
+        dto.getTeamGroups().forEach(tg -> {
+            if (!tGroups.contains(tg)) {
+                throw new AccessDeniedException(String.format("user %d does not have permissions for the resource: teamGroupId %d", admin.getId(), tg));
+            }
+        });
 
         AppUser appUser = dto.buildUser();
         appUser.addUserInfo(dto.buildUserInfo());
 
-        AppUser saved = appUserService.saveUserFollowerIfNotExist(appUser, Status.ACTIVATED);
+        AppUser saved = appUserService.saveUserFollowerIfNotExist(appUser, Status.ACTIVATED, dto.getTeamGroups());
 
         return ResponseUserDto.of(saved);
     }

@@ -14,7 +14,6 @@ import java.util.Map;
 public class ResponseUserDto {
     private long id;
     private String username;
-    private String name;
     private SubscriptionDto subscription;
     private Long ownerOfGroup;
     private Map<Long, GroupRole> groups;
@@ -29,15 +28,15 @@ public class ResponseUserDto {
 
     public static ResponseUserDto of(AppUser u) {
         return ResponseUserDto.builder()
-        .id(u.getId())
-        .username(u.getUsername())
-        .subscription(SubscriptionDto.of(u.getSubscription()))
-        .ownerOfGroup(u.getOwnGroup())
+                .id(u.getId())
+                .username(u.getUsername())
+                .subscription(SubscriptionDto.of(u.getSubscription()))
+                .ownerOfGroup(u.getOwnGroup())
                 .groups(u.defineTeamGroups())
-        .createdOnMs(u.getCreatedOnMs())
-        .status(u.getStatus())
-        .userRole(u.getUserRole())
-        .userInfo(UserInfoDto.of(u.getUserInfo()))
+                .createdOnMs(u.getCreatedOnMs())
+                .status(u.getStatus())
+                .userRole(u.getUserRole())
+                .userInfo(UserInfoDto.of(u.getUserInfo()))
                 .build();
     }
 }

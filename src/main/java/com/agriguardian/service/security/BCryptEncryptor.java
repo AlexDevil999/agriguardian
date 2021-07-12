@@ -10,23 +10,15 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class BCryptEncryptor implements PasswordEncryptor {
-    private final BCryptPasswordEncoder bcrypt;
 
     @Override
     public String encode(String strToEncrypt) {
-        return bcrypt.encode(strToEncrypt);
+        return new BCryptPasswordEncoder().encode(strToEncrypt);
     }
 
     @Override
     public boolean matches(CharSequence rawString, String encodedString) {
-        return bcrypt.matches(rawString, encodedString);
-    }
-
-
-
-    @Bean
-    public BCryptPasswordEncoder bCryptPasswordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder().matches(rawString, encodedString);
     }
 
 }

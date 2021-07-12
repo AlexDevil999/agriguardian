@@ -1,5 +1,6 @@
 package com.agriguardian.controller.auth;
 
+import com.agriguardian.dto.ResponseUserDto;
 import com.agriguardian.dto.auth.AuthRequestDto;
 import com.agriguardian.dto.auth.AuthResponseDto;
 import com.agriguardian.entity.AppUser;
@@ -76,5 +77,15 @@ class TokenController {
             log.warn("[refreshTokens] incorrect authorization header: " + refreshBearer);
             throw new BadRequestException("Incorrect authorization header");
         }
+    }
+
+    @GetMapping(value = "/current")
+    public ResponseUserDto getCurrentUser(@RequestHeader("Authorization") String header,
+                                          Principal principal) {
+        log.debug("[getCurrentUser] for: " + principal.getName());
+        AppUser user = appUserService.findByUsername(principal.getName())
+                .orElseThrow(() -> new NotFoundException("User not found"));
+
+        return ResponseUserDto.of(user);
     }
 }

@@ -8,9 +8,11 @@ import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.InternalErrorException;
+import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AppUserRepository;
 import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.repository.TeamGroupRepository;
+import com.agriguardian.service.security.PasswordEncryptor;
 import com.agriguardian.util.RandomCodeGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,8 +20,8 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -28,6 +30,7 @@ public class AppUserService {
     private final AppUserRepository userRepo;
     private final AppUserTeamGroupRepository autgRepository;
     private final TeamGroupRepository teamGroupRepository;
+    private final PasswordEncryptor passwordEncryptor;
 
     public AppUser save(AppUser appUser) {
         try {
@@ -51,6 +54,7 @@ public class AppUserService {
             appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
             appUser.setCreatedOnMs(time);
             appUser.setOtpCreatedOnMs(time);
+            appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
 
             AppUser user = userRepo.save(appUser);
             //todo move into the saparate service
@@ -68,7 +72,7 @@ public class AppUserService {
     }
 
     @Transactional
-    public AppUser saveUserFollowerIfNotExist(AppUser appUser, Status status) {
+    public AppUser saveUserFollowerIfNotExist(AppUser appUser, Status status, Set<Long> teamGroups) {
         if (existsByUsername(appUser.getUsername())) {
             throw new BadRequestException("user " + appUser.getUsername() + " already exists");
         }
@@ -80,12 +84,13 @@ public class AppUserService {
             appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
             appUser.setCreatedOnMs(time);
             appUser.setOtpCreatedOnMs(time);
+            appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
 
             AppUser user = userRepo.save(appUser);
             //todo move into the saparate service
-            List<TeamGroup> tg = (List<TeamGroup>) teamGroupRepository.findAll();
-            tg.forEach(teamGroup -> {
-                AppUserTeamGroup autg = user.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
+            teamGroups.forEach(teamGroup -> {
+                TeamGroup tg = teamGroupRepository.findById(teamGroup).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
+                AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.VULNERABLE);
                 autgRepository.save(autg);
             });
 
