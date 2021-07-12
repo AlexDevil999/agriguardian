@@ -2,10 +2,7 @@ package com.agriguardian.entity;
 
 
 import com.agriguardian.enums.GroupRole;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -13,6 +10,8 @@ import javax.persistence.*;
 @Table(name = "app_user_team_groups")
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Builder
 @EqualsAndHashCode(of = "id")
 public class AppUserTeamGroup {
@@ -27,6 +26,6 @@ public class AppUserTeamGroup {
     @ManyToOne
     @JoinColumn(name = "team_group_id")
     private TeamGroup teamGroup;
-
+    @Enumerated(EnumType.STRING)
     private GroupRole groupRole;
 }

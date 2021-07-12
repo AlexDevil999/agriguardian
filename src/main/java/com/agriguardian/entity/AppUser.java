@@ -3,21 +3,22 @@ package com.agriguardian.entity;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
-import lombok.Builder;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
-import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "app_users")
 @Getter
 @Setter
 @Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class AppUser {
     @Id
@@ -28,8 +29,9 @@ public class AppUser {
     private String username;
     private String password;
     private String otp;
+    @Column (name = "refresh_token")
+    private String refreshToken;
 
-    private String name;
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserInfo userInfo;
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -45,6 +47,8 @@ public class AppUser {
     private long updatedOnMs;
     @Column(name = "otp_created_on")
     private long otpCreatedOnMs;
+    @Column(name = "rt_created_on")
+    private long rtCreatedOnMs;
 
     @Enumerated(EnumType.STRING)
     private Status status;
@@ -52,7 +56,7 @@ public class AppUser {
     private UserRole userRole;
 
     @OneToMany(mappedBy = "appUser")
-    private Set<AppUserTeamGroup> appUserTeamGroups = new HashSet<>();
+    private Set<AppUserTeamGroup> appUserTeamGroups;
 
 
     public void addUserInfo(UserInfo ui) {
@@ -66,6 +70,8 @@ public class AppUser {
     }
 
     public void  addCreditCard(CreditCard cc) {
+        if (cc == null) return;
+
         this.setCard(cc);
         cc.setAppUser(this);
     }
@@ -76,5 +82,52 @@ public class AppUser {
                 .appUser(this)
                 .groupRole(role)
                 .build();
+    }
+
+//    public TeamGroup createTeamGroup() {
+//        if (teamGroup != null) {
+//            throw new BadRequestException("user " + username + "already have group (id " + teamGroup.getId() + ")");
+//        }
+//        TeamGroup tg = TeamGroup.builder()
+//                .vulnerableInvitationCode(RandomCodeGenerator.generateInvitationCode())
+//                .guardianInvitationCode(RandomCodeGenerator.generateInvitationCode())
+//                .name(getUserInfo().getName() + "'s group")
+//                .owner(this)
+//                .appUserTeamGroups(new HashSet())
+//                .build();
+//
+//        return addTeamGroup(tg, GroupRole.GUARDIAN);
+//    }
+
+    public AppUserTeamGroup addTeamGroup(TeamGroup tg, GroupRole role) {
+        AppUserTeamGroup teamGroup = AppUserTeamGroup.builder()
+                .teamGroup(tg)
+                .appUser(this)
+                .groupRole(role)
+                .build();
+
+        if (appUserTeamGroups == null) {
+            appUserTeamGroups = new HashSet();
+        }
+
+        if (tg.getAppUserTeamGroups() == null) {
+            tg.setAppUserTeamGroups(new HashSet());
+        }
+        appUserTeamGroups.add(teamGroup);
+        tg.getAppUserTeamGroups().add(teamGroup);
+
+        return teamGroup;
+    }
+
+    public Map<Long, GroupRole> defineTeamGroups() {
+        return appUserTeamGroups == null ? new HashMap<>() :
+                appUserTeamGroups.stream()
+                .collect(Collectors.toMap(
+                value -> value.getTeamGroup().getId(),
+                        AppUserTeamGroup::getGroupRole));
+    }
+
+    public Long getOwnGroup() {
+        return teamGroup == null ? null : teamGroup.getId();
     }
 }

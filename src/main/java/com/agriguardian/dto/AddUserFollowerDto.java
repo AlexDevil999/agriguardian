@@ -1,6 +1,7 @@
 package com.agriguardian.dto;
 
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.UserInfo;
 import lombok.Getter;
 
 import javax.validation.constraints.NotBlank;
@@ -14,8 +15,7 @@ public class AddUserFollowerDto {
     private String password;
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
-    @NotNull(message = "field 'groupId' may not be null")
-    private Long groupId;
+
 
 
 
@@ -23,6 +23,11 @@ public class AddUserFollowerDto {
         return AppUser.builder()
                 .username(username)
                 .password(password)
+                .build();
+    }
+
+    public UserInfo buildUserInfo() {
+        return UserInfo.builder()
                 .name(name)
                 .build();
     }

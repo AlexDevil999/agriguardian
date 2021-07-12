@@ -11,7 +11,7 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 public class AddUserMasterDto {
-    @NotBlank(message = "field 'username' is mandatory")
+    @NotBlank(message = "field 'username/email' is mandatory")
     private String username;
     @NotNull(message = "field 'password' may not be null")
     private String password;
@@ -19,16 +19,14 @@ public class AddUserMasterDto {
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
 
-    @NotBlank(message = "field 'county' is mandatory")
-    private String county;
+    @NotBlank(message = "field 'country' is mandatory")
+    private String country;
     @NotBlank(message = "field 'city' is mandatory")
     private String city;
     @NotBlank(message = "field 'street' is mandatory")
     private String street;
-    @NotBlank(message = "field 'zipCode' is mandatory")
-    private String zipCode;
-    @NotBlank(message = "field 'areaCode' is mandatory")
-    private String areaCode;
+    @NotBlank(message = "field 'zipAreaCode' is mandatory")
+    private String zipAreaCode;
     @NotBlank(message = "field 'phoneCode' is mandatory")
     private String phoneCode;
     @NotBlank(message = "field 'phoneNumber' is mandatory")
@@ -43,7 +41,6 @@ public class AddUserMasterDto {
         return AppUser.builder()
                 .username(username)
                 .password(password)
-                .name(name)
                 .build();
     }
 
@@ -53,11 +50,11 @@ public class AddUserMasterDto {
 
     public UserInfo buildUserInfo() {
         return UserInfo.builder()
-                .county(county)
+                .name(name)
+                .country(country)
                 .city(city)
                 .street(street)
-                .zipCode(zipCode)
-                .areaCode(areaCode)
+                .zipAreaCode(zipAreaCode)
                 .phoneCode(phoneCode)
                 .phoneNumber(phoneNumber)
                 .build();

@@ -1,4 +1,4 @@
-package com.agriguardian.controller;
+package com.agriguardian.controller.maintenance;
 
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.ConflictException;

@@ -12,7 +12,7 @@ import javax.validation.constraints.NotBlank;
 @ToString
 public class AuthRequestDto {
     @NotBlank(message = "username/email is mandatory")
-    private String email;
+    private String username;
     @NotBlank(message = "password is mandatory")
     private String password;
 }
