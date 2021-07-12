@@ -25,4 +25,9 @@ public class HealthCheckController {
     public ResponseEntity<String> getInitialDate() {
         return ResponseEntity.ok(new Date().toString());
     }
+
+    @GetMapping("/version")
+    public ResponseEntity<String> version() {
+        return ResponseEntity.ok("12.07");
+    }
 }
