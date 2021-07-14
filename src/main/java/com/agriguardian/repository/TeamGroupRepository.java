@@ -6,4 +6,7 @@ import org.springframework.stereotype.Repository;
 
 @Repository
 public interface TeamGroupRepository extends CrudRepository<TeamGroup, Long> {
+
+    boolean existsByGuardianInvitationCode(String code);
+    boolean existsByVulnerableInvitationCode(String code);
 }

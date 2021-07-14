@@ -1,4 +1,4 @@
-package com.agriguardian.dto;
+package com.agriguardian.dto.appUser;
 
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.UserInfo;

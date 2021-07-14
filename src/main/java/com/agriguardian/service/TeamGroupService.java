@@ -1,6 +1,7 @@
 package com.agriguardian.service;
 
 import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.repository.TeamGroupRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -14,13 +15,24 @@ import java.util.Optional;
 public class TeamGroupService {
     private final TeamGroupRepository teamGroupRepository;
 
-    //todo logs and ...
     public TeamGroup save(TeamGroup tg) {
-//        return teamGroupRepository.save(tg);
-        return null;
+        try {
+            return teamGroupRepository.save(tg);
+        } catch (Exception e) {
+            log.error("[save] failed to save a teamGroup {}; rsn: {}", tg, e.getMessage());
+            throw new InternalErrorException("failed to save teamGroup; rsn: " + e.getMessage());
+        }
     }
 
     public Optional<TeamGroup> findById(Long id) {
         return teamGroupRepository.findById(id);
+    }
+
+    public boolean existsByGuardianCode(String gc) {
+        return teamGroupRepository.existsByGuardianInvitationCode(gc);
+    }
+
+    public boolean existsByVulnerableCode(String gc) {
+        return teamGroupRepository.existsByVulnerableInvitationCode(gc);
     }
 }

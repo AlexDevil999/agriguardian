@@ -1,6 +1,6 @@
 package com.agriguardian.controller.auth;
 
-import com.agriguardian.dto.ResponseUserDto;
+import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.auth.AuthRequestDto;
 import com.agriguardian.dto.auth.AuthResponseDto;
 import com.agriguardian.entity.AppUser;

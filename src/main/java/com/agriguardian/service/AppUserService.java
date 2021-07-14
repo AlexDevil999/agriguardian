@@ -105,9 +105,17 @@ public class AppUserService {
         if (u.getTeamGroup() != null) {
             throw new BadRequestException("user " + u.getUsername() + "already have group (id " + u.getTeamGroup().getId() + ")");
         }
+
+        String guardianInvitationCode = RandomCodeGenerator.generateInvitationCode();
+        String vulnerableInvitationCode;
+        do {
+            vulnerableInvitationCode = RandomCodeGenerator.generateInvitationCode();
+        } while (vulnerableInvitationCode.equals(guardianInvitationCode));
+
+
         TeamGroup tg = TeamGroup.builder()
-                .vulnerableInvitationCode(RandomCodeGenerator.generateInvitationCode())
-                .guardianInvitationCode(RandomCodeGenerator.generateInvitationCode())
+                .guardianInvitationCode(guardianInvitationCode)
+                .vulnerableInvitationCode(vulnerableInvitationCode)
                 .name(u.getUserInfo().getName() + "'s group")
                 .owner(u)
                 .appUserTeamGroups(new HashSet())
@@ -153,6 +161,15 @@ public class AppUserService {
     public Optional<AppUser> findByUsername(String username) {
         try {
             return userRepo.findByUsername(username);
+        } catch (Exception e) {
+            log.error("[findByUsername] failed to retrieve a user; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
+        }
+    }
+
+    public AppUser findByUsernameOrThrowNotFound(String username) {
+        try {
+            return userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("User " + username + " not found"));
         } catch (Exception e) {
             log.error("[findByUsername] failed to retrieve a user; rsn: {}", e.getMessage());
             throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());

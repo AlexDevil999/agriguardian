@@ -1,8 +1,8 @@
 package com.agriguardian.controller;
 
-import com.agriguardian.dto.AddUserFollowerDto;
-import com.agriguardian.dto.AddUserMasterDto;
-import com.agriguardian.dto.ResponseUserDto;
+import com.agriguardian.dto.appUser.AddUserFollowerDto;
+import com.agriguardian.dto.appUser.AddUserMasterDto;
+import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.enums.Status;
 import com.agriguardian.exception.BadTokenException;
