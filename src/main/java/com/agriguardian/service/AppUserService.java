@@ -72,7 +72,7 @@ public class AppUserService {
     }
 
     @Transactional
-    public AppUser saveUserFollowerIfNotExist(AppUser appUser, Status status, Set<Long> teamGroups) {
+    public AppUser saveUserFollowerIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups) {
         if (existsByUsername(appUser.getUsername())) {
             throw new BadRequestException("user " + appUser.getUsername() + " already exists");
         }
@@ -89,8 +89,8 @@ public class AppUserService {
             AppUser user = userRepo.save(appUser);
             //todo move into the saparate service
             teamGroups.forEach(teamGroup -> {
-                TeamGroup tg = teamGroupRepository.findById(teamGroup).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
-                AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.VULNERABLE);
+//                TeamGroup tg = teamGroupRepository.findById(teamGroup).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
+                AppUserTeamGroup autg = user.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
                 autgRepository.save(autg);
             });
 
@@ -106,6 +106,7 @@ public class AppUserService {
             throw new BadRequestException("user " + u.getUsername() + "already have group (id " + u.getTeamGroup().getId() + ")");
         }
 
+        //todo add verification for uniqueness
         String guardianInvitationCode = RandomCodeGenerator.generateInvitationCode();
         String vulnerableInvitationCode;
         do {
@@ -169,7 +170,7 @@ public class AppUserService {
 
     public AppUser findByUsernameOrThrowNotFound(String username) {
         try {
-            return userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("User " + username + " not found"));
+            return userRepo.findByUsername(username).orElseThrow(() -> new NotFoundException("user not found; resource: " + username));
         } catch (Exception e) {
             log.error("[findByUsername] failed to retrieve a user; rsn: {}", e.getMessage());
             throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());

@@ -1,16 +1,12 @@
 package com.agriguardian.controller.maintenance;
 
-import com.agriguardian.exception.BadRequestException;
-import com.agriguardian.exception.ConflictException;
-import com.agriguardian.exception.InternalErrorException;
-import com.agriguardian.exception.NotFoundException;
+import com.agriguardian.exception.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
-import java.nio.file.AccessDeniedException;
 import java.util.Collections;
 
 @Log4j2

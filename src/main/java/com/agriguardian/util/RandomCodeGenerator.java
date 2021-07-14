@@ -9,7 +9,7 @@ public class RandomCodeGenerator {
     }
 
     public static String generateInvitationCode() {
-        return generateRandomNumbers(7);
+        return generateRandomNumbers(6);
     }
 
     public static String generateRandomNumbers(int length) {

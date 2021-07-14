@@ -28,4 +28,9 @@ public class AppUserTeamGroup {
     private TeamGroup teamGroup;
     @Enumerated(EnumType.STRING)
     private GroupRole groupRole;
+
+
+    public boolean storesBind(AppUser appUser, TeamGroup teamGroup) {
+        return appUser.equals(this.appUser) && teamGroup.equals(this.teamGroup);
+    }
 }

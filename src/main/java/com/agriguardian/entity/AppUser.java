@@ -6,10 +6,7 @@ import com.agriguardian.enums.UserRole;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -76,33 +73,34 @@ public class AppUser {
         cc.setAppUser(this);
     }
 
-    public AppUserTeamGroup buildTeamGroupLink(TeamGroup teamGroup, GroupRole role) {
-        return AppUserTeamGroup.builder()
-                .teamGroup(teamGroup)
-                .appUser(this)
-                .groupRole(role)
-                .build();
-    }
-
 
     public AppUserTeamGroup addTeamGroup(TeamGroup tg, GroupRole role) {
-        AppUserTeamGroup teamGroup = AppUserTeamGroup.builder()
-                .teamGroup(tg)
-                .appUser(this)
-                .groupRole(role)
-                .build();
-
         if (appUserTeamGroups == null) {
             appUserTeamGroups = new HashSet();
         }
 
-        if (tg.getAppUserTeamGroups() == null) {
-            tg.setAppUserTeamGroups(new HashSet());
-        }
-        appUserTeamGroups.add(teamGroup);
-        tg.getAppUserTeamGroups().add(teamGroup);
+        Optional<AppUserTeamGroup> savedBind = appUserTeamGroups.stream()
+                .filter(appUserTeamGroup -> appUserTeamGroup.storesBind(this, tg)).findAny();
 
-        return teamGroup;
+        AppUserTeamGroup userTeamGroupBind;
+        if (savedBind.isPresent()) {
+            userTeamGroupBind = savedBind.get();
+            userTeamGroupBind.setGroupRole(role);
+        } else {
+            userTeamGroupBind = AppUserTeamGroup.builder()
+                    .teamGroup(tg)
+                    .appUser(this)
+                    .groupRole(role)
+                    .build();
+
+            if (tg.getAppUserTeamGroups() == null) {
+                tg.setAppUserTeamGroups(new HashSet());
+            }
+            appUserTeamGroups.add(userTeamGroupBind);
+            tg.getAppUserTeamGroups().add(userTeamGroupBind);
+        }
+
+        return userTeamGroupBind;
     }
 
     public Map<Long, GroupRole> defineTeamGroups() {

@@ -35,4 +35,20 @@ public class TeamGroupService {
     public boolean existsByVulnerableCode(String gc) {
         return teamGroupRepository.existsByVulnerableInvitationCode(gc);
     }
+
+    public Optional<TeamGroup> findByGuardianCode(String gc) {
+        return teamGroupRepository.findByGuardianInvitationCode(gc);
+    }
+
+    public Optional<TeamGroup> findByVulnerableCode(String gc) {
+        return teamGroupRepository.findByVulnerableInvitationCode(gc);
+    }
+
+    public Optional<TeamGroup> findByInvitationCode(String invitationCode) {
+        Optional<TeamGroup> tg = teamGroupRepository.findByGuardianInvitationCode(invitationCode);
+        if (!tg.isPresent()) {
+            tg = teamGroupRepository.findByVulnerableInvitationCode(invitationCode);
+        }
+        return tg;
+    }
 }

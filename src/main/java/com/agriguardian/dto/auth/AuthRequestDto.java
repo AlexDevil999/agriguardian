@@ -3,6 +3,7 @@ package com.agriguardian.dto.auth;
 import lombok.*;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 
 @Getter
@@ -13,6 +14,6 @@ import javax.validation.constraints.NotBlank;
 public class AuthRequestDto {
     @NotBlank(message = "username/email is mandatory")
     private String username;
-    @NotBlank(message = "password is mandatory")
+    @NotNull(message = "password is mandatory")
     private String password;
 }
