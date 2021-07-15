@@ -39,6 +39,12 @@ public class ExceptionControllerAdvice {
         return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.singletonMap(ERROR, e.getMessage()));
     }
 
+    @ExceptionHandler(org.springframework.security.access.AccessDeniedException.class)
+    public ResponseEntity<?> handleSpringSecurityAccessDeniedException(org.springframework.security.access.AccessDeniedException e) {
+        log.warn("[handleSpringSecurityAccessDeniedException]: response 'FORBIDDEN'; rsn: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(Collections.singletonMap(ERROR, e.getMessage()));
+    }
+
     @ExceptionHandler(ConflictException.class)
     public ResponseEntity<?> handleConflictException(ConflictException e) {
         log.warn("[handleConflictException]: response 'CONFLICT'; rsn: " + e.getMessage());

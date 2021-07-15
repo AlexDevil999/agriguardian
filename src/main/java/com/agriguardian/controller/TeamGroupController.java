@@ -33,6 +33,7 @@ public class TeamGroupController {
     private final TeamGroupService teamGroupService;
     private final AppUserTeamGroupRepository autgRepository;
 
+
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/join")
     public ResponseUserDto joinGroup(@Valid @RequestBody JoinTeamGroupDto dto, Errors errors, Principal principal) {
@@ -46,7 +47,6 @@ public class TeamGroupController {
         AppUserTeamGroup autg = user.addTeamGroup(teamGroup, groupRole);
         autgRepository.save(autg);
 
-//        todo  add saving of TG???
         return ResponseUserDto.of(user);
     }
 
