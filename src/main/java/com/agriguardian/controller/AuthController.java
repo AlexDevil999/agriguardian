@@ -1,6 +1,5 @@
 package com.agriguardian.controller;
 
-import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.auth.AuthRequestDto;
 import com.agriguardian.dto.auth.AuthResponseDto;
 import com.agriguardian.entity.AppUser;
@@ -19,20 +18,19 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.security.Principal;
 import java.util.Optional;
 
 @Log4j2
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1")
-class TokenController {
+@RequestMapping("/api/v1/auth")
+class AuthController {
     private final AppUserService appUserService;
     private final JwtProvider jwtProvider;
     private final PasswordEncryptor passwordEncryptor;
 
 
-    @PostMapping(value = "/auth")
+    @PostMapping(value = "/login")
     public AuthResponseDto generateTokens(@Valid @RequestBody AuthRequestDto request, Errors errors) {
         ValidationDto.handleErrors(errors);
 
@@ -77,15 +75,5 @@ class TokenController {
             log.warn("[refreshTokens] incorrect authorization header: " + refreshBearer);
             throw new BadRequestException("Incorrect authorization header");
         }
-    }
-
-    @GetMapping(value = "/current")
-    public ResponseUserDto getCurrentUser(@RequestHeader("Authorization") String header,
-                                          Principal principal) {
-        log.debug("[getCurrentUser] for: " + principal.getName());
-        AppUser user = appUserService.findByUsername(principal.getName())
-                .orElseThrow(() -> new NotFoundException("User not found"));
-
-        return ResponseUserDto.of(user);
     }
 }

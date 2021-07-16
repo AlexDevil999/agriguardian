@@ -1,4 +1,4 @@
-package com.agriguardian.controller;
+package com.agriguardian.controller.app;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;

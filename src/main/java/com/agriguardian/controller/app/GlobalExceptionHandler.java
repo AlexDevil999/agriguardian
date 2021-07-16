@@ -1,4 +1,4 @@
-package com.agriguardian.controller;
+package com.agriguardian.controller.app;
 
 import com.agriguardian.exception.*;
 import lombok.extern.log4j.Log4j2;
@@ -11,7 +11,7 @@ import java.util.Collections;
 
 @Log4j2
 @ControllerAdvice
-public class ExceptionControllerAdvice {
+public class GlobalExceptionHandler {
     private static final String ERROR = "error";
 
 

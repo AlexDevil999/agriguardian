@@ -33,7 +33,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver resolver;
     private final AppUserService userService;
 
-    public static final String REFRESH = "/api/v1/refresh";
+    public static final String REFRESH = "/api/v1/auth/refresh";
 
 
     public JwtRequestFilter(JwtProvider jwtProvider,
