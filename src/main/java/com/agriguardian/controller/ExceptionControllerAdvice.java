@@ -1,4 +1,4 @@
-package com.agriguardian.controller.maintenance;
+package com.agriguardian.controller;
 
 import com.agriguardian.exception.*;
 import lombok.extern.log4j.Log4j2;

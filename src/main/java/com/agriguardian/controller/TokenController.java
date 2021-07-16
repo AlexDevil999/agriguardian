@@ -1,4 +1,4 @@
-package com.agriguardian.controller.auth;
+package com.agriguardian.controller;
 
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.auth.AuthRequestDto;
