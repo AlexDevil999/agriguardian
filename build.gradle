@@ -85,5 +85,5 @@ bootJar {
 }
 
 wrapper {
-	gradleVersion = '7.0.2'
+	gradleVersion = '6.6.1'
 }
