@@ -14,24 +14,8 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 import java.util.Collections;
 
 @Configuration
-//@EnableSwagger2
+@EnableSwagger2
 public class SwaggerConfig  implements WebMvcConfigurer {
-//    @Bean
-//    public Docket api() {
-//        return new Docket(DocumentationType.SWAGGER_2)
-//                .select()
-//                .apis(RequestHandlerSelectors.basePackage("com.agriguardian.controller"))
-//                .paths(PathSelectors.any())
-//                .build().apiInfo(new ApiInfo(
-//                        "Cloud API",
-//                        "Agriguardian API",
-//                        "ver 1.0.0.1",
-//                        null,
-//                        null,
-//                        null,
-//                        null,
-//                        Collections.emptyList()));
-//    }
 
     @Bean
     public Docket api() {
