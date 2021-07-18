@@ -25,6 +25,7 @@ public class Border implements Comparable{
     private AlertGeoZone alertGeoZone;
 
 
+    //todo check this
     public void addAlertGeoZone(AlertGeoZone zone) {
         zone.addBorders(Arrays.asList(this));
     }

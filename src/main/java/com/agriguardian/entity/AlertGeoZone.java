@@ -32,6 +32,7 @@ public class AlertGeoZone {
     @JoinColumn(name = "team_group_id")
     private TeamGroup teamGroup;
 
+    //todo delete
     private List<Long> vulnerables;
 
     @Enumerated(EnumType.STRING)
