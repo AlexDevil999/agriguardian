@@ -1,6 +1,8 @@
-package com.agriguardian.entity;
+package com.agriguardian.entity.manyToMany;
 
 
+import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.enums.GroupRole;
 import lombok.*;
 

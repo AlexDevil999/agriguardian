@@ -1,5 +1,6 @@
 package com.agriguardian.entity;
 
+import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import lombok.*;
 
 import javax.persistence.*;
@@ -30,4 +31,21 @@ public class TeamGroup {
 
     @OneToMany(mappedBy = "teamGroup")
     private Set<AppUserTeamGroup> appUserTeamGroups;
+
+    @OneToMany(mappedBy = "teamGroup")
+    private Set<AlertBluetoothZone> alertBluetoothZones;
+
+    @OneToMany(mappedBy = "teamGroup")
+    private Set<AlertGeoZone> alertGeoZones;
+
+
+    public void addAlertBluetoothZone(AlertBluetoothZone zone) {
+        alertBluetoothZones.add(zone);
+        zone.setTeamGroup(this);
+    }
+
+    public void addAlertGeoZone(AlertGeoZone zone) {
+        alertGeoZones.add(zone);
+        zone.setTeamGroup(this);
+    }
 }

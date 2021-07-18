@@ -3,7 +3,7 @@ package com.agriguardian.controller;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.teamGroup.JoinTeamGroupDto;
 import com.agriguardian.entity.AppUser;
-import com.agriguardian.entity.AppUserTeamGroup;
+import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.exception.BadRequestException;
