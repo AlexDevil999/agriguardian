@@ -19,19 +19,19 @@ import java.util.stream.Collectors;
 @Builder
 public class ResponseAlertBluetoothZoneDto {
     private Long id;
-    private ResponseUserDto associatedUser;
+    private Long associatedUser;
     private ZoneRule rule;
     private Long teamGroup;
-    private Set<ResponseUserDto> vulnerables;
+    private Set<Long> vulnerables;
 
 
     public static ResponseAlertBluetoothZoneDto of(AlertBluetoothZone zone) {
         return ResponseAlertBluetoothZoneDto.builder()
                 .id(zone.getId())
-                .associatedUser(ResponseUserDto.of(zone.getAssociatedUser()))
+                .associatedUser(zone.getAssociatedUser().getId())
                 .rule(zone.getRule())
                 .teamGroup(zone.getTeamGroup().getId())
-                .vulnerables(zone.extractVulnerables().stream().map(ResponseUserDto::of).collect(Collectors.toSet()))
+                .vulnerables(zone.extractVulnerables().stream().map(AppUser::getId).collect(Collectors.toSet()))
                 .build();
     }
 }

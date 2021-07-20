@@ -64,4 +64,8 @@ public class TeamGroup {
         return appUserTeamGroups.stream().filter(userGroup -> GroupRole.VULNERABLE == userGroup.getGroupRole())
                 .map(AppUserTeamGroup::getAppUser).collect(Collectors.toSet());
     }
+
+    public boolean containsUser(AppUser user) {
+        return extractUsers().stream().anyMatch(groupUser -> groupUser.equals(user));
+    }
 }

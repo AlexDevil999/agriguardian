@@ -39,27 +39,9 @@ public class AlertBluetoothZoneService {
         return savedZone;
     }
 
-//    @Transactional
     public void delete(AlertBluetoothZone zone) {
-        try {
-            zone.getAppUserBluetoothZones().forEach(userZoneRepository::delete);
-
-            System.out.println("????????????");
-            alertBluetoothZoneRepository.deleteById(zone.getId());
-        } catch (Exception e) {
-            System.out.println("1");
-            System.out.println("2");
-            System.out.println("3");
-            System.out.println("4");
-            System.out.println("55555555555555555");
-            System.out.println(e.getMessage());
-        }
-
-        System.out.println("111111111111111111");
-        System.out.println(zone.getId());
-        System.out.println(zone.getTeamGroup().getId());
-        System.out.println(zone.getAssociatedUser().getId());
-//        zone.getAppUserBluetoothZones().forEach(userZoneRepository::delete);
-//        alertBluetoothZoneRepository.delete(zone);
+            zone.getAssociatedUser().setAlertBluetoothZone(null);
+            zone.getTeamGroup().getAlertBluetoothZones().remove(zone);
+            alertBluetoothZoneRepository.delete(zone);
     }
 }

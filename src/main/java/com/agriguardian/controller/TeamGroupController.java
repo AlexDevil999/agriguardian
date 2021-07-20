@@ -1,7 +1,9 @@
 package com.agriguardian.controller;
 
+import com.agriguardian.dto.ResponseTeamGroupDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.teamGroup.JoinTeamGroupDto;
+import com.agriguardian.dto.teamGroup.ResetTeamGroupCodeDto;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.entity.TeamGroup;
@@ -14,12 +16,11 @@ import com.agriguardian.service.TeamGroupService;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -49,6 +50,21 @@ public class TeamGroupController {
 
         return ResponseUserDto.of(user);
     }
+
+    @GetMapping("/{id}")
+    public ResponseTeamGroupDto findById(@PathVariable Long id, Principal principal) {
+
+        AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        TeamGroup teamGroup = teamGroupService.findById(id)
+                .orElseThrow(() -> new NotFoundException("group not found; resource: id " + id));
+
+        if (!teamGroup.containsUser(user)) {
+            throw new AccessDeniedException("user does not have permissions for team group; resource: group id" + id);
+        }
+
+        return ResponseTeamGroupDto.of(teamGroup);
+    }
+
 
     private GroupRole defineInvCodeOrThrowBadRequest(TeamGroup tg, String code) {
         if (tg.getGuardianInvitationCode().equals(code)) return GroupRole.GUARDIAN;

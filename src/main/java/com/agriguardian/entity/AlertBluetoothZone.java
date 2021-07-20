@@ -33,7 +33,10 @@ public class AlertBluetoothZone {
     @JoinColumn(name = "team_group_id")
     private TeamGroup teamGroup;
 
-    @OneToMany(mappedBy = "alertBluetoothZone")
+    @OneToMany(mappedBy = "alertBluetoothZone",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
     private Set<AppUserBluetoothZone> appUserBluetoothZones;
 
 
