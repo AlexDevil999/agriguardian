@@ -43,12 +43,12 @@ public class JwtProvider {
     }
 
     public AuthResponseDto token(AppUser appUser) {
-        long accessExpiredAt = System.currentTimeMillis() + accessValidity;
-        long  refreshExpiredAt = System.currentTimeMillis() + refreshValidity;
+        long accessExpiresAt = System.currentTimeMillis() + accessValidity;
+        long  refreshExpiresAt = System.currentTimeMillis() + refreshValidity;
 
-        String access = generate(appUser, accessExpiredAt, "access");
-        String refresh = generate(appUser, refreshExpiredAt, "refresh");
-        return new AuthResponseDto(access, refresh, accessExpiredAt, refreshExpiredAt);
+        String access = generate(appUser, accessExpiresAt, "access");
+        String refresh = generate(appUser, refreshExpiresAt, "refresh");
+        return new AuthResponseDto(access, refresh, accessExpiresAt, refreshExpiresAt);
     }
 
     private Claims extractClaim(String token) {
