@@ -10,4 +10,6 @@ import lombok.*;
 public class AuthResponseDto {
     private String accessToken;
     private String refreshToken;
+    private long accessExpiredAt;
+    private long refreshExpiredAt;
 }

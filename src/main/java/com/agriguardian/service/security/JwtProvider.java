@@ -43,9 +43,12 @@ public class JwtProvider {
     }
 
     public AuthResponseDto token(AppUser appUser) {
-        String access = generate(appUser, accessValidity, "access");
-        String refresh = generate(appUser, refreshValidity, "refresh");
-        return new AuthResponseDto(access, refresh);
+        long accessExpiredAt = System.currentTimeMillis() + accessValidity;
+        long  refreshExpiredAt = System.currentTimeMillis() + refreshValidity;
+
+        String access = generate(appUser, accessExpiredAt, "access");
+        String refresh = generate(appUser, refreshExpiredAt, "refresh");
+        return new AuthResponseDto(access, refresh, accessExpiredAt, refreshExpiredAt);
     }
 
     private Claims extractClaim(String token) {
@@ -58,9 +61,7 @@ public class JwtProvider {
         return username;
     }
 
-    private String generate(AppUser user, long time, String type) {
-        Long udId = user.getId();
-
+    private String generate(AppUser user, long expiresAt, String type) {
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("type", type);
         claims.put("id", user.getId());
@@ -70,7 +71,7 @@ public class JwtProvider {
                 .setClaims(claims)
                 .setSubject(user.getUsername())
                 .setIssuedAt(new Date(System.currentTimeMillis()))
-                .setExpiration(new Date(System.currentTimeMillis() + time))
+                .setExpiration(new Date(expiresAt))
                 .signWith(SignatureAlgorithm.HS512, jwtSecret)
                 .compact();
     }
