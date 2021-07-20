@@ -13,7 +13,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-@EqualsAndHashCode(of = "id")
+@EqualsAndHashCode(of = {"appUser", "alertBluetoothZone"})
 public class AppUserBluetoothZone {
     @Id
     @SequenceGenerator(name = "AppUserBluetoothZoneSequence", sequenceName = "app_user_bluetooth_zones_id_seq", allocationSize = 1)
@@ -24,11 +24,6 @@ public class AppUserBluetoothZone {
     @JoinColumn(name = "app_user_id")
     private AppUser appUser;
     @ManyToOne
-    @JoinColumn(name = "alert_bluetooth_zone_id")
+    @JoinColumn(name = "bluetooth_zone_id")
     private AlertBluetoothZone alertBluetoothZone;
-
-
-    public boolean storesBind(AppUser appUser, AlertBluetoothZone zone) {
-        return appUser.equals(this.appUser) && zone.equals(this.alertBluetoothZone);
-    }
 }

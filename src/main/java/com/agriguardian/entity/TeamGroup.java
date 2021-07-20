@@ -1,10 +1,12 @@
 package com.agriguardian.entity;
 
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
+import com.agriguardian.enums.GroupRole;
 import lombok.*;
 
 import javax.persistence.*;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "team_groups")
@@ -34,9 +36,9 @@ public class TeamGroup {
 
     @OneToMany(mappedBy = "teamGroup")
     private Set<AlertBluetoothZone> alertBluetoothZones;
-
-    @OneToMany(mappedBy = "teamGroup")
-    private Set<AlertGeoZone> alertGeoZones;
+//
+//    @OneToMany(mappedBy = "teamGroup")
+//    private Set<AlertGeoZone> alertGeoZones;
 
 
     public void addAlertBluetoothZone(AlertBluetoothZone zone) {
@@ -44,8 +46,22 @@ public class TeamGroup {
         zone.setTeamGroup(this);
     }
 
-    public void addAlertGeoZone(AlertGeoZone zone) {
-        alertGeoZones.add(zone);
-        zone.setTeamGroup(this);
+//    public void addAlertGeoZone(AlertGeoZone zone) {
+//        alertGeoZones.add(zone);
+//        zone.setTeamGroup(this);
+//    }
+
+    public Set<AppUser> extractUsers() {
+        return appUserTeamGroups.stream().map(AppUserTeamGroup::getAppUser).collect(Collectors.toSet());
+    }
+
+    public Set<AppUser> extractAdmins() {
+        return appUserTeamGroups.stream().filter(userGroup -> GroupRole.GUARDIAN == userGroup.getGroupRole())
+                .map(AppUserTeamGroup::getAppUser).collect(Collectors.toSet());
+    }
+
+    public Set<AppUser> extractVulnerables() {
+        return appUserTeamGroups.stream().filter(userGroup -> GroupRole.VULNERABLE == userGroup.getGroupRole())
+                .map(AppUserTeamGroup::getAppUser).collect(Collectors.toSet());
     }
 }

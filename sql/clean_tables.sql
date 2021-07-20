@@ -1,3 +1,7 @@
+delete from app_user_bluetooth_zones;
+
+delete from bluetooth_zones;
+
 delete from app_user_team_groups;
 
 delete from team_groups;

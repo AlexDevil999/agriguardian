@@ -1,6 +1,7 @@
 package com.agriguardian.dto;
 
 import com.agriguardian.domain.Point;
+import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.enums.ZoneType;
@@ -9,6 +10,7 @@ import lombok.*;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Set;
 
 @Builder
 @Getter
@@ -30,5 +32,5 @@ public class AddTeamGroupRuleDto {
     private List<Point> borders;
 
     @NotEmpty(message = "field 'vulnerables' may not be empty")
-    private List<Long> vulnerables;
+    private Set<Long> vulnerables;
 }

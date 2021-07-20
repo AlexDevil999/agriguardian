@@ -5,7 +5,10 @@ import com.agriguardian.enums.ZoneRule;
 import lombok.*;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "bluetooth_zones")
@@ -22,7 +25,7 @@ public class AlertBluetoothZone {
     private long id;
     @OneToOne
     @JoinColumn(name = "app_user_id")
-    private AppUser appUser;
+    private AppUser associatedUser;
     @Enumerated(EnumType.STRING)
     private ZoneRule rule;
 
@@ -35,10 +38,42 @@ public class AlertBluetoothZone {
 
 
     public void addAnchorUser(AppUser user) {
-        user.addAlertBluetoothZone(this);
+        user.createNewAlertBluetoothZone(this);
     }
 
     public void addTeamGroup(TeamGroup teamGroup) {
         teamGroup.addAlertBluetoothZone(this);
+    }
+
+    public AppUserBluetoothZone addVulnerable(AppUser user) {
+        if (appUserBluetoothZones == null) appUserBluetoothZones = new HashSet<>();
+
+        final AppUserBluetoothZone userBluetoothZone =
+                AppUserBluetoothZone.builder()
+                .appUser(user)
+                .alertBluetoothZone(this)
+                .build();
+        Optional<AppUserBluetoothZone> fromSet = appUserBluetoothZones.stream()
+                .filter(userZone -> userZone.equals(userBluetoothZone))
+                .findAny();
+
+        if (fromSet.isPresent()) {
+            return fromSet.get();
+        } else {
+            appUserBluetoothZones.add(userBluetoothZone);
+//            user.getAlertBluetoothZone().addVulnerable(user);
+            user.getAppUserBluetoothZones().add(userBluetoothZone); //todo check this
+            return userBluetoothZone;
+        }
+    }
+
+    public Set<AppUser> extractVulnerables() {
+        if (appUserBluetoothZones == null) return new HashSet<>();
+
+        return appUserBluetoothZones.stream().map(AppUserBluetoothZone::getAppUser).collect(Collectors.toSet());
+    }
+
+    public Set<Long> extractIdsOfVulnerables() {
+        return extractVulnerables().stream().map(AppUser::getId).collect(Collectors.toSet());
     }
 }

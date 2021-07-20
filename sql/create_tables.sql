@@ -62,3 +62,22 @@ create table if not exists app_user_team_groups
     foreign key (app_user_id) references app_users (id),
     foreign key (team_group_id) references team_groups (id)
 );
+
+create table if not exists bluetooth_zones
+(
+    id              serial primary key,
+    rule text,
+    app_user_id        bigint not null,
+    team_group_id        bigint not null,
+    foreign key (app_user_id) references app_users (id),
+    foreign key (team_group_id) references team_groups (id)
+);
+
+create table if not exists app_user_bluetooth_zones
+(
+    id            serial primary key,
+    app_user_id   bigint not null,
+    bluetooth_zone_id bigint not null,
+    foreign key (app_user_id) references app_users (id),
+    foreign key (bluetooth_zone_id) references bluetooth_zones (id)
+);

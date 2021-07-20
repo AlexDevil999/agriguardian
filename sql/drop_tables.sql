@@ -1,3 +1,7 @@
+drop table if exists app_user_bluetooth_zones;
+
+drop table if exists bluetooth_zones;
+
 drop table if exists app_user_team_groups;
 
 drop table if exists team_groups;

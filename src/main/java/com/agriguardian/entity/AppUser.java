@@ -1,7 +1,6 @@
 package com.agriguardian.entity;
 
 import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
-import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
@@ -58,10 +57,8 @@ public class AppUser {
     @OneToMany(mappedBy = "appUser")
     private Set<AppUserTeamGroup> appUserTeamGroups;
 
-    @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "associatedUser", cascade = CascadeType.ALL)
     private AlertBluetoothZone alertBluetoothZone;
-
-
 
 
     //todo here
@@ -71,8 +68,8 @@ public class AppUser {
     //todo here
     @OneToMany(mappedBy = "appUser")
     private Set<AppUserBluetoothZone> appUserBluetoothZones;
-    @OneToMany(mappedBy = "appUser")
-    private Set<AppUserGeoZone> appUserGeoZones;
+//    @OneToMany(mappedBy = "appUser")
+//    private Set<AppUserGeoZone> appUserGeoZones;
 
 
 
@@ -94,9 +91,13 @@ public class AppUser {
         cc.setAppUser(this);
     }
 
-    public void addAlertBluetoothZone(AlertBluetoothZone zone) {
+    public void createNewAlertBluetoothZone(AlertBluetoothZone zone) {
         this.setAlertBluetoothZone(zone);
-        zone.setAppUser(this);
+        zone.setAssociatedUser(this);
+    }
+
+    public AppUserBluetoothZone bindToAlertBluetoothZone(AlertBluetoothZone zone) {
+        return zone.addVulnerable(this);
     }
 
 
