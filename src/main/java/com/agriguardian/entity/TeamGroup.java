@@ -36,9 +36,9 @@ public class TeamGroup {
 
     @OneToMany(mappedBy = "teamGroup")
     private Set<AlertBluetoothZone> alertBluetoothZones;
-//
-//    @OneToMany(mappedBy = "teamGroup")
-//    private Set<AlertGeoZone> alertGeoZones;
+
+    @OneToMany(mappedBy = "teamGroup")
+    private Set<AlertGeoZone> alertGeoZones;
 
 
     public void addAlertBluetoothZone(AlertBluetoothZone zone) {
@@ -46,10 +46,10 @@ public class TeamGroup {
         zone.setTeamGroup(this);
     }
 
-//    public void addAlertGeoZone(AlertGeoZone zone) {
-//        alertGeoZones.add(zone);
-//        zone.setTeamGroup(this);
-//    }
+    public void addAlertGeoZone(AlertGeoZone zone) {
+        alertGeoZones.add(zone);
+        zone.setTeamGroup(this);
+    }
 
     public Set<AppUser> extractUsers() {
         return appUserTeamGroups.stream().map(AppUserTeamGroup::getAppUser).collect(Collectors.toSet());

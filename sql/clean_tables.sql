@@ -1,3 +1,10 @@
+delete from borders;
+
+delete from app_user_geo_zones;
+
+delete from geo_zones;
+
+
 delete from app_user_bluetooth_zones;
 
 delete from bluetooth_zones;

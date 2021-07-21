@@ -1,6 +1,7 @@
 package com.agriguardian.entity;
 
 import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
+import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
@@ -60,16 +61,10 @@ public class AppUser {
     @OneToOne(mappedBy = "associatedUser", cascade = CascadeType.ALL)
     private AlertBluetoothZone alertBluetoothZone;
 
-
-    //todo here
-    //todo here
-    //todo here
-    //todo here
-    //todo here
     @OneToMany(mappedBy = "appUser")
     private Set<AppUserBluetoothZone> appUserBluetoothZones;
-//    @OneToMany(mappedBy = "appUser")
-//    private Set<AppUserGeoZone> appUserGeoZones;
+    @OneToMany(mappedBy = "appUser")
+    private Set<AppUserGeoZone> appUserGeoZones;
 
 
 

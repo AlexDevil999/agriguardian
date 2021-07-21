@@ -81,3 +81,35 @@ create table if not exists app_user_bluetooth_zones
     foreign key (app_user_id) references app_users (id),
     foreign key (bluetooth_zone_id) references bluetooth_zones (id)
 );
+
+
+create table if not exists geo_zones
+(
+    id              serial primary key,
+    rule text,
+    team_group_id        bigint not null,
+    center_lon double precision,
+    center_lat double precision,
+    radius int,
+    figure text,
+    foreign key (team_group_id) references team_groups (id)
+);
+
+create table if not exists app_user_geo_zones
+(
+    id            serial primary key,
+    app_user_id   bigint not null,
+    alert_geo_zone_id bigint not null,
+    foreign key (app_user_id) references app_users (id),
+    foreign key (alert_geo_zone_id) references geo_zones (id)
+);
+
+create table if not exists borders
+(
+    id              serial primary key,
+    lon double precision,
+    lat double precision,
+    position int,
+    geo_zone_id bigint not null,
+    foreign key (geo_zone_id) references geo_zones (id)
+);
