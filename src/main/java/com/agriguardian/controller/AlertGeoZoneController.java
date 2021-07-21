@@ -2,9 +2,11 @@ package com.agriguardian.controller;
 
 import com.agriguardian.dto.AddTeamGroupRuleDto;
 import com.agriguardian.dto.ResponseAlertGeoZoneDto;
+import com.agriguardian.dto.ResponseTeamGroupDto;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AlertGeoZoneService;
@@ -68,6 +70,20 @@ public class AlertGeoZoneController {
                         dto.getBorders()
                 )
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseAlertGeoZoneDto findById(@PathVariable Long id, Principal principal) {
+
+        AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        AlertGeoZone gz = zoneService.findById(id)
+                .orElseThrow(() -> new NotFoundException("zone not found; resource: id " + id));
+
+        if (gz.getTeamGroup().extractUsers().stream().noneMatch(u -> u.equals(user))) {
+            throw new AccessDeniedException("user does not have permissions for zone; resource: zone id" + id);
+        }
+
+        return ResponseAlertGeoZoneDto.of(gz);
     }
 
     //todo add permisions and verifications

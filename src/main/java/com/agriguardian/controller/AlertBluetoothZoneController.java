@@ -2,13 +2,9 @@ package com.agriguardian.controller;
 
 import com.agriguardian.dto.AddTeamGroupRuleDto;
 import com.agriguardian.dto.ResponseAlertBluetoothZoneDto;
-import com.agriguardian.dto.appUser.ResponseUserDto;
-import com.agriguardian.dto.teamGroup.JoinTeamGroupDto;
 import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
-import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
-import com.agriguardian.enums.GroupRole;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.NotFoundException;
@@ -24,7 +20,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
-import javax.naming.ConfigurationException;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.Set;
@@ -70,6 +65,20 @@ public class AlertBluetoothZoneController {
                         vulnerables
                 )
         );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseAlertBluetoothZoneDto findById(@PathVariable Long id, Principal principal) {
+
+        AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        AlertBluetoothZone bz = bluetoothZoneService.findById(id)
+                .orElseThrow(() -> new NotFoundException("zone not found; resource: id " + id));
+
+        if (bz.getTeamGroup().extractUsers().stream().noneMatch(u -> u.equals(user))) {
+            throw new AccessDeniedException("user does not have permissions for zone; resource: zone id" + id);
+        }
+
+        return ResponseAlertBluetoothZoneDto.of(bz);
     }
 
     //todo add permisions and verifications

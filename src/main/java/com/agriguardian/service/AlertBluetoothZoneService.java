@@ -12,6 +12,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Optional;
 import java.util.Set;
 
 @Slf4j
@@ -43,5 +44,9 @@ public class AlertBluetoothZoneService {
             zone.getAssociatedUser().setAlertBluetoothZone(null);
             zone.getTeamGroup().getAlertBluetoothZones().remove(zone);
             alertBluetoothZoneRepository.delete(zone);
+    }
+
+    public Optional<AlertBluetoothZone> findById(Long id) {
+        return alertBluetoothZoneRepository.findById(id);
     }
 }
