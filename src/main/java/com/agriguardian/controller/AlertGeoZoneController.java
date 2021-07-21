@@ -2,11 +2,9 @@ package com.agriguardian.controller;
 
 import com.agriguardian.dto.AddTeamGroupRuleDto;
 import com.agriguardian.dto.ResponseAlertGeoZoneDto;
-import com.agriguardian.dto.ResponseTeamGroupDto;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
-import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AlertGeoZoneService;
@@ -33,12 +31,12 @@ import java.util.stream.Collectors;
 public class AlertGeoZoneController {
     private final AppUserService appUserService;
     private final TeamGroupService teamGroupService;
-    private final AlertGeoZoneService zoneService;
+    private final AlertGeoZoneService geoZoneServie;
 
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping
-    public ResponseAlertGeoZoneDto addAlertBluetoothZone(@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal) {
+    public ResponseAlertGeoZoneDto addAlertGeoZone(@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
         if (dto.getFigureType() == null) throw new BadRequestException("field 'figureType' may not be null");
@@ -59,7 +57,7 @@ public class AlertGeoZoneController {
         }
 
         return ResponseAlertGeoZoneDto.of(
-                zoneService.createNew(
+                geoZoneServie.createNew(
                         dto.getRule(),
                         dto.getCenterLat(),
                         dto.getCenterLon(),
@@ -76,7 +74,7 @@ public class AlertGeoZoneController {
     public ResponseAlertGeoZoneDto findById(@PathVariable Long id, Principal principal) {
 
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-        AlertGeoZone gz = zoneService.findById(id)
+        AlertGeoZone gz = geoZoneServie.findById(id)
                 .orElseThrow(() -> new NotFoundException("zone not found; resource: id " + id));
 
         if (gz.getTeamGroup().extractUsers().stream().noneMatch(u -> u.equals(user))) {
@@ -89,16 +87,15 @@ public class AlertGeoZoneController {
     //todo add permisions and verifications
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/{id}")
-    public ResponseEntity deleteAlertBluetoothZone(@PathVariable Long id,
-                                                   Principal principal) {
-        AlertGeoZone zone = zoneService.findById(id).orElseThrow(() -> new NotFoundException("zone not found; resource " + id));
+    public ResponseEntity deleteAlertGeoZone(@PathVariable Long id, Principal principal) {
+        AlertGeoZone zone = geoZoneServie.findById(id).orElseThrow(() -> new NotFoundException("zone not found; resource " + id));
 
-        if (!zone.getTeamGroup().extractAdmins().stream().anyMatch(u -> u.getUsername().equals(principal.getName()))) {
+        if (zone.getTeamGroup().extractAdmins().stream().noneMatch(u -> u.getUsername().equals(principal.getName()))) {
             throw new AccessDeniedException("user does not have rights on recourse: teamGroup " + zone.getTeamGroup().getId());
         }
 
         long zoneId = zone.getId();
-        zoneService.delete(zone);
+        geoZoneServie.delete(zone);
 
         return ResponseEntity.ok(zoneId);
     }
