@@ -12,7 +12,7 @@ import java.util.Arrays;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Border implements Comparable {
+public class Border implements Comparable<Border> {
     @Id
     @SequenceGenerator(name = "bordersSequence", sequenceName = "borders_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bordersSequence")
@@ -30,8 +30,9 @@ public class Border implements Comparable {
         zone.addBorders(Arrays.asList(this));
     }
 
+
     @Override
-    public int compareTo(Object o) {
-        return order - ((Border) o).order;
+    public int compareTo(Border o) {
+        return order - o.getOrder();
     }
 }
