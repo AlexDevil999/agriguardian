@@ -37,8 +37,8 @@ public class AlertGeoZone {
             orphanRemoval = true)
     private Set<AppUserGeoZone> appUserGeoZones;
 
-        @Enumerated(EnumType.STRING)
-        @Column(name = "figure")
+    @Enumerated(EnumType.STRING)
+    @Column(name = "figure")
     private Figure figureType;
     @Column(name = "center_lon")
     private Double centerLon;
@@ -84,10 +84,10 @@ public class AlertGeoZone {
 
     public void addBorder(Border border) {
         if (this.borders == null) this.borders = new ArrayList<>();
-            border.setAlertGeoZone(this);
-            borders.add(border);
+        border.setAlertGeoZone(this);
+        borders.add(border);
 
-            //todo add increasing of # (order) of each border afet this (f.e. this is #3, 3->4, 4->5 and so on)
+        //todo add increasing of # (order) of each border afet this (f.e. this is #3, 3->4, 4->5 and so on)
     }
 
     public void addBorders(List<Border> borders) {

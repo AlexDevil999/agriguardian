@@ -15,7 +15,7 @@ import java.util.Collections;
 
 @Configuration
 @EnableSwagger2
-public class SwaggerConfig  implements WebMvcConfigurer {
+public class SwaggerConfig implements WebMvcConfigurer {
 
     @Bean
     public Docket api() {
@@ -27,13 +27,13 @@ public class SwaggerConfig  implements WebMvcConfigurer {
 
     private ApiInfo apiInfo() {
         return new ApiInfo(
-                "Cloud API",
-                "Agriguardian API",
+                "Agriguardian Cloud API",
+                "Web server",
                 "1.0",
                 null,
-                new Contact("", "", "email@email.com"),
-                "API",
-                "API license URL",
+                null,
+                null,
+                null,
                 Collections.emptyList());
     }
 }

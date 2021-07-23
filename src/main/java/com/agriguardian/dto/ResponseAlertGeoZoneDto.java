@@ -3,14 +3,15 @@ package com.agriguardian.dto;
 import com.agriguardian.domain.Point;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
-import com.agriguardian.entity.Border;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Getter

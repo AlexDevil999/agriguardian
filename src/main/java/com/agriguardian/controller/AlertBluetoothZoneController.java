@@ -35,7 +35,6 @@ public class AlertBluetoothZoneController {
     private final AlertBluetoothZoneService bluetoothZoneService;
 
 
-
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping
     public ResponseAlertBluetoothZoneDto addAlertBluetoothZone(@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal) {

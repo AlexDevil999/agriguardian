@@ -53,9 +53,9 @@ public class AlertBluetoothZone {
 
         final AppUserBluetoothZone userBluetoothZone =
                 AppUserBluetoothZone.builder()
-                .appUser(user)
-                .alertBluetoothZone(this)
-                .build();
+                        .appUser(user)
+                        .alertBluetoothZone(this)
+                        .build();
         Optional<AppUserBluetoothZone> fromSet = appUserBluetoothZones.stream()
                 .filter(userZone -> userZone.equals(userBluetoothZone))
                 .findAny();

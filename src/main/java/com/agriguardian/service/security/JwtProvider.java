@@ -44,7 +44,7 @@ public class JwtProvider {
 
     public AuthResponseDto token(AppUser appUser) {
         long accessExpiresAt = System.currentTimeMillis() + accessValidity;
-        long  refreshExpiresAt = System.currentTimeMillis() + refreshValidity;
+        long refreshExpiresAt = System.currentTimeMillis() + refreshValidity;
 
         String access = generate(appUser, accessExpiresAt, "access");
         String refresh = generate(appUser, refreshExpiresAt, "refresh");

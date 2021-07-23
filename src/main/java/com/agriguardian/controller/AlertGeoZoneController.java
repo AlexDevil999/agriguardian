@@ -32,6 +32,7 @@ public class AlertGeoZoneController {
     private final AppUserService appUserService;
     private final TeamGroupService teamGroupService;
     private final AlertGeoZoneService geoZoneServie;
+    private static final int MIN_NUMBER_OF_VERTICES = 3;
 
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
@@ -40,7 +41,8 @@ public class AlertGeoZoneController {
         ValidationDto.handleErrors(errors);
 
         if (dto.getFigureType() == null) throw new BadRequestException("field 'figureType' may not be null");
-        if (dto.getBorders() == null && dto.getBorders().isEmpty())  throw new BadRequestException("field 'borders' should contains at least 3 points");
+        if (dto.getBorders() == null || dto.getBorders().size() < MIN_NUMBER_OF_VERTICES)
+            throw new BadRequestException("field 'borders' should contains at least 3 points");
 
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup teamGroup = teamGroupService.findById(dto.getTeamGroupId())

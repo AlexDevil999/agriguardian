@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <configuration>
-<!--    disable console output by committing nex line (excluding default logback configuration)-->
+    <!--    disable console output by committing nex line (excluding default logback configuration)-->
     <include resource="org/springframework/boot/logging/logback/base.xml"/>
 
     <appender name="ROLLING" class="ch.qos.logback.core.rolling.RollingFileAppender">
@@ -24,13 +24,13 @@
     </appender>
 
     <logger name="org.springframework.web" level="DEBUG">
-        <appender-ref ref="ROLLING" />
+        <appender-ref ref="ROLLING"/>
     </logger>
-<!--    <logger name="org.hibernate" level="WARN">-->
+    <!--    <logger name="org.hibernate" level="WARN">-->
     <logger name="org.hibernate" level="DEBUG">
-        <appender-ref ref="ROLLING" />
+        <appender-ref ref="ROLLING"/>
     </logger>
     <logger name="com.agriguardian" level="DEBUG">
-        <appender-ref ref="ROLLING" />
+        <appender-ref ref="ROLLING"/>
     </logger>
 </configuration>

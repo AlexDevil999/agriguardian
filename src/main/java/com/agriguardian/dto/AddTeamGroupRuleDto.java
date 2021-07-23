@@ -1,7 +1,6 @@
 package com.agriguardian.dto;
 
 import com.agriguardian.domain.Point;
-import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.enums.ZoneType;

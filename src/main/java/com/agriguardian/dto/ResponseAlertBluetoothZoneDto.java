@@ -1,16 +1,12 @@
 package com.agriguardian.dto;
 
-import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.entity.AppUser;
-import com.agriguardian.entity.TeamGroup;
-import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.enums.ZoneRule;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
-import javax.persistence.*;
 import java.util.Set;
 import java.util.stream.Collectors;
 

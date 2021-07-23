@@ -41,9 +41,9 @@ public class AlertBluetoothZoneService {
     }
 
     public void delete(AlertBluetoothZone zone) {
-            zone.getAssociatedUser().setAlertBluetoothZone(null);
-            zone.getTeamGroup().getAlertBluetoothZones().remove(zone);
-            alertBluetoothZoneRepository.delete(zone);
+        zone.getAssociatedUser().setAlertBluetoothZone(null);
+        zone.getTeamGroup().getAlertBluetoothZones().remove(zone);
+        alertBluetoothZoneRepository.delete(zone);
     }
 
     public Optional<AlertBluetoothZone> findById(Long id) {

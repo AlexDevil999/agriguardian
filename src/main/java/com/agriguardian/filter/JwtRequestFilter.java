@@ -29,11 +29,10 @@ import java.io.IOException;
 @Log4j2
 @Component
 public class JwtRequestFilter extends OncePerRequestFilter {
+    public static final String REFRESH = "/api/v1/auth/refresh";
     private final JwtProvider jwtProvider;
     private final HandlerExceptionResolver resolver;
     private final AppUserService userService;
-
-    public static final String REFRESH = "/api/v1/auth/refresh";
 
 
     public JwtRequestFilter(JwtProvider jwtProvider,

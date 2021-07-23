@@ -10,8 +10,10 @@ import java.util.Optional;
 public interface TeamGroupRepository extends CrudRepository<TeamGroup, Long> {
 
     boolean existsByGuardianInvitationCode(String code);
+
     boolean existsByVulnerableInvitationCode(String code);
 
     Optional<TeamGroup> findByGuardianInvitationCode(String code);
+
     Optional<TeamGroup> findByVulnerableInvitationCode(String code);
 }

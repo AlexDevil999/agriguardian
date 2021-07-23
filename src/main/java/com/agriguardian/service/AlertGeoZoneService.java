@@ -1,17 +1,13 @@
 package com.agriguardian.service;
 
 import com.agriguardian.domain.Point;
-import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
-import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
-import com.agriguardian.repository.AlertBluetoothZoneRepository;
 import com.agriguardian.repository.AlertGeoZoneRepository;
-import com.agriguardian.repository.AppUserBluetoothZoneRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;

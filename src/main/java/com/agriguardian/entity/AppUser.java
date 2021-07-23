@@ -67,8 +67,6 @@ public class AppUser {
     private Set<AppUserGeoZone> appUserGeoZones;
 
 
-
-
     public void addUserInfo(UserInfo ui) {
         this.setUserInfo(ui);
         ui.setAppUser(this);
