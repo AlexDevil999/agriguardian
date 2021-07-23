@@ -1,0 +1,16 @@
+package com.agriguardian.dto;
+
+import lombok.*;
+
+import javax.validation.constraints.NotNull;
+import java.util.List;
+
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class GeoMonitoringDto {
+    @NotNull(message = "field 'locations' is mandatory")
+    private List<LocationDto> locations;
+}

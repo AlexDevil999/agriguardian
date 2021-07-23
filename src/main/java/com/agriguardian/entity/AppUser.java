@@ -136,4 +136,12 @@ public class AppUser {
     public Long getOwnGroup() {
         return teamGroup == null ? null : teamGroup.getId();
     }
+
+    public List<AlertGeoZone> extractAlertGeoZones() {
+        if (appUserGeoZones == null) {
+            return Collections.emptyList();
+        } else {
+            return appUserGeoZones.stream().map(AppUserGeoZone::getAlertGeoZone).collect(Collectors.toList());
+        }
+    }
 }

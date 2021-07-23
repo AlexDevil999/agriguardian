@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(of = {"lon", "lat"})
 public class Point {
     @NotNull(message = "field 'lon' (longitude) is mandatory")
     private Double lon;
