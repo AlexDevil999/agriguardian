@@ -1,9 +1,11 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.dto.AddTeamGroupRuleDto;
+import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.ResponseAlertBluetoothZoneDto;
 import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.ConflictException;
@@ -11,6 +13,7 @@ import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AlertBluetoothZoneService;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.TeamGroupService;
+import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -33,6 +36,7 @@ public class AlertBluetoothZoneController {
     private final AppUserService appUserService;
     private final TeamGroupService teamGroupService;
     private final AlertBluetoothZoneService bluetoothZoneService;
+    private final Notificator notificator;
 
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
@@ -56,14 +60,22 @@ public class AlertBluetoothZoneController {
             throw new BadRequestException("the resource does not belong to the group; user id " + dto.getVulnerables());
         }
 
-        return ResponseAlertBluetoothZoneDto.of(
-                bluetoothZoneService.createNew(
-                        user,
-                        teamGroup,
-                        dto.getRule(),
-                        vulnerables
-                )
+        AlertBluetoothZone zone = bluetoothZoneService.createNew(
+                user,
+                teamGroup,
+                dto.getRule(),
+                vulnerables
         );
+
+        notificator.notifyUsers(
+                teamGroup.extractUsers(),
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(teamGroup.getId())
+                        .build()
+                );
+
+        return ResponseAlertBluetoothZoneDto.of(zone);
     }
 
     @GetMapping("/{id}")
@@ -89,8 +101,17 @@ public class AlertBluetoothZoneController {
         AlertBluetoothZone zone = user.getAlertBluetoothZone();
 
         long id = zone.getId();
+        Set<AppUser> userList = zone.getTeamGroup().extractUsers();
+        long tgId = zone.getTeamGroup().getId();
         bluetoothZoneService.delete(zone);
 
+        notificator.notifyUsers(
+                userList,
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(tgId)
+                        .build()
+        );
 
         return ResponseEntity.ok(id);
     }

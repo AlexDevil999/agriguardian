@@ -1,15 +1,18 @@
 package com.agriguardian.controller;
 
+import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.appUser.AddUserFollowerDto;
 import com.agriguardian.dto.appUser.AddUserMasterDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
 import com.agriguardian.exception.AccessDeniedException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AppUserService;
+import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -30,6 +33,7 @@ import static java.util.stream.Collectors.joining;
 @RequestMapping("/api/v1/users")
 public class UserController {
     private final AppUserService appUserService;
+    private final Notificator notificator;
 
     @PostMapping("/master")
     public ResponseUserDto addUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
@@ -57,6 +61,16 @@ public class UserController {
         vulnerable.addUserInfo(dto.buildUserInfo());
 
         AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
+
+        teamGroups.forEach(tg -> {
+            notificator.notifyUsers(
+                    tg.extractUsers(),
+                    MessageDto.builder()
+                            .event(EventType.TEAM_GROUP_UPDATED)
+                            .groupId(tg.getId())
+                            .build()
+            );
+        });
 
         return ResponseUserDto.of(saved);
     }

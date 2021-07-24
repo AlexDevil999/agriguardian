@@ -1,9 +1,11 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.dto.GeoMonitoringDto;
+import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.ViolationDto;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.EventType;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.interfaces.UserMonitor;
@@ -43,6 +45,17 @@ public class LocationController {
 
         Collections.sort(geo.getLocations());
         List<AlertGeoZone> violatedZones = userMonitoringService.monitor(user, geo.getLocations().get(geo.getLocations().size() - 1).getPoint());
+
+        //todo add notificaton and storing of user when he/she changes state
+//        teamGroups.forEach(tg -> {
+//            notificator.notifyUsers(
+//                    tg.extractUsers(),
+//                    MessageDto.builder()
+//                            .event(EventType.TEAM_GROUP_UPDATED)
+//                            .groupId(tg.getId())
+//                            .build()
+//            );
+//        });
 
         List<Long> zoneIds = violatedZones.stream().map(AlertGeoZone::getId).collect(Collectors.toList());
         return ViolationDto.builder()

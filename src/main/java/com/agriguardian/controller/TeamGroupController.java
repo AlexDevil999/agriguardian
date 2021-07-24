@@ -1,9 +1,11 @@
 package com.agriguardian.controller;
 
+import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.ResponseTeamGroupDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.teamGroup.JoinTeamGroupDto;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
@@ -12,6 +14,7 @@ import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.TeamGroupService;
+import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -31,6 +34,7 @@ public class TeamGroupController {
     private final AppUserService appUserService;
     private final TeamGroupService teamGroupService;
     private final AppUserTeamGroupRepository autgRepository;
+    private final Notificator notificator;
 
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
@@ -45,6 +49,14 @@ public class TeamGroupController {
 
         AppUserTeamGroup autg = user.addTeamGroup(teamGroup, groupRole);
         autgRepository.save(autg);
+
+        notificator.notifyUsers(
+                teamGroup.extractUsers(),
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(teamGroup.getId())
+                        .build()
+        );
 
         return ResponseUserDto.of(user);
     }

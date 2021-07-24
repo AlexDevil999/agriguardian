@@ -1,15 +1,18 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.dto.AddTeamGroupRuleDto;
+import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.ResponseAlertGeoZoneDto;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AlertGeoZoneService;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.TeamGroupService;
+import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -32,6 +35,7 @@ public class AlertGeoZoneController {
     private final AppUserService appUserService;
     private final TeamGroupService teamGroupService;
     private final AlertGeoZoneService geoZoneServie;
+    private final Notificator notificator;
     private static final int MIN_NUMBER_OF_VERTICES = 3;
 
 
@@ -58,18 +62,25 @@ public class AlertGeoZoneController {
             throw new BadRequestException("the resource does not belong to the group; user id " + dto.getVulnerables());
         }
 
-        return ResponseAlertGeoZoneDto.of(
-                geoZoneServie.createNew(
-                        dto.getRule(),
-                        dto.getCenterLat(),
-                        dto.getCenterLon(),
-                        dto.getFigureType(),
-                        dto.getRadius(),
-                        teamGroup,
-                        vulnerables,
-                        dto.getBorders()
-                )
+        AlertGeoZone zone = geoZoneServie.createNew(
+                dto.getRule(),
+                dto.getCenterLat(),
+                dto.getCenterLon(),
+                dto.getFigureType(),
+                dto.getRadius(),
+                teamGroup,
+                vulnerables,
+                dto.getBorders());
+
+        notificator.notifyUsers(
+                teamGroup.extractUsers(),
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(teamGroup.getId())
+                        .build()
         );
+
+        return ResponseAlertGeoZoneDto.of(zone);
     }
 
     @GetMapping("/{id}")
@@ -97,7 +108,17 @@ public class AlertGeoZoneController {
         }
 
         long zoneId = zone.getId();
+        Set<AppUser> userList = zone.getTeamGroup().extractUsers();
+        long tgId = zone.getTeamGroup().getId();
         geoZoneServie.delete(zone);
+
+        notificator.notifyUsers(
+                userList,
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(tgId)
+                        .build()
+        );
 
         return ResponseEntity.ok(zoneId);
     }
