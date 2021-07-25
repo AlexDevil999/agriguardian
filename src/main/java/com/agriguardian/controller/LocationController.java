@@ -8,6 +8,7 @@ import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.service.AppUserService;
+import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.service.interfaces.UserMonitor;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
@@ -20,7 +21,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 public class LocationController {
     private final AppUserService userService;
     private final UserMonitor userMonitoringService;
+    private final Notificator notificator;
 
 
     @PostMapping("/report")
@@ -43,19 +44,20 @@ public class LocationController {
 
         AppUser user = userService.findByUsernameOrThrowNotFound(principal.getName());
 
-        Collections.sort(geo.getLocations());
-        List<AlertGeoZone> violatedZones = userMonitoringService.monitor(user, geo.getLocations().get(geo.getLocations().size() - 1).getPoint());
+        List<AlertGeoZone> violatedZones = userMonitoringService.monitor(user, geo.findLastLocation().getPoint());
 
         //todo add notificaton and storing of user when he/she changes state
-//        teamGroups.forEach(tg -> {
-//            notificator.notifyUsers(
-//                    tg.extractUsers(),
-//                    MessageDto.builder()
-//                            .event(EventType.TEAM_GROUP_UPDATED)
-//                            .groupId(tg.getId())
-//                            .build()
-//            );
-//        });
+        violatedZones.forEach(zone -> {
+            notificator.notifyUsers(
+                    zone.getTeamGroup().extractAdmins(),
+                    MessageDto.builder()
+                            .userId(user.getId())
+                            .event(EventType.USER_VIOLATION)
+                            .violatedZoneId(zone.getId())
+                            .location(geo.findLastLocation())
+                            .build()
+            );
+        });
 
         List<Long> zoneIds = violatedZones.stream().map(AlertGeoZone::getId).collect(Collectors.toList());
         return ViolationDto.builder()

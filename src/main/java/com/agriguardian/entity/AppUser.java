@@ -31,6 +31,8 @@ public class AppUser {
     private String otp;
     @Column(name = "refresh_token")
     private String refreshToken;
+    @Column(name = "fcm_token")
+    private String fcmToken;
 
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private UserInfo userInfo;

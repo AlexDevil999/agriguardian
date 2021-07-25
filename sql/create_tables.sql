@@ -10,6 +10,7 @@ create table if not exists app_users
     status         text,
     user_role      text,
     refresh_token  text,
+    fcm_token      text,
     rt_created_on  bigint
 );
 

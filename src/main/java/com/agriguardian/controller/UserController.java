@@ -1,5 +1,6 @@
 package com.agriguardian.controller;
 
+import com.agriguardian.dto.FcmCredentialsDto;
 import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.appUser.AddUserFollowerDto;
 import com.agriguardian.dto.appUser.AddUserMasterDto;
@@ -73,6 +74,17 @@ public class UserController {
         });
 
         return ResponseUserDto.of(saved);
+    }
+
+    @PostMapping("/add-fcm-token")
+    public ResponseUserDto addFcmCredentials(@Valid @RequestBody FcmCredentialsDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+
+        AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        user.setFcmToken(dto.getToken());
+
+        return ResponseUserDto.of(appUserService.save(user));
     }
 
     @GetMapping(value = "/current")
