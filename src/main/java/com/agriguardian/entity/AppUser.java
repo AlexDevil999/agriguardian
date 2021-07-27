@@ -125,14 +125,6 @@ public class AppUser {
         return userTeamGroupBind;
     }
 
-    public Map<Long, GroupRole> defineTeamGroups() {
-        return appUserTeamGroups == null ? new HashMap<>() :
-                appUserTeamGroups.stream()
-                        .collect(Collectors.toMap(
-                                value -> value.getTeamGroup().getId(),
-                                AppUserTeamGroup::getGroupRole));
-    }
-
     public Long getOwnGroup() {
         return teamGroup == null ? null : teamGroup.getId();
     }
