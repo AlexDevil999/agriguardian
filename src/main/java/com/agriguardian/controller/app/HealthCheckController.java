@@ -15,6 +15,7 @@ import java.util.Date;
 @Log4j2
 @AllArgsConstructor
 public class HealthCheckController {
+    private static final String date = new Date().toString();
 
     @GetMapping("/check")
     public ResponseEntity<String> healthCheck() {
@@ -23,7 +24,7 @@ public class HealthCheckController {
 
     @RequestMapping("/date")
     public ResponseEntity<String> getInitialDate() {
-        return ResponseEntity.ok(new Date().toString());
+        return ResponseEntity.ok(date);
     }
 
     @GetMapping("/version")
