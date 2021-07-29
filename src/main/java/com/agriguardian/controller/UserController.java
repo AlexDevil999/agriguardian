@@ -91,6 +91,7 @@ public class UserController {
         Set<TeamGroup> teamGroups = extractAndCheckTeamGroups(dto.getTeamGroups(), admin);
 
         AppUser vulnerable = dto.buildUser();
+        vulnerable.setPassword(props.getDevicePass());
         vulnerable.addUserInfo(dto.buildUserInfo());
 
         AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
