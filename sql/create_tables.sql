@@ -40,6 +40,7 @@ create table if not exists user_info
     zip_area_code text,
     phone_code    text,
     phone_number  text,
+    avatar        integer,
     app_user_id   bigint not null,
     foreign key (app_user_id) references app_users (id)
 );

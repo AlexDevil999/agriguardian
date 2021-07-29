@@ -27,6 +27,8 @@ public class UserInfo {
     private String phoneCode;
     @Column(name = "phone_number")
     private String phoneNumber;
+    @Column(name = "avatar")
+    private Integer userAvatar;
 
     @OneToOne
     @JoinColumn(name = "app_user_id")

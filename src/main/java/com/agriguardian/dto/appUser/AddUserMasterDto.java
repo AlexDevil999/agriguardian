@@ -35,6 +35,7 @@ public class AddUserMasterDto {
     private String phoneNumber;
     private Boolean withTeamGroup;
     private String creditCard;
+    private Integer userAvatar;
 
 
     public AppUser buildUser() {
@@ -58,6 +59,7 @@ public class AddUserMasterDto {
                 .zipAreaCode(zipAreaCode)
                 .phoneCode(phoneCode)
                 .phoneNumber(phoneNumber)
+                .userAvatar(userAvatar)
                 .build();
     }
 }

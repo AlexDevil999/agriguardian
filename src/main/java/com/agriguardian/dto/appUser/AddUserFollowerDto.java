@@ -18,6 +18,7 @@ public class AddUserFollowerDto {
     private String name;
     @NotNull(message = "field 'teamGroups' is mandatory")
     private Set<Long> teamGroups;
+    private Integer userAvatar;
 
 
     public AppUser buildUser() {
@@ -30,6 +31,7 @@ public class AddUserFollowerDto {
     public UserInfo buildUserInfo() {
         return UserInfo.builder()
                 .name(name)
+                .userAvatar(userAvatar)
                 .build();
     }
 }
