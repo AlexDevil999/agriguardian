@@ -25,7 +25,7 @@ public class AddUserDeviceDto {
 
     public AppUser buildUser() {
         return AppUser.builder()
-                .username(macAddress)
+                .username(macAddress.trim())
                 .macAddress(macAddress)
                 .build();
     }

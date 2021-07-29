@@ -91,7 +91,6 @@ public class UserController {
         Set<TeamGroup> teamGroups = extractAndCheckTeamGroups(dto.getTeamGroups(), admin);
 
         AppUser vulnerable = dto.buildUser();
-        //fixme why login function does not work? fix it
         vulnerable.setPassword(props.getDevicePass());
         vulnerable.addUserInfo(dto.buildUserInfo());
 

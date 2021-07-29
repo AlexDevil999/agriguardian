@@ -40,7 +40,7 @@ public class AddUserMasterDto {
 
     public AppUser buildUser() {
         return AppUser.builder()
-                .username(username)
+                .username(username.toLowerCase().trim())
                 .password(password)
                 .build();
     }
