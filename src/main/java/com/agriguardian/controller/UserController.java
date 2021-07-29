@@ -1,7 +1,9 @@
 package com.agriguardian.controller;
 
+import com.agriguardian.config.Props;
 import com.agriguardian.dto.FcmCredentialsDto;
 import com.agriguardian.dto.MessageDto;
+import com.agriguardian.dto.appUser.AddUserDeviceDto;
 import com.agriguardian.dto.appUser.AddUserFollowerDto;
 import com.agriguardian.dto.appUser.AddUserMasterDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
@@ -17,7 +19,9 @@ import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -35,6 +39,7 @@ import static java.util.stream.Collectors.joining;
 public class UserController {
     private final AppUserService appUserService;
     private final Notificator notificator;
+    private final Props props;
 
     @PostMapping("/master")
     public ResponseUserDto addUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
@@ -52,6 +57,33 @@ public class UserController {
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/follower")
     public ResponseUserDto addUserFollower(@Valid @RequestBody AddUserFollowerDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+
+        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        Set<TeamGroup> teamGroups = extractAndCheckTeamGroups(dto.getTeamGroups(), admin);
+
+        AppUser vulnerable = dto.buildUser();
+        vulnerable.addUserInfo(dto.buildUserInfo());
+
+        AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
+
+        teamGroups.forEach(tg -> {
+            notificator.notifyUsers(
+                    tg.extractUsers(),
+                    MessageDto.builder()
+                            .event(EventType.TEAM_GROUP_UPDATED)
+                            .groupId(tg.getId())
+                            .build()
+            );
+        });
+
+        return ResponseUserDto.of(saved);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PostMapping("/device")
+    public ResponseUserDto addUserFollower(@Valid @RequestBody AddUserDeviceDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());

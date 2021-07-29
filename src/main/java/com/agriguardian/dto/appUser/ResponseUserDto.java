@@ -26,6 +26,7 @@ public class ResponseUserDto {
     private Long createdOnMs;
     private SubscriptionDto subscription;
     private Integer userAvatar;
+    private String macAddress;
 
 
     public static ResponseUserDto of(AppUser u) {
@@ -40,6 +41,7 @@ public class ResponseUserDto {
                 .userRole(u.getUserRole())
                 .userInfo(UserInfoDto.of(u.getUserInfo()))
                 .userAvatar(u.getUserInfo().getUserAvatar())
+                .macAddress(u.getMacAddress())
                 .build();
     }
 
