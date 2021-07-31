@@ -92,6 +92,15 @@ public class AlertBluetoothZoneController {
         return ResponseAlertBluetoothZoneDto.of(bz);
     }
 
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @GetMapping("/my-bluetooth-zone")
+    public ResponseAlertBluetoothZoneDto findById(Principal principal) {
+        AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        AlertBluetoothZone bz = user.getAlertBluetoothZone();
+
+        return bz == null ? null : ResponseAlertBluetoothZoneDto.of(bz);
+    }
+
     //todo add permisions and verifications
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping
