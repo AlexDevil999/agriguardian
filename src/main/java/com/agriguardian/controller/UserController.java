@@ -96,7 +96,7 @@ public class UserController {
 
         AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
         saved.setUsername("device_" + saved.getId());
-        saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
+        saved = appUserService.save(vulnerable);
 
         teamGroups.forEach(tg -> {
             notificator.notifyUsers(
