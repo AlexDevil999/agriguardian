@@ -94,7 +94,7 @@ public class UserController {
         vulnerable.setPassword(props.getDevicePass());
         vulnerable.addUserInfo(dto.buildUserInfo());
 
-        AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
+        AppUser saved = appUserService.saveUserDeviceIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
         saved.setUsername("device_" + saved.getId());
         saved = appUserService.save(vulnerable);
 

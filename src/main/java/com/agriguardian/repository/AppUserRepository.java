@@ -11,4 +11,6 @@ public interface AppUserRepository extends CrudRepository<AppUser, Long> {
     Optional<AppUser> findByUsername(String username);
 
     boolean existsByUsername(String username);
+
+    boolean existsByMacAddress(String macAddress);
 }

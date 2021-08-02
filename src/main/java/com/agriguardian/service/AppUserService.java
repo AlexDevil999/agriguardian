@@ -101,6 +101,40 @@ public class AppUserService {
         }
     }
 
+    @Transactional
+    public AppUser saveUserDeviceIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups) {
+            if (existsByUsername(appUser.getUsername())) {
+                throw new BadRequestException("user " + appUser.getUsername() + " already exists");
+            }
+
+        if (existsByMacAddress(appUser.getMacAddress())) {
+            throw new BadRequestException("device with mac address " + appUser.getMacAddress() + " already exists");
+        }
+
+            try {
+                long time = System.currentTimeMillis();
+                appUser.setStatus(status);
+                appUser.setUserRole(UserRole.USER_FOLLOWER);
+                appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
+                appUser.setCreatedOnMs(time);
+                appUser.setOtpCreatedOnMs(time);
+                appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
+
+                AppUser user = userRepo.save(appUser);
+                //todo move into the saparate service
+                teamGroups.forEach(teamGroup -> {
+//                TeamGroup tg = teamGroupRepository.findById(teamGroup).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
+                    AppUserTeamGroup autg = user.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
+                    autgRepository.save(autg);
+                });
+
+                return user;
+            } catch (Exception e) {
+                log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
+                throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
+            }
+    }
+
     public TeamGroup createTeamGroup(AppUser u) {
         if (u.getTeamGroup() != null) {
             throw new BadRequestException("user " + u.getUsername() + "already have group (id " + u.getTeamGroup().getId() + ")");
@@ -155,6 +189,15 @@ public class AppUserService {
             return userRepo.existsByUsername(username);
         } catch (Exception e) {
             log.error("[existsByUsername] failed to retrieve a user; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
+        }
+    }
+
+    private boolean existsByMacAddress(String macAddress) {
+        try {
+            return userRepo.existsByMacAddress(macAddress);
+        } catch (Exception e) {
+            log.error("[existsByMacAddress] failed to retrieve a user; rsn: {}", e.getMessage());
             throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
         }
     }
