@@ -95,6 +95,8 @@ public class UserController {
         vulnerable.addUserInfo(dto.buildUserInfo());
 
         AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
+        saved.setUsername("device_" + saved.getId());
+        saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
 
         teamGroups.forEach(tg -> {
             notificator.notifyUsers(
