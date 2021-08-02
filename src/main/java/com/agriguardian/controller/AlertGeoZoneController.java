@@ -2,11 +2,11 @@ package com.agriguardian.controller;
 
 import com.agriguardian.dto.AddTeamGroupRuleDto;
 import com.agriguardian.dto.MessageDto;
+import com.agriguardian.dto.ResponseAlertBluetoothZoneDto;
 import com.agriguardian.dto.ResponseAlertGeoZoneDto;
-import com.agriguardian.entity.AlertGeoZone;
-import com.agriguardian.entity.AppUser;
-import com.agriguardian.entity.EventType;
-import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.entity.*;
+import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
+import com.agriguardian.enums.GroupRole;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AlertGeoZoneService;
@@ -24,8 +24,12 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Log4j2
 @AllArgsConstructor
@@ -95,6 +99,32 @@ public class AlertGeoZoneController {
         }
 
         return ResponseAlertGeoZoneDto.of(gz);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @GetMapping("/my-geo-zones")
+    public  Map<Long, Set<ResponseAlertGeoZoneDto>> findZonesUnderProtection(Principal principal) {
+        AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+//        Set<AlertGeoZone> zonesUnderProtection = user.getAppUserTeamGroups().stream()
+        Map<Long, Set<AlertGeoZone>> zonesUnderProtection = user.getAppUserTeamGroups().stream()
+                .filter(utg -> GroupRole.GUARDIAN == utg.getGroupRole())
+//                .flatMap(utg -> utg.getTeamGroup().getAlertGeoZones().stream())
+                .collect(Collectors.toMap(utg -> utg.getTeamGroup().getId(), utg -> utg.getTeamGroup().getAlertGeoZones()));
+
+//        return zonesUnderProtection.stream()
+//                .map(ResponseAlertGeoZoneDto::of)
+//                .collect(Collectors.toList());
+
+
+        Map<Long, Set<ResponseAlertGeoZoneDto>> response =
+                zonesUnderProtection.entrySet().stream()
+                        .collect(Collectors.toMap(
+                                Map.Entry::getKey,
+                                e -> e.getValue().stream().map(ResponseAlertGeoZoneDto::of).collect(Collectors.toSet())
+                        ));
+
+        return response;
     }
 
     //todo add permisions and verifications
