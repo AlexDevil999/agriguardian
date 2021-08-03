@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Builder
 public class ResponseAlertBluetoothZoneDto {
     private Long id;
+    private String name;
     private Long associatedUser;
     private ZoneRule rule;
     private Long teamGroup;
@@ -24,6 +25,7 @@ public class ResponseAlertBluetoothZoneDto {
     public static ResponseAlertBluetoothZoneDto of(AlertBluetoothZone zone) {
         return ResponseAlertBluetoothZoneDto.builder()
                 .id(zone.getId())
+                .name(zone.getName())
                 .associatedUser(zone.getAssociatedUser().getId())
                 .rule(zone.getRule())
                 .teamGroup(zone.getTeamGroup().getId())

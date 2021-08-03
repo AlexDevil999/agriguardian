@@ -11,7 +11,8 @@ create table if not exists app_users
     user_role      text,
     refresh_token  text,
     fcm_token      text,
-    rt_created_on  bigint
+    rt_created_on  bigint,
+    mac_address    text
 );
 
 create table if not exists credit_cards
@@ -71,6 +72,7 @@ create table if not exists bluetooth_zones
     rule          text,
     app_user_id   bigint not null,
     team_group_id bigint not null,
+    name          text,
     foreign key (app_user_id) references app_users (id),
     foreign key (team_group_id) references team_groups (id)
 );
@@ -94,6 +96,7 @@ create table if not exists geo_zones
     center_lat    double precision,
     radius        int,
     figure        text,
+    name          text,
     foreign key (team_group_id) references team_groups (id)
 );
 

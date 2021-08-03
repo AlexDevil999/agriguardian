@@ -23,6 +23,7 @@ public class AddTeamGroupRuleDto {
     private ZoneType type;
     @NotNull(message = "field 'rule' may not be null")
     private ZoneRule rule;
+    private String name;
 
     private Figure figureType;
     private Double centerLon;

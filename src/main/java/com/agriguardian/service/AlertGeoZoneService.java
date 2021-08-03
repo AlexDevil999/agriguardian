@@ -33,7 +33,8 @@ public class AlertGeoZoneService {
             Integer radius,
             TeamGroup group,
             Set<AppUser> vulnerables,
-            List<Point> borders) {
+            List<Point> borders,
+            String name) {
 
         AlertGeoZone zone = AlertGeoZone.builder()
                 .rule(rule)
@@ -41,6 +42,7 @@ public class AlertGeoZoneService {
                 .centerLon(centerLon)
                 .figureType(figure)
                 .radius(radius)
+                .name(name)
                 .build();
 
 

@@ -24,9 +24,10 @@ public class AlertBluetoothZoneService {
 
 
     @Transactional
-    public AlertBluetoothZone createNew(AppUser anchor, TeamGroup group, ZoneRule rule, Set<AppUser> vulnerables) {
+    public AlertBluetoothZone createNew(AppUser anchor, TeamGroup group, ZoneRule rule, Set<AppUser> vulnerables, String name) {
         AlertBluetoothZone zone = AlertBluetoothZone.builder()
                 .rule(rule)
+                .name(name)
                 .build();
         zone.addAnchorUser(anchor);
         zone.addTeamGroup(group);

@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 @Builder
 public class ResponseAlertGeoZoneDto {
     private Long id;
+    private String name;
     private ZoneRule rule;
     private Long teamGroup;
     private Set<Long> vulnerables;
@@ -36,6 +37,7 @@ public class ResponseAlertGeoZoneDto {
         Collections.sort(zone.getBorders());
         return ResponseAlertGeoZoneDto.builder()
                 .id(zone.getId())
+                .name(zone.getName())
                 .rule(zone.getRule())
                 .teamGroup(zone.getTeamGroup().getId())
                 .vulnerables(zone.extractVulnerables().stream().map(AppUser::getId).collect(Collectors.toSet()))

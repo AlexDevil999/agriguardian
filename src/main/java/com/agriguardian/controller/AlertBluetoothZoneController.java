@@ -64,7 +64,8 @@ public class AlertBluetoothZoneController {
                 user,
                 teamGroup,
                 dto.getRule(),
-                vulnerables
+                vulnerables,
+                dto.getName() != null ? dto.getName() : user.getUserInfo().getName() + "'s"
         );
 
         notificator.notifyUsers(

@@ -74,7 +74,9 @@ public class AlertGeoZoneController {
                 dto.getRadius(),
                 teamGroup,
                 vulnerables,
-                dto.getBorders());
+                dto.getBorders(),
+                dto.getName() != null ? dto.getName() : user.getUserInfo().getName() + "'s"
+        );
 
         notificator.notifyUsers(
                 teamGroup.extractUsers(),

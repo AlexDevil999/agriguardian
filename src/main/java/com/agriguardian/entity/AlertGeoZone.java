@@ -45,6 +45,7 @@ public class AlertGeoZone {
     @Column(name = "center_lat")
     private Double centerLat;
     private Integer radius;
+    private String name;
 
     @OneToMany(mappedBy = "alertGeoZone",
             fetch = FetchType.LAZY,

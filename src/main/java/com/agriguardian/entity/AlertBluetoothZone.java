@@ -28,6 +28,7 @@ public class AlertBluetoothZone {
     private AppUser associatedUser;
     @Enumerated(EnumType.STRING)
     private ZoneRule rule;
+    private String name;
 
     @ManyToOne
     @JoinColumn(name = "team_group_id")
