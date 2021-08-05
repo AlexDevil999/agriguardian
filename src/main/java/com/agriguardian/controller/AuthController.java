@@ -32,6 +32,7 @@ class AuthController {
 
     @PostMapping(value = "/login")
     public AuthResponseDto generateTokens(@Valid @RequestBody AuthRequestDto request, Errors errors) {
+        log.debug("[generateTokens] login attemp: {}", request);
         ValidationDto.handleErrors(errors);
 
         Optional<AppUser> user = appUserService.findByUsername(request.getUsername().toLowerCase().trim());
@@ -52,7 +53,11 @@ class AuthController {
         }
 
         log.debug("[generateTokens] for user: " + user.get().getId() + "; username: " + user.get().getUsername());
-        return jwtProvider.token(user.get());
+
+        AuthResponseDto response = jwtProvider.token(user.get());
+        log.debug("refresh: " + response.getRefreshToken());
+        log.debug("access: " + response.getAccessToken());
+        return response;
     }
 
     @GetMapping(value = "/refresh")
