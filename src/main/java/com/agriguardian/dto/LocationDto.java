@@ -10,6 +10,7 @@ import javax.validation.constraints.NotNull;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class LocationDto implements Comparable<LocationDto> {
     @NotNull(message = "field 'time' is mandatory")
     private Long time;

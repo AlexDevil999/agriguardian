@@ -43,6 +43,7 @@ public class LocationController {
         }
 
         AppUser user = userService.findByUsernameOrThrowNotFound(principal.getName());
+        log.debug("[notifyLocation] {} notifies location {}", user, geo);
 
         List<AlertGeoZone> violatedZones = userMonitoringService.monitor(user, geo.findLastLocation().getPoint());
 
