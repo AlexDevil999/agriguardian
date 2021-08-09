@@ -24,6 +24,7 @@ public class HealthCheckController {
 
     @RequestMapping("/date")
     public ResponseEntity<String> getInitialDate() {
+        log.debug("[getInitialDate] request of date");
         return ResponseEntity.ok(date);
     }
 

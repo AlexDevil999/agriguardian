@@ -32,6 +32,7 @@ class AuthController {
 
     @PostMapping(value = "/login")
     public AuthResponseDto generateTokens(@Valid @RequestBody AuthRequestDto request, Errors errors) {
+        log.debug("[generateTokens] login attemp: {}", request);
         ValidationDto.handleErrors(errors);
 
         Optional<AppUser> user = appUserService.findByUsername(request.getUsername().toLowerCase().trim());
@@ -52,7 +53,11 @@ class AuthController {
         }
 
         log.debug("[generateTokens] for user: " + user.get().getId() + "; username: " + user.get().getUsername());
-        return jwtProvider.token(user.get());
+
+        AuthResponseDto response = jwtProvider.token(user.get());
+        log.debug("refresh: " + response.getRefreshToken());
+        log.debug("access: " + response.getAccessToken());
+        return response;
     }
 
     @GetMapping(value = "/refresh")
@@ -76,7 +81,26 @@ class AuthController {
             return jwt;
         } else {
             log.warn("[refreshTokens] incorrect authorization header: " + refreshBearer);
-            throw new BadRequestException("Incorrect authorization header");
+
+            try {
+                //todo delete this cratch!!!!
+                String token = refreshBearer;
+                jwtProvider.validateSign(token);
+
+                AppUser user = appUserService.findByUsername(jwtProvider.getOwner(token))
+                        .orElseThrow(() -> new NotFoundException("Owner of the token not found"));
+
+
+                if (Status.DEACTIVATED == user.getStatus()) {
+                    throw new AccessDeniedException("Account status is " + user.getStatus() + ". Activate your account first");
+                }
+
+                AuthResponseDto jwt = jwtProvider.token(user);
+                log.debug("refreshTokens: " + jwt);
+                return jwt;
+            } catch (Exception e) {
+                throw new BadRequestException("Incorrect authorization header");
+            }
         }
     }
 }

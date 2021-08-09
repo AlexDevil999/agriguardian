@@ -63,6 +63,7 @@ public class TeamGroupController {
 
     @GetMapping("/{id}")
     public ResponseTeamGroupDto findById(@PathVariable Long id, Principal principal) {
+        log.debug("[findById] user: {}; team group id: {}.", principal.getName(), id);
 
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup teamGroup = teamGroupService.findById(id)
