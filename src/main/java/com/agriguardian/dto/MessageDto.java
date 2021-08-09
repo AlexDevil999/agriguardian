@@ -12,6 +12,8 @@ public class MessageDto {
     private EventType event;
     private Long groupId;
     private Long userId;
+    private String userFullName;
     private Long violatedZoneId;
+    private String violatedZoneName;
     private LocationDto location;
 }

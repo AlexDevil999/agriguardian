@@ -52,8 +52,10 @@ public class LocationController {
                     zone.getTeamGroup().extractAdmins(),
                     MessageDto.builder()
                             .userId(user.getId())
+                            .userFullName(user.getUserInfo().getName())
                             .event(EventType.USER_VIOLATION)
                             .violatedZoneId(zone.getId())
+                            .violatedZoneName(zone.getName())
                             .location(geo.findLastLocation())
                             .build()
             );
