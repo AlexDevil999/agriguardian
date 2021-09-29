@@ -12,6 +12,7 @@ public class BeanConfig {
 
     @Bean
     public ObjectMapper objectMapper() {
+        //todo delete unnecessary configurations
         return new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false)
                 .configure(SerializationFeature.FAIL_ON_EMPTY_BEANS, false)

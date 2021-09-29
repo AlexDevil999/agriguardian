@@ -126,4 +126,14 @@ public class AlertBluetoothZoneController {
         return ResponseEntity.ok(id);
     }
 
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PutMapping
+    public ResponseEntity editBluetoothZone
+            (@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal){
+      deleteAlertBluetoothZone(principal);
+      addAlertBluetoothZone(dto,errors,principal);
+      return ResponseEntity.ok(dto.getTeamGroupId());
+    }
+
+
 }

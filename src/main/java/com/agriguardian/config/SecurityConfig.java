@@ -35,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         httpSecurity
                 .cors()
                 .and()
+                //todo decide if csrf needed or not
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest().permitAll()
