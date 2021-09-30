@@ -7,6 +7,10 @@ import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
+import com.agriguardian.enums.GroupRole;
+import com.agriguardian.enums.UserRole;
+import com.agriguardian.enums.ZoneType;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.NotFoundException;
@@ -17,14 +21,17 @@ import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.aspectj.weaver.ast.Not;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -44,6 +51,9 @@ public class AlertBluetoothZoneController {
     public ResponseAlertBluetoothZoneDto addAlertBluetoothZone(@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
+        if(!dto.getType().equals(ZoneType.BLUETOOTH))
+            throw new ConflictException("mismatch of zone time . Was: " +dto.getType());
+
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup teamGroup = teamGroupService.findById(dto.getTeamGroupId())
                 .orElseThrow(() -> new NotFoundException("group not found; resource: id " + dto.getTeamGroupId()));
@@ -53,12 +63,7 @@ public class AlertBluetoothZoneController {
         if (user.getAlertBluetoothZone() != null) {
             throw new ConflictException("user already has bluetooth rule; delete existing rule first; resource: rule id " + user.getAlertBluetoothZone().getId());
         }
-        Set<AppUser> vulnerables = teamGroup.extractVulnerables().stream().filter(u -> dto.getVulnerables().contains(u.getId())).collect(Collectors.toSet());
-
-        if (vulnerables.size() != dto.getVulnerables().size()) {
-            dto.getVulnerables().removeAll(vulnerables.stream().map(AppUser::getId).collect(Collectors.toSet()));
-            throw new BadRequestException("the resource does not belong to the group; user id " + dto.getVulnerables());
-        }
+        Set<AppUser> vulnerables = validateAndExtractVulnerablesForTeamGroup(dto.getVulnerables(), teamGroup);
 
         AlertBluetoothZone zone = bluetoothZoneService.createNew(
                 user,
@@ -126,13 +131,66 @@ public class AlertBluetoothZoneController {
         return ResponseEntity.ok(id);
     }
 
-    //todo finish
+
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PutMapping("/edit-my-bluetooth-zone")
-    public ResponseEntity editBluetoothZone
+    public ResponseAlertBluetoothZoneDto editBluetoothZone
             (@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal){
+        ValidationDto.handleErrors(errors);
 
-      return ResponseEntity.ok(dto.getTeamGroupId());
+        if(!dto.getType().equals(ZoneType.BLUETOOTH))
+            throw new ConflictException("mismatch of zone time . Was: " +dto.getType());
+
+        AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        if(thisUser.getAlertBluetoothZone()==null)
+            throw new NotFoundException("error finding bluetoothZone for user: "+ principal.getName());
+
+        AlertBluetoothZone currentUsersBluetoothZone = thisUser.getAlertBluetoothZone();
+        currentUsersBluetoothZone.setAppUserBluetoothZones(new HashSet<>());
+
+        TeamGroup teamGroupForCurrentBluetoothZone= currentUsersBluetoothZone.getTeamGroup();
+
+        if (!teamGroupForCurrentBluetoothZone.extractAdmins().contains(thisUser)) {
+            throw new AccessDeniedException("user does not have rights on recourse: teamGroup " + teamGroupForCurrentBluetoothZone.getId());
+        }
+
+        Set<AppUser> vulnerables = validateAndExtractVulnerablesForTeamGroup(dto.getVulnerables(),teamGroupForCurrentBluetoothZone);
+
+        AlertBluetoothZone editedBluetoothZone = bluetoothZoneService
+                .editExisting(currentUsersBluetoothZone.getId(), thisUser,teamGroupForCurrentBluetoothZone,dto.getRule(),vulnerables,dto.getName());
+
+        notificator.notifyUsers(
+                editedBluetoothZone.getTeamGroup().extractUsers(),
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(editedBluetoothZone.getTeamGroup().getId())
+                        .build()
+        );
+
+        return ResponseAlertBluetoothZoneDto.of(editedBluetoothZone);
+    }
+
+    public Set<AppUser> validateAndExtractVulnerablesForTeamGroup(Set<Long> potentialVulnerables, TeamGroup teamGroup){
+        Set<AppUser> vulnerables = new HashSet<>();
+        for (Long vulnerable : potentialVulnerables) {
+            AppUser currVulnerable = appUserService.findById(vulnerable)
+                    .orElseThrow(() -> new NotFoundException("error finding user with id : " + vulnerable));
+
+            if(!teamGroup.containsUser(currVulnerable))
+                throw new ConflictException
+                        ("user with id "+ currVulnerable.getId()+ "is not in team group "+ teamGroup.getId() + " group");
+
+            for (AppUserTeamGroup appUserTeamGroup : teamGroup.getAppUserTeamGroups()) {
+                if (appUserTeamGroup.getAppUser().equals(currVulnerable)) {
+                    if (appUserTeamGroup.getGroupRole().equals(GroupRole.GUARDIAN))
+                        throw new ConflictException("unable to add guardian: " +appUserTeamGroup.getId() + " to bluetoothZone");
+                }
+            }
+
+            vulnerables.add(currVulnerable);
+        }
+        return vulnerables;
     }
 
 

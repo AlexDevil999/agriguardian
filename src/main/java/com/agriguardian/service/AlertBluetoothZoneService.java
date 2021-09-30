@@ -41,6 +41,26 @@ public class AlertBluetoothZoneService {
         return savedZone;
     }
 
+    @Transactional
+    public AlertBluetoothZone editExisting
+            (Long id,AppUser anchor, TeamGroup group, ZoneRule rule, Set<AppUser> vulnerables, String name) {
+        AlertBluetoothZone zone = AlertBluetoothZone.builder()
+                .id(id)
+                .rule(rule)
+                .name(name)
+                .build();
+        zone.addAnchorUser(anchor);
+        zone.addTeamGroup(group);
+        AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(zone);
+
+        vulnerables.forEach(v -> {
+            AppUserBluetoothZone userZone = savedZone.addVulnerable(v);
+            userZoneRepository.save(userZone);
+        });
+
+        return savedZone;
+    }
+
     public void delete(AlertBluetoothZone zone) {
         zone.getAssociatedUser().setAlertBluetoothZone(null);
         zone.getTeamGroup().getAlertBluetoothZones().remove(zone);
