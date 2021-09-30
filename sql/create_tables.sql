@@ -118,3 +118,12 @@ create table if not exists borders
     geo_zone_id bigint not null,
     foreign key (geo_zone_id) references geo_zones (id)
 );
+
+create table if not exists registration_code
+(
+    id          serial primary key,
+    registration_code text not null,
+    valid_till bigint not null,
+    app_user_id bigint not null,
+    foreign key (app_user_id) references app_users (id)
+    );

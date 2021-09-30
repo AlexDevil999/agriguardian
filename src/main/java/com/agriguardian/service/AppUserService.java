@@ -9,10 +9,7 @@ import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
-import com.agriguardian.repository.AppUserRepository;
-import com.agriguardian.repository.AppUserTeamGroupRepository;
-import com.agriguardian.repository.TeamGroupRepository;
-import com.agriguardian.repository.UserInfoRepository;
+import com.agriguardian.repository.*;
 import com.agriguardian.service.security.PasswordEncryptor;
 import com.agriguardian.util.RandomCodeGenerator;
 import lombok.AllArgsConstructor;
@@ -33,6 +30,7 @@ public class AppUserService {
     private final TeamGroupRepository teamGroupRepository;
     private final PasswordEncryptor passwordEncryptor;
     private final UserInfoRepository userInfoRepository;
+    private final RegistrationCodeRepository registrationCodeRepository;
 
     public AppUser save(AppUser appUser) {
         try {
@@ -40,6 +38,18 @@ public class AppUserService {
         } catch (Exception e) {
             log.error("[save] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public AppUser activateUser(AppUser appUser) {
+        try {
+            registrationCodeRepository.deleteByOwnerId(appUser.getId());
+            appUser.setStatus(Status.ACTIVATED);
+            return userRepo.save(appUser);
+        } catch (Exception e) {
+            log.error("[save] failed to activate a user {}; rsn: {}", appUser, e.getMessage());
+            throw new InternalErrorException("failed to activate user; rsn: " + e.getMessage());
         }
     }
 
@@ -156,6 +166,7 @@ public class AppUserService {
                 throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
             }
     }
+
 
     public TeamGroup createTeamGroup(AppUser u) {
         if (u.getTeamGroup() != null) {

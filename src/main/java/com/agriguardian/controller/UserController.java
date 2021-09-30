@@ -16,6 +16,8 @@ import com.agriguardian.enums.Status;
 import com.agriguardian.exception.AccessDeniedException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AppUserService;
+import com.agriguardian.service.EmailSenderService;
+import com.agriguardian.service.interfaces.EmailSender;
 import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
@@ -42,23 +44,37 @@ public class UserController {
     private final AppUserService appUserService;
     private final Notificator notificator;
     private final Props props;
+    private final EmailSenderService mailSender;
 
     @PostMapping("/master")
-    public ResponseUserDto addUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
+    public ResponseUserDto registerUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
         ValidationDto.handleErrors(errors);
 
         AppUser appUser = dto.buildUser();
         appUser.addUserInfo(dto.buildUserInfo());
         appUser.addCreditCard(dto.buildCreditCard());
 
-        AppUser saved = appUserService.saveUserMasterIfNotExist(appUser, Status.ACTIVATED, dto.getWithTeamGroup());
+        //todo should block requests from not activated user ?
+        AppUser saved = appUserService.saveUserMasterIfNotExist(appUser, Status.REGISTRATION, dto.getWithTeamGroup());
+        //todo CODE NOT TOKEN
+        String token = String.valueOf(saved.hashCode());
 
+        return ResponseUserDto.of(saved);
+    }
+
+    @PostMapping("/confiramtion")
+    public ResponseUserDto confirmUserMaster
+            (@Valid @RequestBody AddUserMasterDto dto, Errors errors, @RequestParam(required = true) String token) {
+        ValidationDto.handleErrors(errors);
+        AppUser appUser = dto.buildUser();
+        AppUser saved = appUserService.activateUser(appUser);
         return ResponseUserDto.of(saved);
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/follower")
-    public ResponseUserDto addUserFollower(@Valid @RequestBody AddUserFollowerDto dto, Errors errors, Principal principal) {
+    public ResponseUserDto addUserFollower
+            (@Valid @RequestBody AddUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
@@ -115,7 +131,8 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/device")
-    public ResponseEntity deleteDevicesFromUser(@RequestBody @Valid DeleteDevicesDto dto, Errors errors, Principal principal) {
+    public ResponseEntity deleteDevicesFromUser
+            (@RequestBody @Valid DeleteDevicesDto dto, Errors errors, Principal principal) {
 
         ValidationDto.handleErrors(errors);
 

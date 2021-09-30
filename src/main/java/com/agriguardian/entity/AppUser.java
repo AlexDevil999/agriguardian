@@ -66,6 +66,9 @@ public class AppUser {
     @OneToMany(mappedBy = "appUser")
     private Set<AppUserTeamGroup> appUserTeamGroups;
 
+    @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<RegistrationCode> registrationCodes;
+
     @OneToOne(mappedBy = "associatedUser", cascade = CascadeType.ALL)
     private AlertBluetoothZone alertBluetoothZone;
 
