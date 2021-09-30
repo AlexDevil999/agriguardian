@@ -1,6 +1,7 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.config.Props;
+import com.agriguardian.dto.DeleteDevicesDto;
 import com.agriguardian.dto.FcmCredentialsDto;
 import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.appUser.AddUserDeviceDto;
@@ -20,6 +21,7 @@ import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
@@ -109,6 +111,18 @@ public class UserController {
         });
 
         return ResponseUserDto.of(saved);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @DeleteMapping("/device")
+    public ResponseEntity deleteDevicesFromUser(@RequestBody @Valid DeleteDevicesDto dto, Errors errors, Principal principal) {
+
+        ValidationDto.handleErrors(errors);
+
+        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        appUserService.deleteDevice(dto.getUsername(),dto.getMacAddresses());
+        return ResponseEntity.ok(dto);
     }
 
     @PostMapping("/add-fcm-token")

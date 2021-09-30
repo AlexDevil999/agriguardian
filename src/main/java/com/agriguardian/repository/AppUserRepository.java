@@ -1,6 +1,7 @@
 package com.agriguardian.repository;
 
 import com.agriguardian.entity.AppUser;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
 
@@ -13,4 +14,7 @@ public interface AppUserRepository extends CrudRepository<AppUser, Long> {
     boolean existsByUsername(String username);
 
     boolean existsByMacAddress(String macAddress);
+
+    void deleteByUsername(String username);
+
 }

@@ -12,6 +12,7 @@ import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AppUserRepository;
 import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.repository.TeamGroupRepository;
+import com.agriguardian.repository.UserInfoRepository;
 import com.agriguardian.service.security.PasswordEncryptor;
 import com.agriguardian.util.RandomCodeGenerator;
 import lombok.AllArgsConstructor;
@@ -31,6 +32,7 @@ public class AppUserService {
     private final AppUserTeamGroupRepository autgRepository;
     private final TeamGroupRepository teamGroupRepository;
     private final PasswordEncryptor passwordEncryptor;
+    private final UserInfoRepository userInfoRepository;
 
     public AppUser save(AppUser appUser) {
         try {
@@ -98,6 +100,26 @@ public class AppUserService {
         } catch (Exception e) {
             log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void deleteDevice(String username , Set<String> macAdress) {
+        if (!existsByUsername(username)) {
+            throw new BadRequestException("user " + username + " does not exists");
+        }
+
+        AppUser current = userRepo.findByUsername(username).get();
+        try {
+            //fixme cascade all does not working
+            //todo why is this still not working? (not deleting from userRepository)
+            userInfoRepository.delete(userInfoRepository.getUserInfoByAppUserId(current.getId()));
+            userInfoRepository.deleteById(userInfoRepository.getUserInfoByAppUserId(current.getId()).getId());
+            userRepo.deleteByUsername(username);
+
+        } catch (Exception e) {
+            log.error("[saveUserFollowerIfNotExist] failed to delete a device {}; rsn: {}", macAdress, e.getMessage());
+            throw new InternalErrorException("failed to delete user; rsn: " + e.getMessage());
         }
     }
 
@@ -195,7 +217,7 @@ public class AppUserService {
 
     private boolean existsByMacAddress(String macAddress) {
         try {
-            return userRepo.existsByMacAddress(macAddress);
+            return userRepo.existsByUsername(macAddress);
         } catch (Exception e) {
             log.error("[existsByMacAddress] failed to retrieve a user; rsn: {}", e.getMessage());
             throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
