@@ -45,7 +45,6 @@ public class UserController {
     private final AppUserService appUserService;
     private final Notificator notificator;
     private final Props props;
-    private final EmailSenderService mailSender;
 
     @PostMapping("/master")
     public ResponseUserDto registerUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
@@ -68,6 +67,15 @@ public class UserController {
         AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
         AppUser saved = appUserService.activateUser(currentUser,dto.getConfirmationCode());
         return ResponseUserDto.of(saved);
+    }
+
+    @PostMapping("/resend")
+    public ResponseUserDto resendConfirmation
+            (@RequestBody String username, Errors errors) {
+        ValidationDto.handleErrors(errors);
+        AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(username);
+        appUserService.sendEmailConfirmationForUser(currentUser);
+        return ResponseUserDto.of(currentUser);
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")

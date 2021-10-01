@@ -78,7 +78,8 @@ public class AppUserService {
                 AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.GUARDIAN);
                 autgRepository.save(autg);
             }
-            emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
+
+            sendEmailConfirmationForUser(appUser);
 
             return user;
         } catch (Exception e) {
@@ -125,8 +126,10 @@ public class AppUserService {
 
         AppUser current = userRepo.findByUsername(username).get();
         try {
+            //todo change when implement device
             userRepo.deleteByUsername(username);
 
+            macAdress.forEach(userRepo::deleteByMacAddress);
         } catch (Exception e) {
             log.error("[saveUserFollowerIfNotExist] failed to delete a device {}; rsn: {}", macAdress, e.getMessage());
             throw new InternalErrorException("failed to delete user; rsn: " + e.getMessage());
@@ -251,5 +254,11 @@ public class AppUserService {
             log.error("[findByUsername] failed to retrieve a user; rsn: {}", e.getMessage());
             throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
         }
+    }
+
+    public void sendEmailConfirmationForUser(AppUser appUser){
+        if(!appUser.getStatus().equals(Status.REGISTRATION))
+            throw new ConflictException("user has already confirmed registration");
+        emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
     }
 }

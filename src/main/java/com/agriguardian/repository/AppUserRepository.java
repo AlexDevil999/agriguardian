@@ -17,4 +17,6 @@ public interface AppUserRepository extends CrudRepository<AppUser, Long> {
 
     void deleteByUsername(String username);
 
+    void deleteByMacAddress(String macAddress);
+
 }
