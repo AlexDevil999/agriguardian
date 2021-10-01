@@ -37,21 +37,25 @@ public class AppUserAuthDetails extends AppUser implements UserDetails {
         return super.getUsername();
     }
 
+    //todo maybe true instead?
     @Override
     public boolean isAccountNonExpired() {
         return false;
     }
 
+    //todo maybe true instead?
     @Override
     public boolean isAccountNonLocked() {
         return false;
     }
 
+    //todo maybe true instead?
     @Override
     public boolean isCredentialsNonExpired() {
         return false;
     }
 
+    //todo maybe true instead?
     @Override
     public boolean isEnabled() {
         return true;
