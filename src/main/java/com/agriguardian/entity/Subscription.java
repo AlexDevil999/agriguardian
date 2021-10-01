@@ -11,6 +11,7 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Builder
+//todo add noArgs and AllArgs constructor?
 public class Subscription {
     @Id
     @SequenceGenerator(name = "subscriptionsSequence", sequenceName = "subscriptions_id_seq", allocationSize = 1)
