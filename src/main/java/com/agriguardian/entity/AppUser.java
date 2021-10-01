@@ -29,6 +29,7 @@ public class AppUser {
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appUsersSequence")
     private long id;
     @Column(name = "user_name")
+    //todo maybe unique?
     private String username;
     private String password;
     private String otp;
