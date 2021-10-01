@@ -33,6 +33,8 @@ public class AppUserService {
     private final TeamGroupRepository teamGroupRepository;
     private final PasswordEncryptor passwordEncryptor;
     private final EmailSenderService emailSenderService;
+
+
     public AppUser save(AppUser appUser) {
         try {
             return userRepo.save(appUser);
@@ -124,7 +126,6 @@ public class AppUserService {
             throw new BadRequestException("user " + username + " does not exists");
         }
 
-        AppUser current = userRepo.findByUsername(username).get();
         try {
             //todo change when implement device
             userRepo.deleteByUsername(username);

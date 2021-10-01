@@ -54,7 +54,6 @@ public class UserController {
         appUser.addUserInfo(dto.buildUserInfo());
         appUser.addCreditCard(dto.buildCreditCard());
 
-        //todo should block requests from not activated user ?
         AppUser saved = appUserService.saveUserMasterIfNotExist(appUser, Status.REGISTRATION, dto.getWithTeamGroup());
 
         return ResponseUserDto.of(saved);
