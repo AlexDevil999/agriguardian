@@ -5,7 +5,7 @@ import java.util.Random;
 public class RandomCodeGenerator {
 
     public static String generateConfirmationCode() {
-        return generateRandomNumbers(7);
+        return generateRandomNumbers(4);
     }
 
     public static String generateInvitationCode() {

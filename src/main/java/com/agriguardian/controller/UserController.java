@@ -4,6 +4,7 @@ import com.agriguardian.config.Props;
 import com.agriguardian.dto.DeleteDevicesDto;
 import com.agriguardian.dto.FcmCredentialsDto;
 import com.agriguardian.dto.MessageDto;
+import com.agriguardian.dto.RegistrationConfirmationDto;
 import com.agriguardian.dto.appUser.AddUserDeviceDto;
 import com.agriguardian.dto.appUser.AddUserFollowerDto;
 import com.agriguardian.dto.appUser.AddUserMasterDto;
@@ -56,18 +57,16 @@ public class UserController {
 
         //todo should block requests from not activated user ?
         AppUser saved = appUserService.saveUserMasterIfNotExist(appUser, Status.REGISTRATION, dto.getWithTeamGroup());
-        //todo CODE NOT TOKEN
-        String token = String.valueOf(saved.hashCode());
 
         return ResponseUserDto.of(saved);
     }
 
-    @PostMapping("/confiramtion")
+    @PostMapping("/confirmation")
     public ResponseUserDto confirmUserMaster
-            (@Valid @RequestBody AddUserMasterDto dto, Errors errors, @RequestParam(required = true) String token) {
+            (@RequestBody RegistrationConfirmationDto dto, Errors errors) {
         ValidationDto.handleErrors(errors);
-        AppUser appUser = dto.buildUser();
-        AppUser saved = appUserService.activateUser(appUser);
+        AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
+        AppUser saved = appUserService.activateUser(currentUser,dto.getConfirmationCode());
         return ResponseUserDto.of(saved);
     }
 

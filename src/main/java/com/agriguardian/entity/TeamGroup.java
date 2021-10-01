@@ -31,7 +31,8 @@ public class TeamGroup {
     @JoinColumn(name = "owner_id")
     private AppUser owner;
 
-    @OneToMany(mappedBy = "teamGroup")
+
+    @OneToMany(mappedBy = "teamGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AppUserTeamGroup> appUserTeamGroups;
 
     @OneToMany(mappedBy = "teamGroup")

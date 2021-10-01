@@ -2,14 +2,17 @@ package com.agriguardian.service;
 
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.entity.UserInfo;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
+import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.*;
+import com.agriguardian.service.interfaces.EmailSender;
 import com.agriguardian.service.security.PasswordEncryptor;
 import com.agriguardian.util.RandomCodeGenerator;
 import lombok.AllArgsConstructor;
@@ -29,9 +32,7 @@ public class AppUserService {
     private final AppUserTeamGroupRepository autgRepository;
     private final TeamGroupRepository teamGroupRepository;
     private final PasswordEncryptor passwordEncryptor;
-    private final UserInfoRepository userInfoRepository;
-    private final RegistrationCodeRepository registrationCodeRepository;
-
+    private final EmailSenderService emailSenderService;
     public AppUser save(AppUser appUser) {
         try {
             return userRepo.save(appUser);
@@ -42,9 +43,11 @@ public class AppUserService {
     }
 
     @Transactional
-    public AppUser activateUser(AppUser appUser) {
+    public AppUser activateUser(AppUser appUser, String otp) {
         try {
-            registrationCodeRepository.deleteByOwnerId(appUser.getId());
+            if(!otp.equals(appUser.getOtp()))
+                throw new ConflictException("incorrect confirmation code");
+
             appUser.setStatus(Status.ACTIVATED);
             return userRepo.save(appUser);
         } catch (Exception e) {
@@ -75,6 +78,7 @@ public class AppUserService {
                 AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.GUARDIAN);
                 autgRepository.save(autg);
             }
+            emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
 
             return user;
         } catch (Exception e) {
@@ -121,10 +125,6 @@ public class AppUserService {
 
         AppUser current = userRepo.findByUsername(username).get();
         try {
-            //fixme cascade all does not working
-            //todo why is this still not working? (not deleting from userRepository)
-            userInfoRepository.delete(userInfoRepository.getUserInfoByAppUserId(current.getId()));
-            userInfoRepository.deleteById(userInfoRepository.getUserInfoByAppUserId(current.getId()).getId());
             userRepo.deleteByUsername(username);
 
         } catch (Exception e) {

@@ -44,7 +44,7 @@ public class AppUser {
     private Subscription subscription;
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private CreditCard card;
-    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToOne(mappedBy = "owner", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private TeamGroup teamGroup;
 
     @Column(name = "created_on")
@@ -65,9 +65,6 @@ public class AppUser {
 
     @OneToMany(mappedBy = "appUser")
     private Set<AppUserTeamGroup> appUserTeamGroups;
-
-    @OneToMany(mappedBy = "appUser", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<RegistrationCode> registrationCodes;
 
     @OneToOne(mappedBy = "associatedUser", cascade = CascadeType.ALL)
     private AlertBluetoothZone alertBluetoothZone;

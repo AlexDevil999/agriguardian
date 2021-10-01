@@ -15,8 +15,6 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 public class EmailSenderService implements EmailSender {
 
-
-
     private final JavaMailSender mailSender;
 
     @Override
@@ -35,4 +33,5 @@ public class EmailSenderService implements EmailSender {
             throw new InternalErrorException("failed to send email. Reason: "+e.getMessage());
         }
     }
+
 }
