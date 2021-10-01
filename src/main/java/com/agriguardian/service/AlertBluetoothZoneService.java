@@ -5,6 +5,7 @@ import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.enums.ZoneRule;
+import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AlertBluetoothZoneRepository;
 import com.agriguardian.repository.AppUserBluetoothZoneRepository;
 import lombok.AllArgsConstructor;
@@ -44,14 +45,20 @@ public class AlertBluetoothZoneService {
     @Transactional
     public AlertBluetoothZone editExisting
             (Long id,AppUser anchor, TeamGroup group, ZoneRule rule, Set<AppUser> vulnerables, String name) {
-        AlertBluetoothZone zone = AlertBluetoothZone.builder()
-                .id(id)
-                .rule(rule)
-                .name(name)
-                .build();
-        zone.addAnchorUser(anchor);
-        zone.addTeamGroup(group);
-        AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(zone);
+
+        AlertBluetoothZone currentZone = alertBluetoothZoneRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("zone with id: "+id+" does not exists"));
+
+        currentZone.setRule(rule);
+        Optional.ofNullable(name).ifPresent(currentZone::setName);
+        currentZone.addAnchorUser(anchor);
+        currentZone.addTeamGroup(group);
+
+        currentZone.emptySet();
+
+        userZoneRepository.deleteByAlertBluetoothZoneId(anchor.getAlertBluetoothZone().getId());
+
+        AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(currentZone);
 
         vulnerables.forEach(v -> {
             AppUserBluetoothZone userZone = savedZone.addVulnerable(v);

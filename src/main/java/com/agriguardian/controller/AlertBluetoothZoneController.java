@@ -147,7 +147,6 @@ public class AlertBluetoothZoneController {
             throw new NotFoundException("error finding bluetoothZone for user: "+ principal.getName());
 
         AlertBluetoothZone currentUsersBluetoothZone = thisUser.getAlertBluetoothZone();
-        currentUsersBluetoothZone.setAppUserBluetoothZones(new HashSet<>());
 
         TeamGroup teamGroupForCurrentBluetoothZone= currentUsersBluetoothZone.getTeamGroup();
 
