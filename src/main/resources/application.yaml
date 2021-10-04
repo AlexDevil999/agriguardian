@@ -5,8 +5,6 @@ spring:
     password: TqTjBw2yOYn80lzKypMR
 
 
-code:
-  lifetime: 3600000
 
 jwt:
   token:
@@ -22,6 +20,10 @@ device:
 mail:
   username: podarunochkiservice@gmail.com
   password: NewStrongPass>>
+
+
+code:
+  lifetime: 3600000
 
 logging:
   config: ./logback.xml

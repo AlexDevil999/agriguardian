@@ -61,7 +61,7 @@ public class UserController {
 
     @PostMapping("/confirmation")
     public ResponseUserDto confirmUserMaster
-            (@RequestBody RegistrationConfirmationDto dto, Errors errors) {
+            (@Valid @RequestBody RegistrationConfirmationDto dto, Errors errors) {
         ValidationDto.handleErrors(errors);
         AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
         AppUser saved = appUserService.activateUser(currentUser, dto.getConfirmationCode());
