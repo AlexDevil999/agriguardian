@@ -15,7 +15,9 @@ import com.agriguardian.service.interfaces.EmailSender;
 import com.agriguardian.service.security.PasswordEncryptor;
 import com.agriguardian.util.RandomCodeGenerator;
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -25,9 +27,10 @@ import java.util.Set;
 
 @Slf4j
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class AppUserService {
-    private final long lifetimeMs =6000;
+    @Value("${code.lifetime}")
+    private long lifetimeMs;
     private final AppUserRepository userRepo;
     private final AppUserTeamGroupRepository autgRepository;
     private final TeamGroupRepository teamGroupRepository;
@@ -133,7 +136,6 @@ public class AppUserService {
         try {
             //todo change when implement device
             userRepo.deleteByUsername(username);
-
             macAdress.forEach(userRepo::deleteByMacAddress);
         } catch (Exception e) {
             log.error("[saveUserFollowerIfNotExist] failed to delete a device {}; rsn: {}", macAdress, e.getMessage());
@@ -244,9 +246,7 @@ public class AppUserService {
     }
 
     private boolean usersOtpCodeIsValid(AppUser appUser){
-        System.out.println("VALID TO: " + appUser.getOtpCreatedOnMs()+ lifetimeMs +"\n");
-        System.out.println("CURRENT: "+System.currentTimeMillis());
-        return appUser.getOtpCreatedOnMs()+ lifetimeMs <System.currentTimeMillis();
+        return Long.sum(appUser.getOtpCreatedOnMs(),lifetimeMs)>System.currentTimeMillis();
     }
 
     public Optional<AppUser> findByUsername(String username) {

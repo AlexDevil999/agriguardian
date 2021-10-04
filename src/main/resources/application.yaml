@@ -5,6 +5,9 @@ spring:
     password: TqTjBw2yOYn80lzKypMR
 
 
+code:
+  lifetime: 3600000
+
 jwt:
   token:
     secret: jwt_secret_key
@@ -22,6 +25,3 @@ mail:
 
 logging:
   config: ./logback.xml
-
-code:
-  lifetime: 360000
