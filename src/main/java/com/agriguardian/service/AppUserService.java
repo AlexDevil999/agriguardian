@@ -2,7 +2,6 @@ package com.agriguardian.service;
 
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
-import com.agriguardian.entity.UserInfo;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
@@ -28,6 +27,7 @@ import java.util.Set;
 @Service
 @AllArgsConstructor
 public class AppUserService {
+    private final long lifetimeMs =6000;
     private final AppUserRepository userRepo;
     private final AppUserTeamGroupRepository autgRepository;
     private final TeamGroupRepository teamGroupRepository;
@@ -47,6 +47,10 @@ public class AppUserService {
     @Transactional
     public AppUser activateUser(AppUser appUser, String otp) {
         try {
+            if(!usersOtpCodeIsValid(appUser)) {
+                throw new ConflictException("lifetime of this code has ended");
+            }
+
             if(!otp.equals(appUser.getOtp()))
                 throw new ConflictException("incorrect confirmation code");
 
@@ -239,6 +243,12 @@ public class AppUserService {
         }
     }
 
+    private boolean usersOtpCodeIsValid(AppUser appUser){
+        System.out.println("VALID TO: " + appUser.getOtpCreatedOnMs()+ lifetimeMs +"\n");
+        System.out.println("CURRENT: "+System.currentTimeMillis());
+        return appUser.getOtpCreatedOnMs()+ lifetimeMs <System.currentTimeMillis();
+    }
+
     public Optional<AppUser> findByUsername(String username) {
         try {
             return userRepo.findByUsername(username);
@@ -260,6 +270,16 @@ public class AppUserService {
     public void sendEmailConfirmationForUser(AppUser appUser){
         if(!appUser.getStatus().equals(Status.REGISTRATION))
             throw new ConflictException("user has already confirmed registration");
+        if(!usersOtpCodeIsValid(appUser)) {
+            try{
+                appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
+                appUser.setOtpCreatedOnMs(System.currentTimeMillis());
+                userRepo.save(appUser);
+            }
+            catch (Exception e){
+                throw new InternalErrorException("failed to set new Otp a user; rsn: " + e.getMessage());
+            }
+        }
         emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
     }
 }

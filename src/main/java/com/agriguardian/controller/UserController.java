@@ -64,7 +64,7 @@ public class UserController {
             (@RequestBody RegistrationConfirmationDto dto, Errors errors) {
         ValidationDto.handleErrors(errors);
         AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
-        AppUser saved = appUserService.activateUser(currentUser,dto.getConfirmationCode());
+        AppUser saved = appUserService.activateUser(currentUser, dto.getConfirmationCode());
         return ResponseUserDto.of(saved);
     }
 

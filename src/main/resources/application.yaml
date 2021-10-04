@@ -22,3 +22,6 @@ mail:
 
 logging:
   config: ./logback.xml
+
+code:
+  lifetime: 360000
