@@ -78,6 +78,10 @@ public class AlertGeoZone {
         }
     }
 
+    public void emptyVulnerables(){
+        appUserGeoZones.forEach(appUserGeoZone -> appUserGeoZones.remove(appUserGeoZone));
+    }
+
     public Set<AppUser> extractVulnerables() {
         if (appUserGeoZones == null) return new HashSet<>();
         return appUserGeoZones.stream().map(AppUserGeoZone::getAppUser).collect(Collectors.toSet());

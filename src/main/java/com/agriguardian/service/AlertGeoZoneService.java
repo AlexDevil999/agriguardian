@@ -1,13 +1,17 @@
 package com.agriguardian.service;
 
 import com.agriguardian.domain.Point;
+import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
+import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AlertGeoZoneRepository;
+import com.agriguardian.repository.AppUserGeoZoneRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -22,6 +26,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class AlertGeoZoneService {
     private final AlertGeoZoneRepository zoneRepository;
+    private final AppUserGeoZoneRepository appUserGeoZoneRepository;
 
 
     @Transactional
@@ -59,6 +64,46 @@ public class AlertGeoZoneService {
 
         return zoneRepository.save(zone);
     }
+
+    @Transactional
+    public AlertGeoZone editExisting
+            (Long id,Double centerLat,
+             Double centerLon,Figure figure,
+             Integer radius, TeamGroup group,
+             List<Point> borders, ZoneRule rule,
+             Set<AppUser> vulnerables, String name) {
+
+        AlertGeoZone currentZone = zoneRepository.findById(id)
+                .orElseThrow(()-> new NotFoundException("zone with id: "+id+" does not exists"));
+
+        currentZone.setRule(rule);
+        Optional.ofNullable(name).ifPresent(currentZone::setName);
+
+
+        if(figure.equals(Figure.CIRCLE)){
+            currentZone.setCenterLat(centerLat);
+            currentZone.setCenterLon(centerLon);
+            currentZone.setFigureType(figure);
+            currentZone.setRadius(radius);
+        }
+        else if(figure.equals(Figure.POLYGON)){
+            currentZone.bordersByPoints(borders);
+            currentZone.setFigureType(figure);
+        }
+
+        currentZone.emptyVulnerables();
+
+        AlertGeoZone savedZone = zoneRepository.save(currentZone);
+
+
+        vulnerables.forEach(v -> {
+            AppUserGeoZone userZone = savedZone.addVulnerable(v);
+            appUserGeoZoneRepository.save(userZone);
+        });
+
+        return savedZone;
+    }
+
 
     public void delete(AlertGeoZone zone) {
         zone.getTeamGroup().getAlertBluetoothZones().remove(zone);

@@ -1,13 +1,12 @@
 package com.agriguardian.controller;
 
-import com.agriguardian.dto.AddTeamGroupRuleDto;
-import com.agriguardian.dto.MessageDto;
-import com.agriguardian.dto.ResponseAlertBluetoothZoneDto;
-import com.agriguardian.dto.ResponseAlertGeoZoneDto;
+import com.agriguardian.dto.*;
 import com.agriguardian.entity.*;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
+import com.agriguardian.enums.ZoneType;
 import com.agriguardian.exception.BadRequestException;
+import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AlertGeoZoneService;
 import com.agriguardian.service.AppUserService;
@@ -89,6 +88,50 @@ public class AlertGeoZoneController {
         return ResponseAlertGeoZoneDto.of(zone);
     }
 
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PutMapping("/edit-my-geo-zone")
+    public ResponseAlertGeoZoneDto editBluetoothZone
+            (@Valid @RequestBody EditGeoZoneDto dto, Errors errors, Principal principal){
+        ValidationDto.handleErrors(errors);
+
+        if(!dto.getType().equals(ZoneType.GEO))
+            throw new ConflictException("mismatch of zone type . Was: " +dto.getType());
+
+        AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        if(thisUser.getAlertBluetoothZone()==null)
+            throw new NotFoundException("error finding bluetoothZone for user: "+ principal.getName());
+
+        AlertGeoZone currentUsersGeoZone = geoZoneServie.findById(dto.getGeoZoneId())
+                .orElseThrow(() -> new NotFoundException("feo zone with id: "+dto.getGeoZoneId() + "was not found"));
+
+        TeamGroup teamGroupForCurrentGeoZone = currentUsersGeoZone.getTeamGroup();
+
+        if (!teamGroupForCurrentGeoZone.extractAdmins().contains(thisUser)) {
+            throw new AccessDeniedException("user does not have rights on recourse: teamGroup " + teamGroupForCurrentGeoZone.getId());
+        }
+
+        Set<AppUser> vulnerables = validateAndExtractVulnerablesForTeamGroup(dto.getVulnerables(),teamGroupForCurrentGeoZone);
+
+        AlertGeoZone editedGeoZone = geoZoneServie
+                .editExisting(
+                        dto.getGeoZoneId(),dto.getCenterLat(),
+                        dto.getCenterLon(),dto.getFigureType(),dto.getRadius(),
+                        teamGroupForCurrentGeoZone,dto.getBorders(),
+                        dto.getRule(),vulnerables,dto.getName()
+                );
+
+        notificator.notifyUsers(
+                editedGeoZone.getTeamGroup().extractUsers(),
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(editedGeoZone.getTeamGroup().getId())
+                        .build()
+        );
+
+        return ResponseAlertGeoZoneDto.of(editedGeoZone);
+    }
+
     @GetMapping("/{id}")
     public ResponseAlertGeoZoneDto findById(@PathVariable Long id, Principal principal) {
 
@@ -153,5 +196,27 @@ public class AlertGeoZoneController {
         );
 
         return ResponseEntity.ok(zoneId);
+    }
+
+    private Set<AppUser> validateAndExtractVulnerablesForTeamGroup(Set<Long> potentialVulnerables, TeamGroup teamGroup){
+        Set<AppUser> vulnerables = new HashSet<>();
+        for (Long vulnerable : potentialVulnerables) {
+            AppUser currVulnerable = appUserService.findById(vulnerable)
+                    .orElseThrow(() -> new NotFoundException("error finding user with id : " + vulnerable));
+
+            if(!teamGroup.containsUser(currVulnerable))
+                throw new ConflictException
+                        ("user with id "+ currVulnerable.getId()+ "is not in team group "+ teamGroup.getId() + " group");
+
+            for (AppUserTeamGroup appUserTeamGroup : teamGroup.getAppUserTeamGroups()) {
+                if (appUserTeamGroup.getAppUser().equals(currVulnerable)) {
+                    if (appUserTeamGroup.getGroupRole().equals(GroupRole.GUARDIAN))
+                        throw new ConflictException("unable to add guardian: " +appUserTeamGroup.getId() + " to geoZone");
+                }
+            }
+
+            vulnerables.add(currVulnerable);
+        }
+        return vulnerables;
     }
 }

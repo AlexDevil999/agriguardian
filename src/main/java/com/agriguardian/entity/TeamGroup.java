@@ -35,10 +35,10 @@ public class TeamGroup {
     @OneToMany(mappedBy = "teamGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AppUserTeamGroup> appUserTeamGroups;
 
-    @OneToMany(mappedBy = "teamGroup")
+    @OneToMany(mappedBy = "teamGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AlertBluetoothZone> alertBluetoothZones;
 
-    @OneToMany(mappedBy = "teamGroup")
+    @OneToMany(mappedBy = "teamGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<AlertGeoZone> alertGeoZones;
 
 

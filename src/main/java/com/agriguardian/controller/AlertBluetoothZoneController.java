@@ -139,7 +139,7 @@ public class AlertBluetoothZoneController {
         ValidationDto.handleErrors(errors);
 
         if(!dto.getType().equals(ZoneType.BLUETOOTH))
-            throw new ConflictException("mismatch of zone time . Was: " +dto.getType());
+            throw new ConflictException("mismatch of zone type . Was: " +dto.getType());
 
         AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
@@ -170,7 +170,7 @@ public class AlertBluetoothZoneController {
         return ResponseAlertBluetoothZoneDto.of(editedBluetoothZone);
     }
 
-    public Set<AppUser> validateAndExtractVulnerablesForTeamGroup(Set<Long> potentialVulnerables, TeamGroup teamGroup){
+    private Set<AppUser> validateAndExtractVulnerablesForTeamGroup(Set<Long> potentialVulnerables, TeamGroup teamGroup){
         Set<AppUser> vulnerables = new HashSet<>();
         for (Long vulnerable : potentialVulnerables) {
             AppUser currVulnerable = appUserService.findById(vulnerable)
