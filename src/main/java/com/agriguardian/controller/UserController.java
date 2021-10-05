@@ -59,24 +59,6 @@ public class UserController {
         return ResponseUserDto.of(saved);
     }
 
-    @PostMapping("/confirmation")
-    public ResponseUserDto confirmUserMaster
-            (@Valid @RequestBody RegistrationConfirmationDto dto, Errors errors) {
-        ValidationDto.handleErrors(errors);
-        AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
-        AppUser saved = appUserService.activateUser(currentUser, dto.getConfirmationCode());
-        return ResponseUserDto.of(saved);
-    }
-
-    @PostMapping("/resend")
-    public ResponseUserDto resendConfirmation
-            (@RequestBody String username, Errors errors) {
-        ValidationDto.handleErrors(errors);
-        AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(username);
-        appUserService.sendEmailConfirmationForUser(currentUser);
-        return ResponseUserDto.of(currentUser);
-    }
-
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/follower")
     public ResponseUserDto addUserFollower
