@@ -60,6 +60,7 @@ public class AlertGeoZoneService {
 //            userZoneRepository.save(userZone);
         });
 
+        if(figure.equals(Figure.POLYGON))
         zone.bordersByPoints(borders);
 
         return zoneRepository.save(zone);

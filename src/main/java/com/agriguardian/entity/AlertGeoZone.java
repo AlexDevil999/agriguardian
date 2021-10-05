@@ -79,7 +79,7 @@ public class AlertGeoZone {
     }
 
     public void emptyVulnerables(){
-        appUserGeoZones.forEach(appUserGeoZone -> appUserGeoZones.remove(appUserGeoZone));
+        appUserGeoZones.removeAll(appUserGeoZones);
     }
 
     public Set<AppUser> extractVulnerables() {

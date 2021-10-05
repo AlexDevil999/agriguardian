@@ -3,6 +3,7 @@ package com.agriguardian.controller;
 import com.agriguardian.dto.*;
 import com.agriguardian.entity.*;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
+import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.ZoneType;
 import com.agriguardian.exception.BadRequestException;
@@ -48,8 +49,14 @@ public class AlertGeoZoneController {
         ValidationDto.handleErrors(errors);
 
         if (dto.getFigureType() == null) throw new BadRequestException("field 'figureType' may not be null");
-        if (dto.getBorders() == null || dto.getBorders().size() < MIN_NUMBER_OF_VERTICES)
+
+        if (dto.getFigureType().equals(Figure.POLYGON) &&
+                (dto.getBorders() == null || dto.getBorders().size() < MIN_NUMBER_OF_VERTICES))
             throw new BadRequestException("field 'borders' should contains at least 3 points");
+
+        if(dto.getFigureType().equals(Figure.CIRCLE) &&
+                (dto.getCenterLon()==null||dto.getCenterLat()==null||dto.getRadius()==null))
+            throw new BadRequestException("for circle long, lat and radius should be present");
 
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup teamGroup = teamGroupService.findById(dto.getTeamGroupId())
@@ -98,9 +105,6 @@ public class AlertGeoZoneController {
             throw new ConflictException("mismatch of zone type . Was: " +dto.getType());
 
         AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-
-        if(thisUser.getAlertBluetoothZone()==null)
-            throw new NotFoundException("error finding bluetoothZone for user: "+ principal.getName());
 
         AlertGeoZone currentUsersGeoZone = geoZoneServie.findById(dto.getGeoZoneId())
                 .orElseThrow(() -> new NotFoundException("feo zone with id: "+dto.getGeoZoneId() + "was not found"));

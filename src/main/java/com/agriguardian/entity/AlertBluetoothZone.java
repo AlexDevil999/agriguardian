@@ -72,7 +72,7 @@ public class AlertBluetoothZone {
     }
 
     public void emptySet(){
-        appUserBluetoothZones.forEach(appUserBluetoothZone -> appUserBluetoothZones.remove(appUserBluetoothZone));
+        appUserBluetoothZones.removeAll(appUserBluetoothZones);
     }
 
     public Set<AppUser> extractVulnerables() {

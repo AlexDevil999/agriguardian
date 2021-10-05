@@ -34,18 +34,33 @@ public class ResponseAlertGeoZoneDto {
 
 
     public static ResponseAlertGeoZoneDto of(AlertGeoZone zone) {
-        Collections.sort(zone.getBorders());
-        return ResponseAlertGeoZoneDto.builder()
-                .id(zone.getId())
-                .name(zone.getName())
-                .rule(zone.getRule())
-                .teamGroup(zone.getTeamGroup().getId())
-                .vulnerables(zone.extractVulnerables().stream().map(AppUser::getId).collect(Collectors.toSet()))
-                .figureType(zone.getFigureType())
-                .centerLat(zone.getCenterLat())
-                .centerLon(zone.getCenterLon())
-                .radius(zone.getRadius())
-                .borders(zone.getBorders().stream().map(Point::of).collect(Collectors.toList()))
-                .build();
+        if(zone.getFigureType().equals(Figure.POLYGON)) {
+            Collections.sort(zone.getBorders());
+            return ResponseAlertGeoZoneDto.builder()
+                    .id(zone.getId())
+                    .name(zone.getName())
+                    .rule(zone.getRule())
+                    .teamGroup(zone.getTeamGroup().getId())
+                    .vulnerables(zone.extractVulnerables().stream().map(AppUser::getId).collect(Collectors.toSet()))
+                    .figureType(zone.getFigureType())
+                    .centerLat(zone.getCenterLat())
+                    .centerLon(zone.getCenterLon())
+                    .radius(zone.getRadius())
+                    .borders(zone.getBorders().stream().map(Point::of).collect(Collectors.toList()))
+                    .build();
+        }
+        else{
+            return ResponseAlertGeoZoneDto.builder()
+                    .id(zone.getId())
+                    .name(zone.getName())
+                    .rule(zone.getRule())
+                    .teamGroup(zone.getTeamGroup().getId())
+                    .vulnerables(zone.extractVulnerables().stream().map(AppUser::getId).collect(Collectors.toSet()))
+                    .figureType(zone.getFigureType())
+                    .centerLat(zone.getCenterLat())
+                    .centerLon(zone.getCenterLon())
+                    .radius(zone.getRadius())
+                    .build();
+        }
     }
 }
