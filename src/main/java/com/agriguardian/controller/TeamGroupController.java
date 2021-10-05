@@ -4,6 +4,7 @@ import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.ResponseTeamGroupDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.teamGroup.JoinTeamGroupDto;
+import com.agriguardian.entity.AlertBluetoothZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
@@ -18,6 +19,7 @@ import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.Errors;
@@ -25,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Set;
 
 @Log4j2
 @AllArgsConstructor
@@ -63,12 +66,13 @@ public class TeamGroupController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/{tgId}/{userId}")
-    public ResponseTeamGroupDto DeleteFromGroup(@RequestParam(name = "tdId") Long tgId,
-                                                @RequestParam(name = "userId") Long uid,
-                                                Errors errors, Principal principal) {
-        ValidationDto.handleErrors(errors);
+    public ResponseTeamGroupDto deleteUserFromTeamGroup(Principal principal,
+                                                  @PathVariable("userId") Long userId,
+                                                  @PathVariable("tgId") Long tgId) {
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-        return ResponseTeamGroupDto.of(teamGroupService.deleteFromTeamGroup(deleter,tgId,uid));
+        TeamGroup updatedTg = teamGroupService.deleteFromTeamGroup(deleter,tgId,userId);
+        return ResponseTeamGroupDto.of(updatedTg);
+
     }
 
     @GetMapping("/{id}")

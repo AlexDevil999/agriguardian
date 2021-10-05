@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -53,7 +54,9 @@ public class TeamGroupService {
         }
         editedTeamGroup.removeAppUserFromGroup(appUserTeamGroupRepository.getByAppUserId(appUserToDeleteId));
         if(userToDelete.getUserRole().equals(UserRole.USER_FOLLOWER)){
-            if(userToDelete.getAppUserTeamGroups().size()==0){
+            if(userToDelete.getAppUserTeamGroups().stream()
+                    .filter(appUserTeamGroup -> !appUserTeamGroup.getTeamGroup().equals(editedTeamGroup))
+                    .collect(Collectors.toSet()).size()==0){
                 appUserService.deleteUser(userToDelete.getUsername());
             }
         }
