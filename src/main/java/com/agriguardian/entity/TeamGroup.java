@@ -52,6 +52,10 @@ public class TeamGroup {
         zone.setTeamGroup(this);
     }
 
+    public void removeAppUserFromGroup(AppUserTeamGroup appUserTeamGroup) {
+        appUserTeamGroups.remove(appUserTeamGroup);
+    }
+
     public Set<AppUser> extractUsers() {
         return appUserTeamGroups.stream().map(AppUserTeamGroup::getAppUser).collect(Collectors.toSet());
     }

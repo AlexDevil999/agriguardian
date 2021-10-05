@@ -61,6 +61,16 @@ public class TeamGroupController {
         return ResponseUserDto.of(user);
     }
 
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @DeleteMapping("/{tgId}/{userId}")
+    public ResponseTeamGroupDto DeleteFromGroup(@RequestParam(name = "tdId") Long tgId,
+                                                @RequestParam(name = "userId") Long uid,
+                                                Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+        AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        return ResponseTeamGroupDto.of(teamGroupService.deleteFromTeamGroup(deleter,tgId,uid));
+    }
+
     @GetMapping("/{id}")
     public ResponseTeamGroupDto findById(@PathVariable Long id, Principal principal) {
         log.debug("[findById] user: {}; team group id: {}.", principal.getName(), id);

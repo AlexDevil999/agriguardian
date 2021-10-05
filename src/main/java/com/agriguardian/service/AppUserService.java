@@ -143,6 +143,18 @@ public class AppUserService {
         }
     }
 
+    public void deleteUser(String username) {
+        if (!existsByUsername(username)) {
+            throw new BadRequestException("user " + username + " does not exists");
+        }
+
+        try {
+            userRepo.deleteByUsername(username);
+        } catch (Exception e) {
+            throw new InternalErrorException("failed to delete user; rsn: " + e.getMessage());
+        }
+    }
+
     @Transactional
     public AppUser saveUserDeviceIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups) {
             if (existsByUsername(appUser.getUsername())) {
