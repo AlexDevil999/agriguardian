@@ -41,6 +41,9 @@ public class TeamGroupService {
         TeamGroup editedTeamGroup = findById(tgId).orElseThrow
                 (() -> new NotFoundException("group with id "+tgId+" was not found"));
 
+        if(userToDelete.equals(deleter))
+            throw new ConflictException("prohibited to deleted yourself");
+
         if(!editedTeamGroup.containsUser(userToDelete))
             throw new ConflictException("group does not contain user: "+ appUserToDeleteId);
 
