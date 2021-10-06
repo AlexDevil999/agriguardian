@@ -36,6 +36,7 @@ public class AppUserService {
     private final TeamGroupRepository teamGroupRepository;
     private final PasswordEncryptor passwordEncryptor;
     private final EmailSenderService emailSenderService;
+    private final TeamGroupService teamGroupService;
 
 
     public AppUser save(AppUser appUser) {
@@ -81,11 +82,9 @@ public class AppUserService {
             appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
 
             AppUser user = userRepo.save(appUser);
-            //todo move into the saparate service
+
             if (Boolean.TRUE.equals(withNewGroup)) {
-                TeamGroup tg = teamGroupRepository.save(createTeamGroup(user));
-                AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.GUARDIAN);
-                autgRepository.save(autg);
+                teamGroupService.createTeamGroupForUser(user);
             }
 
             sendEmailConfirmationForUser(appUser);
@@ -112,15 +111,11 @@ public class AppUserService {
             appUser.setOtpCreatedOnMs(time);
             appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
 
-            AppUser user = userRepo.save(appUser);
-            //todo move into the saparate service
-            teamGroups.forEach(teamGroup -> {
-//                TeamGroup tg = teamGroupRepository.findById(teamGroup).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
-                AppUserTeamGroup autg = user.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
-                autgRepository.save(autg);
-            });
+            AppUser follower = userRepo.save(appUser);
 
-            return user;
+            teamGroupService.saveVulnerableToTeamGroups(follower,teamGroups);
+
+            return follower;
         } catch (Exception e) {
             log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
@@ -136,6 +131,7 @@ public class AppUserService {
         try {
             //todo change when implement device
             userRepo.deleteByUsername(username);
+
             macAdress.forEach(userRepo::deleteByMacAddress);
         } catch (Exception e) {
             log.error("[saveUserFollowerIfNotExist] failed to delete a device {}; rsn: {}", macAdress, e.getMessage());
@@ -174,15 +170,11 @@ public class AppUserService {
                 appUser.setOtpCreatedOnMs(time);
                 appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
 
-                AppUser user = userRepo.save(appUser);
-                //todo move into the saparate service
-                teamGroups.forEach(teamGroup -> {
-//                TeamGroup tg = teamGroupRepository.findById(teamGroup).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
-                    AppUserTeamGroup autg = user.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
-                    autgRepository.save(autg);
-                });
+                AppUser device = userRepo.save(appUser);
 
-                return user;
+                teamGroupService.saveDeviceToTeamGroups(device,teamGroups);
+
+                return device;
             } catch (Exception e) {
                 log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
                 throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
