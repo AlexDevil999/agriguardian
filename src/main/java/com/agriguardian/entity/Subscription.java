@@ -1,8 +1,6 @@
 package com.agriguardian.entity;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
@@ -11,7 +9,8 @@ import javax.persistence.*;
 @Getter
 @Setter
 @Builder
-//todo add noArgs and AllArgs constructor?
+@NoArgsConstructor
+@AllArgsConstructor
 public class Subscription {
     @Id
     @SequenceGenerator(name = "subscriptionsSequence", sequenceName = "subscriptions_id_seq", allocationSize = 1)

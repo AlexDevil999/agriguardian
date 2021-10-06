@@ -16,6 +16,7 @@ import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
 import com.agriguardian.exception.AccessDeniedException;
 import com.agriguardian.exception.NotFoundException;
+import com.agriguardian.repository.TeamGroupRepository;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.EmailSenderService;
 import com.agriguardian.service.interfaces.EmailSender;
