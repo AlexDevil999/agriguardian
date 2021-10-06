@@ -65,12 +65,7 @@ public class AlertGeoZoneController {
             throw new AccessDeniedException("user does not have rights on recourse: teamGroup " + teamGroup.getId());
         }
 
-        Set<AppUser> vulnerables = teamGroup.extractVulnerables().stream().filter(u -> dto.getVulnerables().contains(u.getId())).collect(Collectors.toSet());
-
-        if (vulnerables.size() != dto.getVulnerables().size()) {
-            dto.getVulnerables().removeAll(vulnerables.stream().map(AppUser::getId).collect(Collectors.toSet()));
-            throw new BadRequestException("the resource does not belong to the group; user id " + dto.getVulnerables());
-        }
+        Set<AppUser> vulnerables = validateAndExtractVulnerablesForTeamGroup(dto.getVulnerables(), teamGroup);
 
         AlertGeoZone zone = geoZoneServie.createNew(
                 dto.getRule(),

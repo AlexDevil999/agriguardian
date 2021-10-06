@@ -75,15 +75,7 @@ public class UserController {
 
         AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
 
-        teamGroups.forEach(tg -> {
-            notificator.notifyUsers(
-                    tg.extractUsers(),
-                    MessageDto.builder()
-                            .event(EventType.TEAM_GROUP_UPDATED)
-                            .groupId(tg.getId())
-                            .build()
-            );
-        });
+        notifyAllUsersFromTeamGroups(teamGroups);
 
         return ResponseUserDto.of(saved);
     }
@@ -105,15 +97,7 @@ public class UserController {
         saved.setUsername("device_" + saved.getId());
         saved = appUserService.save(vulnerable);
 
-        teamGroups.forEach(tg -> {
-            notificator.notifyUsers(
-                    tg.extractUsers(),
-                    MessageDto.builder()
-                            .event(EventType.TEAM_GROUP_UPDATED)
-                            .groupId(tg.getId())
-                            .build()
-            );
-        });
+        notifyAllUsersFromTeamGroups(teamGroups);
 
         return ResponseUserDto.of(saved);
     }
@@ -171,5 +155,17 @@ public class UserController {
                     targetTeamGroupIds.stream().map(String::valueOf).collect(joining(","))));
         }
         return teamGroups;
+    }
+
+    private void notifyAllUsersFromTeamGroups(Set<TeamGroup> teamGroups){
+        teamGroups.forEach(tg -> {
+            notificator.notifyUsers(
+                    tg.extractUsers(),
+                    MessageDto.builder()
+                            .event(EventType.TEAM_GROUP_UPDATED)
+                            .groupId(tg.getId())
+                            .build()
+            );
+        });
     }
 }

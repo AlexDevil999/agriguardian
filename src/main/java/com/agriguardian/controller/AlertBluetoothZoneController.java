@@ -52,11 +52,12 @@ public class AlertBluetoothZoneController {
         ValidationDto.handleErrors(errors);
 
         if(!dto.getType().equals(ZoneType.BLUETOOTH))
-            throw new ConflictException("mismatch of zone time . Was: " +dto.getType());
+            throw new ConflictException("mismatch of zone type . Was: " +dto.getType());
 
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup teamGroup = teamGroupService.findById(dto.getTeamGroupId())
                 .orElseThrow(() -> new NotFoundException("group not found; resource: id " + dto.getTeamGroupId()));
+
         if (!teamGroup.extractAdmins().contains(user)) {
             throw new AccessDeniedException("user does not have rights on recourse: teamGroup " + teamGroup.getId());
         }
