@@ -105,16 +105,7 @@ public class AppUserService {
         }
     }
 
-    private AppUser setAppUserDetails(AppUser appUser, Status status, UserRole userFollower) {
-        long time = System.currentTimeMillis();
-        appUser.setStatus(status);
-        appUser.setUserRole(userFollower);
-        appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
-        appUser.setCreatedOnMs(time);
-        appUser.setOtpCreatedOnMs(time);
-        appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
-        return appUser;
-    }
+
 
     @Transactional
     public void deleteDevice(String username , Set<String> macAdress) {
@@ -229,19 +220,6 @@ public class AppUserService {
         }
     }
 
-    private boolean existsByMacAddress(String macAddress) {
-        try {
-            return userRepo.existsByUsername(macAddress);
-        } catch (Exception e) {
-            log.error("[existsByMacAddress] failed to retrieve a user; rsn: {}", e.getMessage());
-            throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
-        }
-    }
-
-    private boolean usersOtpCodeIsValid(AppUser appUser){
-        return Long.sum(appUser.getOtpCreatedOnMs(),lifetimeMs)>System.currentTimeMillis();
-    }
-
     public Optional<AppUser> findByUsername(String username) {
         try {
             return userRepo.findByUsername(username);
@@ -275,4 +253,30 @@ public class AppUserService {
         }
         emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
     }
+
+    private boolean existsByMacAddress(String macAddress) {
+        try {
+            return userRepo.existsByUsername(macAddress);
+        } catch (Exception e) {
+            log.error("[existsByMacAddress] failed to retrieve a user; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
+        }
+    }
+
+    private boolean usersOtpCodeIsValid(AppUser appUser){
+        return Long.sum(appUser.getOtpCreatedOnMs(),lifetimeMs)>System.currentTimeMillis();
+    }
+
+    private AppUser setAppUserDetails(AppUser appUser, Status status, UserRole userFollower) {
+        long time = System.currentTimeMillis();
+        appUser.setStatus(status);
+        appUser.setUserRole(userFollower);
+        appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
+        appUser.setCreatedOnMs(time);
+        appUser.setOtpCreatedOnMs(time);
+        appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
+        return appUser;
+    }
+
+
 }
