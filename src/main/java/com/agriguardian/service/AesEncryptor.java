@@ -1,6 +1,7 @@
 package com.agriguardian.service;
 
 import com.agriguardian.exception.InternalErrorException;
+import com.agriguardian.service.interfaces.DataEncoder;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -15,7 +16,7 @@ import java.util.Base64;
 
 @Service
 @Slf4j
-public class AesEncryptor {
+public class AesEncryptor implements DataEncoder {
     private String keyStr;
 
     private static byte[] key;
@@ -43,7 +44,8 @@ public class AesEncryptor {
         }
     }
 
-    public String encode(String strToEncrypt) {
+    @Override
+    public String encode(String toEncrypt) {
         try
         {
             if(secretKey==null)
@@ -51,15 +53,16 @@ public class AesEncryptor {
 
             Cipher cipher = Cipher.getInstance("AES/ECB/PKCS5PADDING");
             cipher.init(Cipher.ENCRYPT_MODE, secretKey);
-            return Base64.getEncoder().encodeToString(cipher.doFinal(strToEncrypt.getBytes(StandardCharsets.UTF_8)));
+            return Base64.getEncoder().encodeToString(cipher.doFinal(toEncrypt.getBytes(StandardCharsets.UTF_8)));
         }
         catch (Exception e)
         {
             log.error("Error while encrypting: " + e.toString());
-            throw new InternalErrorException("could not encrypt: "+strToEncrypt);
+            throw new InternalErrorException("could not encrypt: "+toEncrypt);
         }
     }
 
+    @Override
     public String decode(String toDecrypt){
         try
         {
