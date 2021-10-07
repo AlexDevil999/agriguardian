@@ -10,6 +10,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.crypto.Cipher;
+import javax.crypto.NoSuchPaddingException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Base64;
 import java.util.Date;
 import java.util.HashMap;
@@ -42,12 +45,12 @@ public class JwtProvider {
         }
     }
 
-    public AuthResponseDto token(AppUser appUser) {
+    public AuthResponseDto token(AppUser appUser) throws NoSuchPaddingException, NoSuchAlgorithmException {
         long accessExpiresAt = System.currentTimeMillis() + accessValidity;
         long refreshExpiresAt = System.currentTimeMillis() + refreshValidity;
 
-        String access = generate(appUser, accessExpiresAt, "access");
-        String refresh = generate(appUser, refreshExpiresAt, "refresh");
+        String access = generateAccess(appUser, accessExpiresAt, "access");
+        String refresh = generateRefresh(appUser, refreshExpiresAt, "refresh");
         return new AuthResponseDto(access, refresh, accessExpiresAt, refreshExpiresAt);
     }
 
@@ -61,12 +64,27 @@ public class JwtProvider {
         return username;
     }
 
-    private String generate(AppUser user, long expiresAt, String type) {
+    private String generateAccess(AppUser user, long expiresAt, String type) {
         HashMap<String, Object> claims = new HashMap<>();
         claims.put("type", type);
         claims.put("id", user.getId());
         claims.put("role", user.getUserRole());
 
+        return Jwts.builder()
+                .setClaims(claims)
+                .setSubject(user.getUsername())
+                .setIssuedAt(new Date(System.currentTimeMillis()))
+                .setExpiration(new Date(expiresAt))
+                .signWith(SignatureAlgorithm.HS512, jwtSecret)
+                .compact();
+    }
+
+    private String generateRefresh(AppUser user, long expiresAt, String type)
+            throws NoSuchPaddingException, NoSuchAlgorithmException {
+        HashMap<String, Object> claims = new HashMap<>();
+        claims.put("type", type);
+        claims.put("id", user.getId());
+        claims.put("role", user.getUserRole());
         return Jwts.builder()
                 .setClaims(claims)
                 .setSubject(user.getUsername())

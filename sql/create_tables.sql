@@ -1,7 +1,7 @@
 create table if not exists app_users
 (
     id             serial primary key,
-    user_name      text,
+    user_name      text   unique,
     password       text,
     otp            text,
     created_on     bigint,
@@ -9,10 +9,10 @@ create table if not exists app_users
     otp_created_on bigint,
     status         text,
     user_role      text,
-    refresh_token  text,
+    refresh_token  text  unique,
     fcm_token      text,
     rt_created_on  bigint,
-    mac_address    text
+    mac_address    text,
 );
 
 create table if not exists credit_cards

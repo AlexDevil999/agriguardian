@@ -9,6 +9,7 @@ import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.security.JwtProvider;
 import com.agriguardian.service.security.PasswordEncryptor;
+import com.agriguardian.service.AesEncryptor;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
@@ -17,7 +18,9 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
+import javax.crypto.NoSuchPaddingException;
 import javax.validation.Valid;
+import java.security.NoSuchAlgorithmException;
 import java.util.Optional;
 
 @Log4j2
@@ -28,10 +31,10 @@ class AuthController {
     private final AppUserService appUserService;
     private final JwtProvider jwtProvider;
     private final PasswordEncryptor passwordEncryptor;
-
+    private final AesEncryptor aesEncryptor;
 
     @PostMapping(value = "/login")
-    public AuthResponseDto generateTokens(@Valid @RequestBody AuthRequestDto request, Errors errors) {
+    public AuthResponseDto generateTokens(@Valid @RequestBody AuthRequestDto request, Errors errors) throws NoSuchPaddingException, NoSuchAlgorithmException {
         log.debug("[generateTokens] login attemp: {}", request);
         ValidationDto.handleErrors(errors);
 
@@ -44,39 +47,46 @@ class AuthController {
             throw new BadCredentialsException("Bad credentials");
         }
 
-        if (Status.REGISTRATION == user.get().getStatus()) {
+        AppUser currentUser = user.get();
+
+        if (Status.REGISTRATION == currentUser.getStatus()) {
             throw new AccessDeniedException("Unfinished registration: required confirmation of email");
         }
 
-        if (Status.DEACTIVATED == user.get().getStatus()) {
+        if (Status.DEACTIVATED == currentUser.getStatus()) {
             throw new AccessDeniedException("Account status is " + user.get().getStatus() + ". Activate your account first");
         }
 
         log.debug("[generateTokens] for user: " + user.get().getId() + "; username: " + user.get().getUsername());
 
         AuthResponseDto response = jwtProvider.token(user.get());
+
+        currentUser.setRefreshToken(aesEncryptor.encode(response.getRefreshToken()));
+        response.setRefreshToken(currentUser.getRefreshToken());
+        appUserService.save(currentUser);
         log.debug("refresh: " + response.getRefreshToken());
         log.debug("access: " + response.getAccessToken());
         return response;
     }
 
     @GetMapping(value = "/refresh")
-    public AuthResponseDto refreshTokens(@RequestHeader("Authorization") String refreshBearer) {
+    public AuthResponseDto refreshTokens(@RequestHeader("Authorization") String refreshBearer)
+            throws NoSuchPaddingException, NoSuchAlgorithmException {
         if (refreshBearer != null && refreshBearer.startsWith("Bearer ")) {
             String token = refreshBearer.substring(7);
-            //todo add storing and verifying of DB
-            //todo add token invalidation
-            jwtProvider.validateSign(token);
 
-            AppUser user = appUserService.findByUsername(jwtProvider.getOwner(token))
-                    .orElseThrow(() -> new NotFoundException("Owner of the token not found"));
+            AppUser owner = appUserService.findByRefreshTokenOrThrowNotFound(token);
+
+            String tokenToValidate = aesEncryptor.decode(token);
+            jwtProvider.validateSign(tokenToValidate);
 
 
-            if (Status.DEACTIVATED == user.getStatus()) {
-                throw new AccessDeniedException("Account status is " + user.getStatus() + ". Activate your account first");
+            if (Status.DEACTIVATED == owner.getStatus()) {
+                throw new AccessDeniedException("Account status is " + owner.getStatus() + ". Activate your account first");
             }
 
-            AuthResponseDto jwt = jwtProvider.token(user);
+            AuthResponseDto jwt = jwtProvider.token(owner);
+            owner.setRefreshToken(jwt.getRefreshToken());
             log.debug("refreshTokens: " + jwt);
             return jwt;
         } else {

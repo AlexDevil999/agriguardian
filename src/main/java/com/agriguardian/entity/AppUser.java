@@ -28,12 +28,11 @@ public class AppUser {
     @SequenceGenerator(name = "appUsersSequence", sequenceName = "app_users_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appUsersSequence")
     private long id;
-    @Column(name = "user_name")
-    //todo maybe unique?
+    @Column(name = "user_name",unique = true)
     private String username;
     private String password;
     private String otp;
-    @Column(name = "refresh_token")
+    @Column(name = "refresh_token",unique = true)
     private String refreshToken;
     @Column(name = "fcm_token")
     private String fcmToken;

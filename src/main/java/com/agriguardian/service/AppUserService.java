@@ -238,6 +238,16 @@ public class AppUserService {
         }
     }
 
+    public AppUser findByRefreshTokenOrThrowNotFound(String refreshToken) {
+        try {
+            return userRepo.findByRefreshToken(refreshToken)
+                    .orElseThrow(() -> new NotFoundException("user not found; resource: " + refreshToken));
+        } catch (Exception e) {
+            log.error("[findByUsername] failed to retrieve a user; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
+        }
+    }
+
     public void sendEmailConfirmationForUser(AppUser appUser){
         if(!appUser.getStatus().equals(Status.REGISTRATION))
             throw new ConflictException("user has already confirmed registration");
