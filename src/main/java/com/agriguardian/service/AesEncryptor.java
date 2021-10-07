@@ -26,7 +26,6 @@ public class AesEncryptor {
     }
 
     private void setKey(){
-        System.out.println("at least we are here 1");
         if(secretKey!=null)
             return;
         MessageDigest sha = null;
