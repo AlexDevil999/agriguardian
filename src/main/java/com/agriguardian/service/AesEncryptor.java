@@ -1,5 +1,6 @@
 package com.agriguardian.service;
 
+import com.agriguardian.exception.InternalErrorException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -54,9 +55,9 @@ public class AesEncryptor {
         }
         catch (Exception e)
         {
-            System.out.println("Error while encrypting: " + e.toString());
+            log.error("Error while encrypting: " + e.toString());
+            throw new InternalErrorException("could not encrypt: "+strToEncrypt);
         }
-        return null;
     }
 
     public String decode(String toDecrypt){
@@ -71,8 +72,8 @@ public class AesEncryptor {
         }
         catch (Exception e)
         {
-            System.out.println("Error while decrypting: " + e.toString());
+           log.error("Error while decrypting: " + e.toString());
+           throw new InternalErrorException("could not decrypt: "+toDecrypt);
         }
-        return null;
     }
 }
