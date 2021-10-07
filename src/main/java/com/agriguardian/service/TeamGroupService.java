@@ -9,6 +9,7 @@ import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
+import com.agriguardian.repository.AppUserRepository;
 import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.repository.TeamGroupRepository;
 import com.agriguardian.util.RandomCodeGenerator;
@@ -27,7 +28,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TeamGroupService {
     private final TeamGroupRepository teamGroupRepository;
-    private final AppUserService appUserService;
+    private final AppUserRepository appUserRepository;
     private final AppUserTeamGroupRepository appUserTeamGroupRepository;
 
     public TeamGroup save(TeamGroup tg) {
@@ -41,35 +42,44 @@ public class TeamGroupService {
 
     @Transactional
     public TeamGroup deleteFromTeamGroup(AppUser deleter, Long tgId, Long appUserToDeleteId){
-        AppUser userToDelete = appUserService.findById(appUserToDeleteId).orElseThrow
-                (() -> new NotFoundException("user with id: "+appUserToDeleteId + " was not found"));
+        AppUserTeamGroup appUserTeamGroupToDelete =appUserTeamGroupRepository.getByAppUserId(appUserToDeleteId).orElseThrow
+                (() -> new NotFoundException("user with id: "+appUserToDeleteId + " was not found in a group"));
+        AppUser appUserToDelete = appUserTeamGroupToDelete.getAppUser();
         TeamGroup editedTeamGroup = findById(tgId).orElseThrow
                 (() -> new NotFoundException("group with id "+tgId+" was not found"));
 
-        if(userToDelete.equals(deleter))
+        if(appUserToDelete.equals(deleter))
             throw new ConflictException("prohibited to deleted yourself");
 
-        if(!editedTeamGroup.containsUser(userToDelete))
+        if(!editedTeamGroup.containsUser(appUserToDelete))
             throw new ConflictException("group does not contain user: "+ appUserToDeleteId);
 
         if(!editedTeamGroup.extractAdmins().contains(deleter))
             throw new ConflictException("group does not contain guardian: "+ deleter.getId());
 
-        if(editedTeamGroup.extractAdmins().contains(userToDelete)){
+        if(editedTeamGroup.extractAdmins().contains(appUserToDelete)){
             if(!editedTeamGroup.getOwner().equals(deleter)){
                 throw new ConflictException("only owner can remove guardians");
             }
         }
-        editedTeamGroup.removeAppUserFromGroup(appUserTeamGroupRepository.getByAppUserId(appUserToDeleteId));
-        if(userToDelete.getUserRole().equals(UserRole.USER_FOLLOWER)){
-            if(userToDelete.getAppUserTeamGroups().stream()
-                    .filter(appUserTeamGroup -> !appUserTeamGroup.getTeamGroup().equals(editedTeamGroup))
-                    .collect(Collectors.toSet()).size()==0){
-                appUserService.deleteUser(userToDelete.getUsername());
-            }
-        }
 
-        return save(editedTeamGroup);
+        try {
+            editedTeamGroup.removeAppUserTeamGroupFromGroup(appUserTeamGroupToDelete);
+
+            if (appUserToDelete.getUserRole().equals(UserRole.USER_FOLLOWER)) {
+                if (appUserToDelete.getAppUserTeamGroups().stream()
+                        .filter(appUserTeamGroup -> !appUserTeamGroup.getTeamGroup().equals(editedTeamGroup))
+                        .collect(Collectors.toSet()).size() == 0) {
+                    appUserRepository.deleteByUsername(appUserToDelete.getUsername());
+                }
+            }
+
+            return save(editedTeamGroup);
+        }
+        catch (Exception e){
+            log.error("[deleteFromTeamGroup] failed to delete a user {} from tg {}; rsn: {}", deleter.getUsername(),tgId, e.getMessage());
+            throw new InternalErrorException("failed to delete user from tg; rsn: " + e.getMessage());
+        }
     }
 
     public Optional<TeamGroup> findById(Long id) {
@@ -108,6 +118,7 @@ public class TeamGroupService {
     }
 
     //todo check if it fits here
+    @Transactional
     public void saveVulnerableToTeamGroups(AppUser follower, Set<TeamGroup> teamGroups){
         teamGroups.forEach(teamGroup -> {
             teamGroupRepository.findById(teamGroup.getId()).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
@@ -117,6 +128,7 @@ public class TeamGroupService {
     }
 
     //todo check if it fits here
+    @Transactional
     public void saveDeviceToTeamGroups(AppUser device, Set<TeamGroup> teamGroups){
         teamGroups.forEach(teamGroup -> {
             teamGroupRepository.findById(teamGroup.getId()).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));

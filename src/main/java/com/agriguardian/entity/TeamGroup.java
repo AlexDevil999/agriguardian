@@ -52,7 +52,7 @@ public class TeamGroup {
         zone.setTeamGroup(this);
     }
 
-    public void removeAppUserFromGroup(AppUserTeamGroup appUserTeamGroup) {
+    public void removeAppUserTeamGroupFromGroup(AppUserTeamGroup appUserTeamGroup) {
         appUserTeamGroups.remove(appUserTeamGroup);
     }
 
