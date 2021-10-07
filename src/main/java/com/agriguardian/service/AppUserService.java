@@ -133,6 +133,7 @@ public class AppUserService {
         }
     }
 
+    @Transactional
     public void deleteUser(String username) {
         if (!existsByUsername(username)) {
             throw new BadRequestException("user " + username + " does not exists");

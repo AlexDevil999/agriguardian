@@ -115,6 +115,12 @@ public class UserController {
         return ResponseEntity.ok(dto);
     }
 
+    @DeleteMapping("/master")
+    public ResponseEntity deleteUser(Principal principal) {
+        appUserService.deleteUser(principal.getName());
+        return ResponseEntity.ok("deleted");
+    }
+
     @PostMapping("/add-fcm-token")
     public ResponseUserDto addFcmCredentials(@Valid @RequestBody FcmCredentialsDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
