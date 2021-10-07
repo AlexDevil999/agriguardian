@@ -2,8 +2,6 @@ package com.agriguardian.service;
 
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
-import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
-import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
@@ -14,7 +12,6 @@ import com.agriguardian.repository.*;
 import com.agriguardian.service.interfaces.EmailSender;
 import com.agriguardian.service.security.PasswordEncryptor;
 import com.agriguardian.util.RandomCodeGenerator;
-import lombok.AllArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,8 +29,6 @@ public class AppUserService {
     @Value("${code.lifetime}")
     private long lifetimeMs;
     private final AppUserRepository userRepo;
-    private final AppUserTeamGroupRepository autgRepository;
-    private final TeamGroupRepository teamGroupRepository;
     private final PasswordEncryptor passwordEncryptor;
     private final EmailSenderService emailSenderService;
     private final TeamGroupService teamGroupService;
@@ -73,23 +68,17 @@ public class AppUserService {
         }
 
         try {
-            long time = System.currentTimeMillis();
-            appUser.setStatus(status);
-            appUser.setUserRole(UserRole.USER_MASTER);
-            appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
-            appUser.setCreatedOnMs(time);
-            appUser.setOtpCreatedOnMs(time);
-            appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
+            AppUser masterToSave = setAppUserDetails(appUser, status, UserRole.USER_MASTER);
 
-            AppUser user = userRepo.save(appUser);
+            AppUser master = userRepo.save(masterToSave);
 
             if (Boolean.TRUE.equals(withNewGroup)) {
-                teamGroupService.createTeamGroupForUser(user);
+                teamGroupService.createTeamGroupForUser(master);
             }
 
             sendEmailConfirmationForUser(appUser);
 
-            return user;
+            return master;
         } catch (Exception e) {
             log.error("[save] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
@@ -103,15 +92,9 @@ public class AppUserService {
         }
 
         try {
-            long time = System.currentTimeMillis();
-            appUser.setStatus(status);
-            appUser.setUserRole(UserRole.USER_FOLLOWER);
-            appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
-            appUser.setCreatedOnMs(time);
-            appUser.setOtpCreatedOnMs(time);
-            appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
+            AppUser followerToSave = setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
 
-            AppUser follower = userRepo.save(appUser);
+            AppUser follower = userRepo.save(followerToSave);
 
             teamGroupService.saveVulnerableToTeamGroups(follower,teamGroups);
 
@@ -120,6 +103,17 @@ public class AppUserService {
             log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
         }
+    }
+
+    private AppUser setAppUserDetails(AppUser appUser, Status status, UserRole userFollower) {
+        long time = System.currentTimeMillis();
+        appUser.setStatus(status);
+        appUser.setUserRole(userFollower);
+        appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
+        appUser.setCreatedOnMs(time);
+        appUser.setOtpCreatedOnMs(time);
+        appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
+        return appUser;
     }
 
     @Transactional
@@ -162,13 +156,7 @@ public class AppUserService {
         }
 
             try {
-                long time = System.currentTimeMillis();
-                appUser.setStatus(status);
-                appUser.setUserRole(UserRole.USER_FOLLOWER);
-                appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
-                appUser.setCreatedOnMs(time);
-                appUser.setOtpCreatedOnMs(time);
-                appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
+                setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
 
                 AppUser device = userRepo.save(appUser);
 
