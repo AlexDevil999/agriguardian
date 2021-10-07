@@ -69,7 +69,7 @@ public class TeamGroupController {
                                                   @PathVariable("userId") Long userId,
                                                   @PathVariable("tgId") Long tgId) {
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-        TeamGroup updatedTg = teamGroupService.deleteFromTeamGroup(deleter,tgId,userId);
+        TeamGroup updatedTg = teamGroupService.deleteAppUserFromTeamGroup(deleter,tgId,userId);
         return ResponseTeamGroupDto.of(updatedTg);
 
     }

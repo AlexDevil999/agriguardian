@@ -41,7 +41,7 @@ public class TeamGroupService {
     }
 
     @Transactional
-    public TeamGroup deleteFromTeamGroup(AppUser deleter, Long tgId, Long appUserToDeleteId){
+    public TeamGroup deleteAppUserFromTeamGroup(AppUser deleter, Long tgId, Long appUserToDeleteId){
         AppUserTeamGroup appUserTeamGroupToDelete =appUserTeamGroupRepository.getByAppUserId(appUserToDeleteId).orElseThrow
                 (() -> new NotFoundException("user with id: "+appUserToDeleteId + " was not found in a group"));
         AppUser appUserToDelete = appUserTeamGroupToDelete.getAppUser();

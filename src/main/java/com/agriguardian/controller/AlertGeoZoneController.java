@@ -92,7 +92,7 @@ public class AlertGeoZoneController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PutMapping("/edit-my-geo-zone")
-    public ResponseAlertGeoZoneDto editBluetoothZone
+    public ResponseAlertGeoZoneDto editGeoZone
             (@Valid @RequestBody EditGeoZoneDto dto, Errors errors, Principal principal){
         ValidationDto.handleErrors(errors);
 
@@ -102,7 +102,7 @@ public class AlertGeoZoneController {
         AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
         AlertGeoZone currentUsersGeoZone = geoZoneServie.findById(dto.getGeoZoneId())
-                .orElseThrow(() -> new NotFoundException("feo zone with id: "+dto.getGeoZoneId() + "was not found"));
+                .orElseThrow(() -> new NotFoundException("geo zone with id: "+dto.getGeoZoneId() + "was not found"));
 
         TeamGroup teamGroupForCurrentGeoZone = currentUsersGeoZone.getTeamGroup();
 
