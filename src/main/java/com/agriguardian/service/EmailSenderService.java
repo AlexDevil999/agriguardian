@@ -22,15 +22,16 @@ public class EmailSenderService implements EmailSender {
     public void send(String to, String email) {
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
-            MimeMessageHelper helper =
-                    new MimeMessageHelper(mimeMessage, "utf-8");
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, "utf-8");
+
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject("Confirm your email");
             helper.setFrom("hello@agrg.com");
+
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new InternalErrorException("failed to send email. Reason: "+e.getMessage());
+            throw new InternalErrorException("failed to send an email. Reason: "+e.getMessage());
         }
     }
 

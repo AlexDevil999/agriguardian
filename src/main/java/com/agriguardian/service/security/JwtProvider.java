@@ -4,7 +4,9 @@ import com.agriguardian.domain.AppUserAuthDetails;
 import com.agriguardian.dto.auth.AuthResponseDto;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.exception.BadTokenException;
+import com.agriguardian.service.AesEncryptor;
 import io.jsonwebtoken.*;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,6 +21,7 @@ import java.util.HashMap;
 
 @Log4j2
 @Service
+@RequiredArgsConstructor
 public class JwtProvider {
     @Value("${jwt.token.secret}")
     private String jwtSecret;
@@ -27,6 +30,7 @@ public class JwtProvider {
     @Value("${jwt.token.ttl_ms.refresh}")
     private long refreshValidity;
 
+    private final AesEncryptor aesEncryptor;
 
     @PostConstruct
     protected void init() {
@@ -51,6 +55,7 @@ public class JwtProvider {
 
         String access = generateAccess(appUser, accessExpiresAt, "access");
         String refresh = generateRefresh(appUser, refreshExpiresAt, "refresh");
+        refresh = aesEncryptor.encode(refresh);
         return new AuthResponseDto(access, refresh, accessExpiresAt, refreshExpiresAt);
     }
 

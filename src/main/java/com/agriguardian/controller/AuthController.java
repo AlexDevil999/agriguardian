@@ -61,8 +61,7 @@ class AuthController {
 
         AuthResponseDto response = jwtProvider.token(user.get());
 
-        currentUser.setRefreshToken(aesEncryptor.encode(response.getRefreshToken()));
-        response.setRefreshToken(currentUser.getRefreshToken());
+        currentUser.setRefreshToken(response.getRefreshToken());
         appUserService.save(currentUser);
         log.debug("refresh: " + response.getRefreshToken());
         log.debug("access: " + response.getAccessToken());
@@ -87,6 +86,7 @@ class AuthController {
 
             AuthResponseDto jwt = jwtProvider.token(owner);
             owner.setRefreshToken(jwt.getRefreshToken());
+            appUserService.save(owner);
             log.debug("refreshTokens: " + jwt);
             return jwt;
         } else {
@@ -95,17 +95,20 @@ class AuthController {
             try {
                 //todo delete this cratch!!!!
                 String token = refreshBearer;
-                jwtProvider.validateSign(token);
+                
+                AppUser owner = appUserService.findByRefreshTokenOrThrowNotFound(token);
 
-                AppUser user = appUserService.findByUsername(jwtProvider.getOwner(token))
-                        .orElseThrow(() -> new NotFoundException("Owner of the token not found"));
+                String tokenToValidate = aesEncryptor.decode(token);
+                jwtProvider.validateSign(tokenToValidate);
 
 
-                if (Status.DEACTIVATED == user.getStatus()) {
-                    throw new AccessDeniedException("Account status is " + user.getStatus() + ". Activate your account first");
+                if (Status.DEACTIVATED == owner.getStatus()) {
+                    throw new AccessDeniedException("Account status is " + owner.getStatus() + ". Activate your account first");
                 }
 
-                AuthResponseDto jwt = jwtProvider.token(user);
+                AuthResponseDto jwt = jwtProvider.token(owner);
+                owner.setRefreshToken(jwt.getRefreshToken());
+                appUserService.save(owner);
                 log.debug("refreshTokens: " + jwt);
                 return jwt;
             } catch (Exception e) {

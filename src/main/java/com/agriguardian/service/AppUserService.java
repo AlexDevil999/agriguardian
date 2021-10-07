@@ -108,18 +108,22 @@ public class AppUserService {
 
 
     @Transactional
-    public void deleteDevice(String username , Set<String> macAdress) {
+    public void deleteDevice(String username , Set<String> macAddresses) {
         if (!existsByUsername(username)) {
             throw new BadRequestException("user " + username + " does not exists");
+        }
+        for (String macAddress: macAddresses) {
+            if(!existsByMacAddress(macAddress))
+                throw new NotFoundException("device with mac Address: "+macAddress+ " was not found");
         }
 
         try {
             //todo change when implement device
             userRepo.deleteByUsername(username);
 
-            macAdress.forEach(userRepo::deleteByMacAddress);
+            macAddresses.forEach(userRepo::deleteByMacAddress);
         } catch (Exception e) {
-            log.error("[saveUserFollowerIfNotExist] failed to delete a device {}; rsn: {}", macAdress, e.getMessage());
+            log.error("[saveUserFollowerIfNotExist] failed to delete a devices {}; rsn: {}", macAddresses, e.getMessage());
             throw new InternalErrorException("failed to delete user; rsn: " + e.getMessage());
         }
     }
@@ -148,9 +152,9 @@ public class AppUserService {
         }
 
             try {
-                setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
+                AppUser deviceToSave = setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
 
-                AppUser device = userRepo.save(appUser);
+                AppUser device = userRepo.save(deviceToSave);
 
                 teamGroupService.saveDeviceToTeamGroups(device,teamGroups);
 
