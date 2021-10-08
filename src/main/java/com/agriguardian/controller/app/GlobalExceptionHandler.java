@@ -4,6 +4,7 @@ import com.agriguardian.exception.*;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -49,6 +50,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<?> handleConflictException(ConflictException e) {
         log.warn("[handleConflictException]: response 'CONFLICT'; rsn: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(ERROR, e.getMessage()));
+    }
+
+    @ExceptionHandler(BadCredentialsException.class)
+    public ResponseEntity<?> handleBadCredentialsException(ConflictException e) {
+        log.warn("[handleConflictException]: response 'NOT_FOUND'; rsn: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap(ERROR, e.getMessage()));
     }
 
     @ExceptionHandler(Throwable.class)
