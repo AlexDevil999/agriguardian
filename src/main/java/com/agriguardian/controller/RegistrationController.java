@@ -1,6 +1,7 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.dto.RegistrationConfirmationDto;
+import com.agriguardian.dto.ResendConfirmationDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.service.AppUserService;
@@ -34,9 +35,9 @@ public class RegistrationController {
 
     @PostMapping("/resend")
     public ResponseUserDto resendConfirmation
-            (@RequestBody String username, Errors errors) {
+            (@RequestBody @Valid ResendConfirmationDto dto, Errors errors) {
         ValidationDto.handleErrors(errors);
-        AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(username);
+        AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
         appUserService.sendEmailConfirmationForUser(currentUser);
         return ResponseUserDto.of(currentUser);
     }
