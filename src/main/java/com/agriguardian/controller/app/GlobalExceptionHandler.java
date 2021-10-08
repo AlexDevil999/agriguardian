@@ -53,7 +53,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(BadCredentialsException.class)
-    public ResponseEntity<?> handleBadCredentialsException(ConflictException e) {
+    public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
         log.warn("[handleBadCredentialsException]: response 'NOT_FOUND'; rsn: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap(ERROR, e.getMessage()));
     }
