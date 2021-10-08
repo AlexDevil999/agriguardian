@@ -54,7 +54,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(ConflictException e) {
-        log.warn("[handleConflictException]: response 'NOT_FOUND'; rsn: " + e.getMessage());
+        log.warn("[handleBadCredentialsException]: response 'NOT_FOUND'; rsn: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Collections.singletonMap(ERROR, e.getMessage()));
     }
 
