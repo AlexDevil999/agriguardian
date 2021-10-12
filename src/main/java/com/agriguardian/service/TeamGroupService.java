@@ -49,7 +49,7 @@ public class TeamGroupService {
                 (() -> new NotFoundException("group with id "+tgId+" was not found"));
 
         if(appUserToDelete.equals(deleter))
-            throw new ConflictException("prohibited to deleted yourself");
+            throw new ConflictException("prohibited to delete yourself");
 
         if(!editedTeamGroup.containsUser(appUserToDelete))
             throw new ConflictException("group does not contain user: "+ appUserToDeleteId);
