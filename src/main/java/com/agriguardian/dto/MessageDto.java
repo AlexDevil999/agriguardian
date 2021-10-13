@@ -16,4 +16,5 @@ public class MessageDto {
     private Long violatedZoneId;
     private String violatedZoneName;
     private LocationDto location;
+    private String zoneRule;
 }
