@@ -50,7 +50,7 @@ class AuthController {
         AppUser currentUser = user.get();
 
         if (Status.REGISTRATION == currentUser.getStatus()) {
-            throw new AccessDeniedException("Unfinished registration: required confirmation of email");
+            throw new AccessDeniedException("Unfinished registration: required confirmation of an email");
         }
 
         if (Status.DEACTIVATED == currentUser.getStatus()) {
