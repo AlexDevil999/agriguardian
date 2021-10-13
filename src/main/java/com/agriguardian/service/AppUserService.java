@@ -267,6 +267,7 @@ public class AppUserService {
                 throw new InternalErrorException("failed to set new Otp a user; rsn: " + e.getMessage());
             }
         }
+        log.debug("[sendEmailConfirmationForUser] trying to send an email for user: {}", appUser.getUsername());
         emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
     }
 
