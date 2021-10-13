@@ -5,6 +5,7 @@ import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.enums.ZoneRule;
+import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AlertBluetoothZoneRepository;
 import com.agriguardian.repository.AppUserBluetoothZoneRepository;
@@ -26,55 +27,78 @@ public class AlertBluetoothZoneService {
 
     @Transactional
     public AlertBluetoothZone createNew(AppUser anchor, TeamGroup group, ZoneRule rule, Set<AppUser> vulnerables, String name) {
+
         AlertBluetoothZone zone = AlertBluetoothZone.builder()
                 .rule(rule)
                 .name(name)
                 .build();
         zone.addAnchorUser(anchor);
         zone.addTeamGroup(group);
-        AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(zone);
+        try{
+            AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(zone);
+            vulnerables.forEach(v -> {
+                AppUserBluetoothZone userZone = savedZone.addVulnerable(v);
+                userZoneRepository.save(userZone);
+            });
 
-        vulnerables.forEach(v -> {
-            AppUserBluetoothZone userZone = savedZone.addVulnerable(v);
-            userZoneRepository.save(userZone);
-        });
-
-        return savedZone;
+            return savedZone;
+        }
+        catch (Exception e){
+            log.error("[createNew] failed to create new bluetoothZone {}; rsn: {}", zone, e.getMessage());
+            throw new InternalErrorException("failed to create new bluetoothZone; rsn: " + e.getMessage());
+        }
     }
 
     @Transactional
     public AlertBluetoothZone editExisting
             (Long id,AppUser anchor, TeamGroup group, ZoneRule rule, Set<AppUser> vulnerables, String name) {
 
-        AlertBluetoothZone currentZone = alertBluetoothZoneRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException("zone with id: "+id+" does not exists"));
 
-        currentZone.setRule(rule);
-        Optional.ofNullable(name).ifPresent(currentZone::setName);
-        currentZone.addAnchorUser(anchor);
-        currentZone.addTeamGroup(group);
+            AlertBluetoothZone currentZone = alertBluetoothZoneRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("zone with id: " + id + " does not exists"));
 
-        currentZone.emptySet();
+            currentZone.setRule(rule);
+            Optional.ofNullable(name).ifPresent(currentZone::setName);
+            currentZone.addAnchorUser(anchor);
+            currentZone.addTeamGroup(group);
 
-        userZoneRepository.deleteByAlertBluetoothZoneId(anchor.getAlertBluetoothZone().getId());
+            currentZone.emptySet();
 
-        AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(currentZone);
+        try {
+            AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(currentZone);
 
-        vulnerables.forEach(v -> {
-            AppUserBluetoothZone userZone = savedZone.addVulnerable(v);
-            userZoneRepository.save(userZone);
-        });
+            vulnerables.forEach(v -> {
+                AppUserBluetoothZone userZone = savedZone.addVulnerable(v);
+                userZoneRepository.save(userZone);
+            });
 
-        return savedZone;
+            return savedZone;
+        }
+        catch (Exception e){
+            log.error("[editExisting] failed to edit bluetoothZone {}; rsn: {}", currentZone, e.getMessage());
+            throw new InternalErrorException("failed to edit bluetoothZone; rsn: " + e.getMessage());
+        }
     }
 
     public void delete(AlertBluetoothZone zone) {
         zone.getAssociatedUser().setAlertBluetoothZone(null);
         zone.getTeamGroup().getAlertBluetoothZones().remove(zone);
-        alertBluetoothZoneRepository.delete(zone);
+        try {
+            alertBluetoothZoneRepository.delete(zone);
+        }
+        catch (Exception e){
+            log.error("[delete] failed to delete bluetoothZone {}; rsn: {}", zone, e.getMessage());
+            throw new InternalErrorException("failed to delete bluetoothZone; rsn: " + e.getMessage());
+        }
     }
 
     public Optional<AlertBluetoothZone> findById(Long id) {
-        return alertBluetoothZoneRepository.findById(id);
+        try {
+            return alertBluetoothZoneRepository.findById(id);
+        }
+        catch (Exception e){
+            log.error("[findById] failed to retrieve a bluetoothZone; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to retrieve a bluetoothZone. rsn: " + e.getMessage());
+        }
     }
 }

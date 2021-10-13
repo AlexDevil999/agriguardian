@@ -56,7 +56,7 @@ public class AppUserService {
             appUser.setStatus(Status.ACTIVATED);
             return userRepo.save(appUser);
         } catch (Exception e) {
-            log.error("[save] failed to activate a user {}; rsn: {}", appUser, e.getMessage());
+            log.error("[activate] failed to activate a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to activate user; rsn: " + e.getMessage());
         }
     }
@@ -137,6 +137,7 @@ public class AppUserService {
         try {
             userRepo.deleteByUsername(username);
         } catch (Exception e) {
+            log.error("[deleteUser] failed to delete a user {}; rsn: {}", username, e.getMessage());
             throw new InternalErrorException("failed to delete user; rsn: " + e.getMessage());
         }
     }
@@ -262,6 +263,7 @@ public class AppUserService {
                 userRepo.save(appUser);
             }
             catch (Exception e){
+                log.error("[sendEmailConfirmationForUser] failed to send verification email; rsn: {}", e.getMessage());
                 throw new InternalErrorException("failed to set new Otp a user; rsn: " + e.getMessage());
             }
         }

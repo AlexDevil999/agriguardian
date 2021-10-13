@@ -9,6 +9,7 @@ import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
+import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AlertGeoZoneRepository;
 import com.agriguardian.repository.AppUserGeoZoneRepository;
@@ -62,8 +63,13 @@ public class AlertGeoZoneService {
 
         if(figure.equals(Figure.POLYGON))
         zone.bordersByPoints(borders);
-
-        return zoneRepository.save(zone);
+        try {
+            return zoneRepository.save(zone);
+        }
+        catch (Exception e){
+            log.error("[createNew] failed to create new geoZone {}; rsn: {}", zone, e.getMessage());
+            throw new InternalErrorException("failed to create new geoZone; rsn: " + e.getMessage());
+        }
     }
 
     @Transactional
@@ -74,44 +80,64 @@ public class AlertGeoZoneService {
              List<Point> borders, ZoneRule rule,
              Set<AppUser> vulnerables, String name) {
 
-        AlertGeoZone currentZone = zoneRepository.findById(id)
-                .orElseThrow(()-> new NotFoundException("zone with id: "+id+" does not exists"));
-
-        currentZone.setRule(rule);
-        Optional.ofNullable(name).ifPresent(currentZone::setName);
 
 
-        if(figure.equals(Figure.CIRCLE)){
-            currentZone.setCenterLat(centerLat);
-            currentZone.setCenterLon(centerLon);
-            currentZone.setFigureType(figure);
-            currentZone.setRadius(radius);
+            AlertGeoZone currentZone = zoneRepository.findById(id)
+                    .orElseThrow(() -> new NotFoundException("zone with id: " + id + " does not exists"));
+
+            currentZone.setRule(rule);
+            Optional.ofNullable(name).ifPresent(currentZone::setName);
+
+
+            if (figure.equals(Figure.CIRCLE)) {
+                currentZone.setCenterLat(centerLat);
+                currentZone.setCenterLon(centerLon);
+                currentZone.setFigureType(figure);
+                currentZone.setRadius(radius);
+            } else if (figure.equals(Figure.POLYGON)) {
+                currentZone.bordersByPoints(borders);
+                currentZone.setFigureType(figure);
+            }
+
+            currentZone.emptyVulnerables();
+
+        try {
+            AlertGeoZone savedZone = zoneRepository.save(currentZone);
+
+
+            vulnerables.forEach(v -> {
+                AppUserGeoZone userZone = savedZone.addVulnerable(v);
+                appUserGeoZoneRepository.save(userZone);
+            });
+
+
+            return savedZone;
         }
-        else if(figure.equals(Figure.POLYGON)){
-            currentZone.bordersByPoints(borders);
-            currentZone.setFigureType(figure);
+        catch (Exception e){
+            log.error("[editExisting] failed to edit geoZone {}; rsn: {}", currentZone, e.getMessage());
+            throw new InternalErrorException("failed to edit geoZone; rsn: " + e.getMessage());
         }
-
-        currentZone.emptyVulnerables();
-
-        AlertGeoZone savedZone = zoneRepository.save(currentZone);
-
-
-        vulnerables.forEach(v -> {
-            AppUserGeoZone userZone = savedZone.addVulnerable(v);
-            appUserGeoZoneRepository.save(userZone);
-        });
-
-        return savedZone;
     }
 
 
     public void delete(AlertGeoZone zone) {
-        zone.getTeamGroup().getAlertBluetoothZones().remove(zone);
-        zoneRepository.delete(zone);
+        try {
+            zone.getTeamGroup().getAlertGeoZones().remove(zone);
+            zoneRepository.delete(zone);
+        }
+        catch (Exception e){
+            log.error("[delete] failed to delete geoZone {}; rsn: {}", zone, e.getMessage());
+            throw new InternalErrorException("failed to delete geoZone; rsn: " + e.getMessage());
+        }
     }
 
     public Optional<AlertGeoZone> findById(Long id) {
-        return zoneRepository.findById(id);
+        try {
+            return zoneRepository.findById(id);
+        }
+        catch (Exception e){
+            log.error("[findById] failed to retrieve a geoZone; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to retrieve a geoZone. rsn: " + e.getMessage());
+        }
     }
 }
