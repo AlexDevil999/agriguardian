@@ -58,7 +58,7 @@ public class LocationController {
                             .violatedZoneId(zone.getId())
                             .violatedZoneName(zone.getName())
                             .location(geo.findLastLocation())
-                            .zoneRule(zone.getRule().name())
+                            .violatedZoneRule(zone.getRule().name())
                             .build()
             );
         });
