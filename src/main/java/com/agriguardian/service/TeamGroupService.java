@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -42,9 +43,12 @@ public class TeamGroupService {
 
     @Transactional
     public TeamGroup deleteAppUserFromTeamGroup(AppUser deleter, Long tgId, Long appUserToDeleteId){
-        AppUserTeamGroup appUserTeamGroupToDelete =appUserTeamGroupRepository.getByAppUserId(appUserToDeleteId).orElseThrow
+
+        AppUserTeamGroup appUserTeamGroupToDelete =appUserTeamGroupRepository.findByAppUserId(appUserToDeleteId).orElseThrow
                 (() -> new NotFoundException("user with id: "+appUserToDeleteId + " was not found in a group"));
+
         AppUser appUserToDelete = appUserTeamGroupToDelete.getAppUser();
+
         TeamGroup editedTeamGroup = findById(tgId).orElseThrow
                 (() -> new NotFoundException("group with id "+tgId+" was not found"));
 
@@ -77,13 +81,19 @@ public class TeamGroupService {
             return save(editedTeamGroup);
         }
         catch (Exception e){
-            log.error("[deleteFromTeamGroup] failed to delete a user {} from tg {}; rsn: {}", deleter.getUsername(),tgId, e.getMessage());
+            log.error("[deleteFromTeamGroup] failed to delete a user {} from tg {}; rsn: {}", appUserToDelete,tgId, e.getMessage());
             throw new InternalErrorException("failed to delete user from tg; rsn: " + e.getMessage());
         }
     }
 
     public Optional<TeamGroup> findById(Long id) {
-        return teamGroupRepository.findById(id);
+        try {
+            return teamGroupRepository.findById(id);
+        }
+        catch (Exception e){
+            log.error("[findById] failed to find teamGroup by id{}; rsn: {}", id, e.getMessage());
+            throw new InternalErrorException("failed to find teamGroup by id; rsn: " + e.getMessage());
+        }
     }
 
     public boolean existsByGuardianCode(String gc) {
@@ -103,28 +113,48 @@ public class TeamGroupService {
     }
 
     public Optional<TeamGroup> findByInvitationCode(String invitationCode) {
-        Optional<TeamGroup> tg = teamGroupRepository.findByGuardianInvitationCode(invitationCode);
-        if (!tg.isPresent()) {
-            tg = teamGroupRepository.findByVulnerableInvitationCode(invitationCode);
+        try {
+            Optional<TeamGroup> tg = teamGroupRepository.findByGuardianInvitationCode(invitationCode);
+            if (!tg.isPresent()) {
+                tg = teamGroupRepository.findByVulnerableInvitationCode(invitationCode);
+            }
+            return tg;
         }
-        return tg;
+        catch (Exception e){
+            log.error("[findByInvitationCode] failed to find teamGroup by InvitationCode {}; rsn: {}", invitationCode, e.getMessage());
+            throw new InternalErrorException("failed to find teamGroup by InvitationCode; rsn: " + e.getMessage());
+        }
     }
 
     //todo check if it fits here
+    @Transactional
     public void createTeamGroupForUser(AppUser user){
-        TeamGroup tg = teamGroupRepository.save(createTeamGroup(user));
-        AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.GUARDIAN);
-        appUserTeamGroupRepository.save(autg);
+        try {
+            TeamGroup tg = teamGroupRepository.save(createTeamGroup(user));
+            AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.GUARDIAN);
+            appUserTeamGroupRepository.save(autg);
+        }
+        catch (Exception e){
+            log.error("[createTeamGroupForUser] failed to create Team Group For User {}; rsn: {}", user.getUsername(), e.getMessage());
+            throw new InternalErrorException(" failed to create Team Group For User; rsn: " + e.getMessage());
+        }
     }
 
     //todo check if it fits here
     @Transactional
     public void saveVulnerableToTeamGroups(AppUser follower, Set<TeamGroup> teamGroups){
-        teamGroups.forEach(teamGroup -> {
-            teamGroupRepository.findById(teamGroup.getId()).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
-            AppUserTeamGroup autg = follower.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
-            appUserTeamGroupRepository.save(autg);
-        });
+            teamGroups.forEach(teamGroup -> {
+                teamGroupRepository.findById(teamGroup.getId()).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
+                    AppUserTeamGroup autg = follower.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
+                    try{
+                        appUserTeamGroupRepository.save(autg);
+                    }
+                catch (Exception e){
+                    log.error("[saveVulnerableToTeamGroups] failed to save Vulnerable {} To Team Groups {}; rsn: {}",follower.getUsername(), Arrays.toString(teamGroups.toArray()), e.getMessage());
+                    throw new InternalErrorException(" failed to save Vulnerable To Team Groups: " + e.getMessage());
+                }
+            });
+
     }
 
     //todo check if it fits here
@@ -133,7 +163,13 @@ public class TeamGroupService {
         teamGroups.forEach(teamGroup -> {
             teamGroupRepository.findById(teamGroup.getId()).orElseThrow(() -> new NotFoundException("TeamGroup not found: " + teamGroup));
             AppUserTeamGroup autg = device.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
-            appUserTeamGroupRepository.save(autg);
+            try {
+                appUserTeamGroupRepository.save(autg);
+            }
+            catch (Exception e){
+                log.error("[saveDeviceToTeamGroups] failed to save device {} To Team Groups {}; rsn: {}",device.getTeamGroup(), Arrays.toString(teamGroups.toArray()), e.getMessage());
+                throw new InternalErrorException(" failed to save device To Team Groups: " + e.getMessage());
+            }
         });
     }
 

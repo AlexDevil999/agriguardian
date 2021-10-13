@@ -8,5 +8,5 @@ import java.util.Optional;
 
 @Repository
 public interface AppUserTeamGroupRepository extends CrudRepository<AppUserTeamGroup, Long> {
-    Optional<AppUserTeamGroup> getByAppUserId(Long appUserId);
+    Optional<AppUserTeamGroup> findByAppUserId(Long appUserId);
 }
