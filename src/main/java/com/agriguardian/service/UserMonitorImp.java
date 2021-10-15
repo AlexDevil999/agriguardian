@@ -26,6 +26,7 @@ public class UserMonitorImp implements UserMonitor {
 
     @Override
     public List<AlertGeoZone> monitor(AppUser user, Point point) {
+
         List<AlertGeoZone> allGeoZones = user.extractAlertGeoZones();
 
         //todo refactor when multiple zone types (e.g. circle and so on) will be available

@@ -45,6 +45,9 @@ public class FcmNotificator implements Notificator {
                     //todo add resendiong
                     log.error("[notifyUsers] failed to notify user [{}]; reason : {}", user.getId(), e.getMessage());
                 }
+                catch (Exception e){
+                    log.error("unexpected exception has occured : {}", e.getMessage());
+                }
             });
     }
 
