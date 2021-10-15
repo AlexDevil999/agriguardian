@@ -40,7 +40,8 @@ public class AesEncryptor implements DataEncoder {
 
         }
         catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
+            log.error("[setKey] {}",e.getMessage());
+            throw new InternalErrorException("cannot set secret key in encryptor");
         }
     }
 
@@ -57,7 +58,7 @@ public class AesEncryptor implements DataEncoder {
         }
         catch (Exception e)
         {
-            log.error("Error while encrypting: " + e.toString());
+            log.error("Error while encrypting: " + e.getMessage());
             throw new InternalErrorException("could not encrypt: "+toEncrypt);
         }
     }
@@ -75,7 +76,7 @@ public class AesEncryptor implements DataEncoder {
         }
         catch (Exception e)
         {
-           log.error("Error while decrypting: " + e.toString());
+           log.error("Error while decrypting: " + e.getMessage());
            throw new InternalErrorException("could not decrypt: "+toDecrypt);
         }
     }

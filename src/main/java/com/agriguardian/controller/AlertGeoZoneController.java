@@ -48,6 +48,8 @@ public class AlertGeoZoneController {
     public ResponseAlertGeoZoneDto addAlertGeoZone(@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
+        log.trace("user {} is trying to create geoZone", principal.getName());
+
         if (dto.getFigureType() == null) throw new BadRequestException("field 'figureType' may not be null");
 
         if (dto.getFigureType().equals(Figure.POLYGON) &&
@@ -95,6 +97,8 @@ public class AlertGeoZoneController {
     public ResponseAlertGeoZoneDto editGeoZone
             (@Valid @RequestBody EditGeoZoneDto dto, Errors errors, Principal principal){
         ValidationDto.handleErrors(errors);
+
+        log.trace("user {} is trying to edit geoZone", principal.getName());
 
         if(!dto.getType().equals(ZoneType.GEO))
             throw new ConflictException("mismatch of zone type . Was: " +dto.getType());
@@ -175,6 +179,9 @@ public class AlertGeoZoneController {
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/{id}")
     public ResponseEntity deleteAlertGeoZone(@PathVariable Long id, Principal principal) {
+
+        log.trace("user {} is trying to delete geoZone", principal.getName());
+
         AlertGeoZone zone = geoZoneServie.findById(id).orElseThrow(() -> new NotFoundException("zone not found; resource " + id));
 
         if (zone.getTeamGroup().extractAdmins().stream().noneMatch(u -> u.getUsername().equals(principal.getName()))) {
