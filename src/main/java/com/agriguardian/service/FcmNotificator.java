@@ -68,7 +68,7 @@ public class FcmNotificator implements Notificator {
 //                .putAllData(data)
                 .build();
 
-        log.debug("notification for {} is being sent",subject);
+        log.trace("notification for {} is being sent",subject);
 
         return firebaseMessaging.send(message);
     }

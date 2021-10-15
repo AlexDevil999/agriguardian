@@ -47,7 +47,7 @@ public class LocationController {
 
         List<AlertGeoZone> violatedZones = userMonitoringService.monitor(user, geo.findLastLocation().getPoint());
 
-        log.debug("violatedZones has been extracted");
+        log.trace("violatedZones for user {} has been extracted", principal.getName());
 
         //todo add notificaton and storing of user when he/she changes state
         violatedZones.forEach(zone -> {
