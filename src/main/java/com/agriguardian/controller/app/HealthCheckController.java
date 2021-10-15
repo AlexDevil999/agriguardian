@@ -30,6 +30,6 @@ public class HealthCheckController {
 
     @GetMapping("/version")
     public ResponseEntity<String> version() {
-        return ResponseEntity.ok("05.10");
+        return ResponseEntity.ok("15.10");
     }
 }
