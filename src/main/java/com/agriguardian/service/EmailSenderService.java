@@ -3,6 +3,8 @@ package com.agriguardian.service;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.service.interfaces.EmailSender;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.scheduling.annotation.Async;
@@ -13,6 +15,7 @@ import javax.mail.internet.MimeMessage;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class EmailSenderService implements EmailSender {
 
     private final JavaMailSender mailSender;
@@ -28,6 +31,8 @@ public class EmailSenderService implements EmailSender {
             helper.setTo(to);
             helper.setSubject("Confirm your email");
             helper.setFrom("authforagriguardian@gmail.com");
+
+            log.debug("[send] mailSender is sending message for {}", to);
 
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {

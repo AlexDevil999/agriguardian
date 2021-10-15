@@ -82,7 +82,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/device")
-    public ResponseUserDto addUserFollower(@Valid @RequestBody AddUserDeviceDto dto, Errors errors, Principal principal) {
+    public ResponseUserDto addUserDevice(@Valid @RequestBody AddUserDeviceDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());

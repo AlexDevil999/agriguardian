@@ -51,6 +51,8 @@ public class AlertBluetoothZoneController {
     public ResponseAlertBluetoothZoneDto addAlertBluetoothZone(@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
+        log.trace("user {} is trying to create bluetoothZone", principal.getName());
+
         if(!dto.getType().equals(ZoneType.BLUETOOTH))
             throw new ConflictException("mismatch of zone type . Was: " +dto.getType());
 
@@ -113,6 +115,8 @@ public class AlertBluetoothZoneController {
     @DeleteMapping
     public ResponseEntity deleteAlertBluetoothZone(Principal principal) {
 
+        log.trace("user {} is trying to delete bluetooth zone",principal.getName());
+
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         AlertBluetoothZone zone = user.getAlertBluetoothZone();
 
@@ -138,6 +142,8 @@ public class AlertBluetoothZoneController {
     public ResponseAlertBluetoothZoneDto editBluetoothZone
             (@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal){
         ValidationDto.handleErrors(errors);
+
+        log.trace("user {} is trying to edit bluetoothZone", principal.getName());
 
         if(!dto.getType().equals(ZoneType.BLUETOOTH))
             throw new ConflictException("mismatch of zone type . Was: " +dto.getType());

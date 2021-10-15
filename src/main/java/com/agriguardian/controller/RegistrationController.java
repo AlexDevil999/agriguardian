@@ -30,6 +30,7 @@ public class RegistrationController {
         ValidationDto.handleErrors(errors);
         AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
         AppUser saved = appUserService.activateUser(currentUser, dto.getConfirmationCode());
+        log.debug("user {} has confirmed email", dto.getUsername());
         return ResponseUserDto.of(saved);
     }
 
@@ -37,6 +38,9 @@ public class RegistrationController {
     public ResponseUserDto resendConfirmation
             (@RequestBody @Valid ResendConfirmationDto dto, Errors errors) {
         ValidationDto.handleErrors(errors);
+
+        log.debug("user {} requesting resending of an email confirmation", dto.getUsername());
+
         AppUser currentUser =appUserService.findByUsernameOrThrowNotFound(dto.getUsername());
         appUserService.sendEmailConfirmationForUser(currentUser);
         return ResponseUserDto.of(currentUser);
