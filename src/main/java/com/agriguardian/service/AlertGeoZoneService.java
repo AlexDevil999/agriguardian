@@ -53,12 +53,9 @@ public class AlertGeoZoneService {
 
 
         zone.addTeamGroup(group);
-//        AlertBluetoothZone savedZone = alertBluetoothZoneRepository.save(zone);
-//        zone.addVulnerable()
 
         vulnerables.forEach(v -> {
             AppUserGeoZone userZone = zone.addVulnerable(v);
-//            userZoneRepository.save(userZone);
         });
 
         if(figure.equals(Figure.POLYGON))

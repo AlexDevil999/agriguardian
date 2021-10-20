@@ -18,9 +18,6 @@ public class FirebaseMessagingConfig {
     @Bean
     public FirebaseMessaging firebaseMessaging() {
         try {
-//            GoogleCredentials googleCredentials = GoogleCredentials
-//                    .fromStream(new ClassPathResource("firebase-service-account.json").getInputStream());
-
             GoogleCredentials googleCredentials = GoogleCredentials.fromStream(new FileInputStream("firebase-service-account.json"));
 
             FirebaseOptions firebaseOptions = FirebaseOptions

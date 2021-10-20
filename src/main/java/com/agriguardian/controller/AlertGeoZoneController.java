@@ -154,15 +154,9 @@ public class AlertGeoZoneController {
     public  Map<Long, Set<ResponseAlertGeoZoneDto>> findZonesUnderProtection(Principal principal) {
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
-//        Set<AlertGeoZone> zonesUnderProtection = user.getAppUserTeamGroups().stream()
         Map<Long, Set<AlertGeoZone>> zonesUnderProtection = user.getAppUserTeamGroups().stream()
                 .filter(utg -> GroupRole.GUARDIAN == utg.getGroupRole())
-//                .flatMap(utg -> utg.getTeamGroup().getAlertGeoZones().stream())
                 .collect(Collectors.toMap(utg -> utg.getTeamGroup().getId(), utg -> utg.getTeamGroup().getAlertGeoZones()));
-
-//        return zonesUnderProtection.stream()
-//                .map(ResponseAlertGeoZoneDto::of)
-//                .collect(Collectors.toList());
 
 
         Map<Long, Set<ResponseAlertGeoZoneDto>> response =

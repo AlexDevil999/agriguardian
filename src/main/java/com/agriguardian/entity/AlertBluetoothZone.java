@@ -65,7 +65,6 @@ public class AlertBluetoothZone {
             return fromSet.get();
         } else {
             appUserBluetoothZones.add(userBluetoothZone);
-//            user.getAlertBluetoothZone().addVulnerable(user);
             user.getAppUserBluetoothZones().add(userBluetoothZone); //todo check this
             return userBluetoothZone;
         }

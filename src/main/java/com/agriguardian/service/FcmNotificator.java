@@ -65,7 +65,6 @@ public class FcmNotificator implements Notificator {
                 .builder()
                 .setToken(token)
                 .setNotification(notification)
-//                .putAllData(data)
                 .build();
 
         log.trace("notification for {} is being sent",subject);
@@ -73,58 +72,3 @@ public class FcmNotificator implements Notificator {
         return firebaseMessaging.send(message);
     }
 
-//    public void sendPersonal(String clientToken, String origin) {
-//        Message message = Message.builder()
-//                .setNotification(Notification.builder()
-//                        .setTitle("SNFY")
-//                        .setBody(origin)
-//                        .build())
-//                .setToken(clientToken)
-//                .setApnsConfig(ApnsConfig.builder()
-//                        .putHeader("content-available", "1")
-//                        .setAps(Aps.builder().build())
-//                        .build())
-//                .build();
-//
-//        try {
-//            FirebaseMessaging.getInstance().sendAsync(message).get();
-//        } catch (InterruptedException | ExecutionException e) {
-//            log.warn("{} [{}]", e.getClass().getSimpleName(), e.getMessage());
-//        }
-//    }
-}
-
-//@Log4j2
-//@Service
-//public class Notificator {
-//
-////    public Notificator() {
-////        try {
-////            FirebaseOptions options = FirebaseOptions.builder()
-////                    .setCredentials(GoogleCredentials.fromStream(new FileInputStream("fire.key.json"))).build();
-////            FirebaseApp.initializeApp(options);
-////        } catch (IOException e) {
-////            log.warn("Firebase init error [{}]", e.getMessage());
-////        }
-////    }
-//
-////    public void sendPersonal(String clientToken, String origin) {
-////        Message message = Message.builder()
-////                .setNotification(Notification.builder()
-////                        .setTitle("SNFY")
-////                        .setBody(origin)
-////                        .build())
-////                .setToken(clientToken)
-////                .setApnsConfig(ApnsConfig.builder()
-////                        .putHeader("content-available", "1")
-////                        .setAps(Aps.builder().build())
-////                        .build())
-////                .build();
-////
-////        try {
-////            FirebaseMessaging.getInstance().sendAsync(message).get();
-////        } catch (InterruptedException | ExecutionException e) {
-////            log.warn("{} [{}]", e.getClass().getSimpleName(), e.getMessage());
-////        }
-////    }
-//}
