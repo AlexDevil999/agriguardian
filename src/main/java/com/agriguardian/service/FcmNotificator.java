@@ -34,21 +34,20 @@ public class FcmNotificator implements Notificator {
 
     @Override
     public void notifyUsers(Set<AppUser> recipients, MessageDto message) {
-            recipients.forEach(user -> {
-                try {
-                    if (ValidationString.isBlank(user.getFcmToken())) {
-                        log.error("firebase cloud massaging token is absent; user: {} {}", user.getId(), user.getUsername());
-                        return;
-                    }
-                    sendNotification(message.getEvent().name(), mapper.writeValueAsString(message), null, user.getFcmToken());
-                } catch (FirebaseMessagingException | JsonProcessingException e) {
-                    //todo add resendiong
-                    log.error("[notifyUsers] failed to notify user [{}]; reason : {}", user.getId(), e.getMessage());
+        recipients.forEach(user -> {
+            try {
+                if (ValidationString.isBlank(user.getFcmToken())) {
+                    log.error("firebase cloud massaging token is absent; user: {} {}", user.getId(), user.getUsername());
+                    return;
                 }
-                catch (Exception e){
-                    log.error("unexpected exception has occured : {}", e.getMessage());
-                }
-            });
+                sendNotification(message.getEvent().name(), mapper.writeValueAsString(message), null, user.getFcmToken());
+            } catch (FirebaseMessagingException | JsonProcessingException e) {
+                //todo add resendiong
+                log.error("[notifyUsers] failed to notify user [{}]; reason : {}", user.getId(), e.getMessage());
+            } catch (Exception e) {
+                log.error("unexpected exception has occured : {}", e.getMessage());
+            }
+        });
     }
 
 
@@ -67,8 +66,9 @@ public class FcmNotificator implements Notificator {
                 .setNotification(notification)
                 .build();
 
-        log.trace("notification for {} is being sent",subject);
+        log.trace("notification for {} is being sent", subject);
 
         return firebaseMessaging.send(message);
     }
+}
 

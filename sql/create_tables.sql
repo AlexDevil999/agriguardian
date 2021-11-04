@@ -9,11 +9,23 @@ create table if not exists app_users
     otp_created_on bigint,
     status         text,
     user_role      text,
+    restrictions   text,
     refresh_token  text  unique,
     fcm_token      text,
     rt_created_on  bigint,
-    mac_address    text,
+    mac_address    text
 );
+
+create table if not exists app_users_relations
+(
+    id             serial primary key,
+    controller_id  bigint not null,
+    follower_id    bigint not null,
+    relation       text,
+    foreign key (controller_id) references app_users (id),
+    foreign key (follower_id) references app_users (id)
+);
+
 
 create table if not exists credit_cards
 (

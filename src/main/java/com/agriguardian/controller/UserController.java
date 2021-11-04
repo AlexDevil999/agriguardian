@@ -93,15 +93,14 @@ public class UserController {
         vulnerable.setPassword(props.getDevicePass());
         vulnerable.addUserInfo(dto.buildUserInfo());
 
-        AppUser saved = appUserService.saveUserDeviceIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
-        saved.setUsername("device_" + saved.getId());
-        saved = appUserService.save(vulnerable);
+        AppUser saved = appUserService.saveUserDeviceIfNotExist(vulnerable, Status.ACTIVATED, teamGroups, admin);
 
         notifyAllUsersFromTeamGroups(teamGroups);
 
         return ResponseUserDto.of(saved);
     }
 
+    //todo REWORK
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/device")
     public ResponseEntity deleteDevicesFromUser
@@ -109,8 +108,10 @@ public class UserController {
 
         ValidationDto.handleErrors(errors);
 
-        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        if(dto.getMacAddresses()==null&&dto.getUsername()==null)
+            throw new NotFoundException("either username or macAddresses is mandatory");
 
+        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         appUserService.deleteDevice(dto.getUsername(),dto.getMacAddresses());
         return ResponseEntity.ok(dto);
     }

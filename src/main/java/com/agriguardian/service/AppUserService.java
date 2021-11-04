@@ -2,6 +2,8 @@ package com.agriguardian.service;
 
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.entity.manyToMany.AppUserRelations;
+import com.agriguardian.enums.Relation;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
@@ -32,6 +34,7 @@ public class AppUserService {
     private final PasswordEncryptor passwordEncryptor;
     private final EmailSenderService emailSenderService;
     private final TeamGroupService teamGroupService;
+    private final AppUserRelationsRepository appUserRelationsRepository;
 
 
     public AppUser save(AppUser appUser) {
@@ -109,19 +112,28 @@ public class AppUserService {
 
     @Transactional
     public void deleteDevice(String username , Set<String> macAddresses) {
-        if (!existsByUsername(username)) {
-            throw new BadRequestException("user " + username + " does not exists");
+        if(username!=null) {
+            if (!existsByUsername(username)) {
+                throw new BadRequestException("user " + username + " does not exists");
+            }
         }
-        for (String macAddress: macAddresses) {
-            if(!existsByMacAddress(macAddress))
-                throw new NotFoundException("device with mac Address: "+macAddress+ " was not found");
+
+        if(macAddresses!=null) {
+            for (String macAddress : macAddresses) {
+                if (!existsByMacAddress(macAddress)) {
+                    throw new NotFoundException("device with mac Address: " + macAddress + " was not found");
+                }
+            }
         }
 
         try {
             //todo change when implement device
-            userRepo.deleteByUsername(username);
+            if(username!=null)
+                userRepo.deleteByUsername(username);
 
-            macAddresses.forEach(userRepo::deleteByMacAddress);
+            if(macAddresses!=null)
+                macAddresses.forEach(userRepo::deleteByMacAddress);
+
         } catch (Exception e) {
             log.error("[saveUserFollowerIfNotExist] failed to delete a devices {}; rsn: {}", macAddresses, e.getMessage());
             throw new InternalErrorException("failed to delete user; rsn: " + e.getMessage());
@@ -143,7 +155,7 @@ public class AppUserService {
     }
 
     @Transactional
-    public AppUser saveUserDeviceIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups) {
+    public AppUser saveUserDeviceIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups, AppUser creator) {
             if (existsByUsername(appUser.getUsername())) {
                 throw new BadRequestException("user " + appUser.getUsername() + " already exists");
             }
@@ -156,8 +168,24 @@ public class AppUserService {
                 AppUser deviceToSave = setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
 
                 AppUser device = userRepo.save(deviceToSave);
+                device.setUsername("device_" + device.getId());
+                device = userRepo.save(deviceToSave);
 
                 teamGroupService.saveDeviceToTeamGroups(device,teamGroups);
+
+                AppUserRelations creatorToDeviceRelation = new AppUserRelations();
+                creatorToDeviceRelation.setRelation(Relation.created);
+                creatorToDeviceRelation.setController(creator);
+                creatorToDeviceRelation.setUserFollower(device);
+
+                //todo DELETE THIS AFTER TESTING
+                AppUser controller = userRepo.findByUsername("vlad").get();
+                AppUserRelations sharedDeviceRelation = new AppUserRelations();
+                sharedDeviceRelation.setRelation(Relation.manipulate);
+                sharedDeviceRelation.setController(controller);
+                sharedDeviceRelation.setUserFollower(device);
+
+                appUserRelationsRepository.save(creatorToDeviceRelation);
 
                 return device;
             } catch (Exception e) {
@@ -273,7 +301,7 @@ public class AppUserService {
 
     private boolean existsByMacAddress(String macAddress) {
         try {
-            return userRepo.existsByUsername(macAddress);
+            return userRepo.existsByMacAddress(macAddress);
         } catch (Exception e) {
             log.error("[existsByMacAddress] failed to retrieve a user; rsn: {}", e.getMessage());
             throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());

@@ -2,8 +2,10 @@ package com.agriguardian.entity;
 
 import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.entity.manyToMany.AppUserGeoZone;
+import com.agriguardian.entity.manyToMany.AppUserRelations;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
+import com.agriguardian.enums.Restrictions;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import lombok.*;
@@ -62,17 +64,23 @@ public class AppUser {
     private Status status;
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
+    @Enumerated(EnumType.STRING)
+    private Restrictions restrictions;
 
-    @OneToMany(mappedBy = "appUser")
+    @OneToMany(mappedBy = "appUser", cascade = CascadeType.ALL)
     private Set<AppUserTeamGroup> appUserTeamGroups;
 
     @OneToOne(mappedBy = "associatedUser", cascade = CascadeType.ALL)
     private AlertBluetoothZone alertBluetoothZone;
 
-    @OneToMany(mappedBy = "appUser")
+    @OneToMany(mappedBy = "appUser",cascade = CascadeType.ALL)
     private Set<AppUserBluetoothZone> appUserBluetoothZones;
-    @OneToMany(mappedBy = "appUser")
+    @OneToMany(mappedBy = "appUser",cascade = CascadeType.ALL)
     private Set<AppUserGeoZone> appUserGeoZones;
+    @OneToMany(mappedBy = "controller",cascade = CascadeType.ALL)
+    private Set<AppUserRelations> relationToUsers;
+    @OneToMany(mappedBy = "userFollower",cascade = CascadeType.ALL)
+    private Set<AppUserRelations> usersRelationToMe;
 
 
     public void addUserInfo(UserInfo ui) {

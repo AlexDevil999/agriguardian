@@ -11,9 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeleteDevicesDto {
-    @NotBlank(message = "username is mandatory")
     private String username;
 
-    @NotNull(message = "set of mac addresses is mandatory")
     private Set<String> macAddresses;
 }
