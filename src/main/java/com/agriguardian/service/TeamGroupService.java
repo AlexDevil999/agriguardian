@@ -70,14 +70,6 @@ public class TeamGroupService {
         try {
             editedTeamGroup.removeAppUserTeamGroupFromGroup(appUserTeamGroupToDelete);
 
-            if (appUserToDelete.getUserRole().equals(UserRole.USER_FOLLOWER)) {
-                if (appUserToDelete.getAppUserTeamGroups().stream()
-                        .filter(appUserTeamGroup -> !appUserTeamGroup.getTeamGroup().equals(editedTeamGroup))
-                        .collect(Collectors.toSet()).size() == 0) {
-                    appUserRepository.deleteByUsername(appUserToDelete.getUsername());
-                }
-            }
-
             return save(editedTeamGroup);
         }
         catch (Exception e){
