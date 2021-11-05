@@ -1,6 +1,7 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.dto.DeleteDevicesDto;
+import com.agriguardian.dto.ResponseTeamGroupDto;
 import com.agriguardian.dto.appUser.AddUserMasterDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.entity.AppUser;
@@ -27,14 +28,16 @@ import java.security.Principal;
 public class FollowerController {
     private final TeamGroupService teamGroupService;
     private final AppUserService appUserService;
+
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/delete/{groupId}/{childId}")
-    public ResponseEntity deleteFollowerFromGroup(@PathVariable(name = "groupId") long groupId, @PathVariable(name = "childId") long childId, Principal principal) {
+    public ResponseTeamGroupDto deleteFollowerFromGroup(@PathVariable(name = "groupId") long groupId, @PathVariable(name = "childId") long childId, Principal principal) {
         TeamGroup thisGroup = teamGroupService.findById(groupId).orElseThrow(() -> new NotFoundException("group with id: " + groupId + " does not exists"));
         AppUser followerToDeleteFromGroup = appUserService.findById(childId).orElseThrow(() -> new NotFoundException("user with id: " + childId + "does not exists"));
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
-        return ResponseEntity.ok("deleted");
+        teamGroupService.removeControlledFollowerFromTeamGroup(deleter,followerToDeleteFromGroup,thisGroup);
+        return ResponseTeamGroupDto.of(thisGroup);
     }
 
 }
