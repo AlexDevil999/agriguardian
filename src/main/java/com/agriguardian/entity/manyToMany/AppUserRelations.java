@@ -14,16 +14,15 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
+@IdClass(RelationId.class)
 public class AppUserRelations {
-    @Id
-    @SequenceGenerator(name = "appUsersRelationsSequence", sequenceName = "app_users_relations_id_seq", allocationSize = 1)
-    @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "appUsersRelationsSequence")
-    private long id;
 
+    @Id
     @ManyToOne(optional = false)
     @JoinColumn(name="controller_id")
     private AppUser controller;
 
+    @Id
     @ManyToOne(optional = false)
     @JoinColumn(name="follower_id")
     private AppUser userFollower;

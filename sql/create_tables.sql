@@ -18,10 +18,10 @@ create table if not exists app_users
 
 create table if not exists app_users_relations
 (
-    id             serial primary key,
     controller_id  bigint not null,
     follower_id    bigint not null,
     relation       text,
+    PRIMARY KEY (controller_id, follower_id),
     foreign key (controller_id) references app_users (id),
     foreign key (follower_id) references app_users (id)
 );
