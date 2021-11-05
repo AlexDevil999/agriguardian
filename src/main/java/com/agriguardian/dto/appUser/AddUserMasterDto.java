@@ -5,11 +5,13 @@ import com.agriguardian.entity.CreditCard;
 import com.agriguardian.entity.UserInfo;
 import com.agriguardian.util.ValidationString;
 import lombok.Getter;
+import lombok.ToString;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Getter
+@ToString
 public class AddUserMasterDto {
     @NotBlank(message = "field 'username/email' is mandatory")
     private String username;

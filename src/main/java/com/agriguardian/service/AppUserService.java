@@ -20,9 +20,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.HashSet;
-import java.util.Optional;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -89,7 +88,7 @@ public class AppUserService {
     }
 
     @Transactional
-    public AppUser saveUserFollowerIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups) {
+    public AppUser saveUserFollowerIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups, AppUser master) {
         if (existsByUsername(appUser.getUsername())) {
             throw new BadRequestException("user " + appUser.getUsername() + " already exists");
         }
@@ -101,13 +100,16 @@ public class AppUserService {
 
             teamGroupService.saveVulnerableToTeamGroups(follower,teamGroups);
 
+            AppUserRelations masterToFollowerRelation = masterToFollowerRelation(master, follower, Relation.created);
+
+            appUserRelationsRepository.save(masterToFollowerRelation);
+
             return follower;
         } catch (Exception e) {
             log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
         }
     }
-
 
 
     @Transactional
@@ -173,10 +175,7 @@ public class AppUserService {
 
                 teamGroupService.saveDeviceToTeamGroups(device,teamGroups);
 
-                AppUserRelations creatorToDeviceRelation = new AppUserRelations();
-                creatorToDeviceRelation.setRelation(Relation.created);
-                creatorToDeviceRelation.setController(creator);
-                creatorToDeviceRelation.setUserFollower(device);
+                AppUserRelations creatorToDeviceRelation = masterToFollowerRelation(creator,device,Relation.created);
 
                 appUserRelationsRepository.save(creatorToDeviceRelation);
 
@@ -185,32 +184,6 @@ public class AppUserService {
                 log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
                 throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
             }
-    }
-
-
-    public TeamGroup createTeamGroup(AppUser u) {
-        if (u.getTeamGroup() != null) {
-            throw new BadRequestException("user " + u.getUsername() + "already have group (id " + u.getTeamGroup().getId() + ")");
-        }
-
-        //todo add verification for uniqueness
-        String guardianInvitationCode = RandomCodeGenerator.generateInvitationCode();
-        String vulnerableInvitationCode;
-        do {
-            vulnerableInvitationCode = RandomCodeGenerator.generateInvitationCode();
-        } while (vulnerableInvitationCode.equals(guardianInvitationCode));
-
-
-        TeamGroup tg = TeamGroup.builder()
-                .guardianInvitationCode(guardianInvitationCode)
-                .vulnerableInvitationCode(vulnerableInvitationCode)
-                .name(u.getUserInfo().getName() + "'s group")
-                .owner(u)
-                .appUserTeamGroups(new HashSet())
-                .build();
-
-        u.setTeamGroup(tg);
-        return tg;
     }
 
     public Optional<AppUser> findById(Long id) {
@@ -292,6 +265,20 @@ public class AppUserService {
         emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
     }
 
+    public List<AppUserRelations> getAllUserRelations(AppUser master){
+        return appUserRelationsRepository.findByController(master);
+    }
+
+    public Map<Long, String> getAllRelatedWithRelationType(AppUser master){
+        List<AppUserRelations> userRelations = getAllUserRelations(master);
+        Map<Long, String> subAccountIdAndRelation =
+                userRelations.stream().collect(Collectors.
+                        toMap(appUserRelations -> appUserRelations.getUserFollower().getId(),
+                                appUserRelations -> appUserRelations.getRelation().name()));
+
+        return subAccountIdAndRelation;
+    }
+
     private boolean existsByMacAddress(String macAddress) {
         try {
             return userRepo.existsByMacAddress(macAddress);
@@ -314,6 +301,15 @@ public class AppUserService {
         appUser.setOtpCreatedOnMs(time);
         appUser.setPassword(passwordEncryptor.encode(appUser.getPassword()));
         return appUser;
+    }
+
+    private AppUserRelations masterToFollowerRelation(AppUser master, AppUser follower, Relation relation) {
+        AppUserRelations masterToFollowerRelation = new AppUserRelations();
+        masterToFollowerRelation.setRelation(relation);
+        masterToFollowerRelation.setController(master);
+        masterToFollowerRelation.setUserFollower(follower);
+
+        return masterToFollowerRelation;
     }
 
 

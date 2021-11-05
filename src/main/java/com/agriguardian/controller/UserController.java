@@ -5,15 +5,13 @@ import com.agriguardian.dto.DeleteDevicesDto;
 import com.agriguardian.dto.FcmCredentialsDto;
 import com.agriguardian.dto.MessageDto;
 import com.agriguardian.dto.RegistrationConfirmationDto;
-import com.agriguardian.dto.appUser.AddUserDeviceDto;
-import com.agriguardian.dto.appUser.AddUserFollowerDto;
-import com.agriguardian.dto.appUser.AddUserMasterDto;
-import com.agriguardian.dto.appUser.ResponseUserDto;
+import com.agriguardian.dto.appUser.*;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
+import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.AccessDeniedException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.TeamGroupRepository;
@@ -34,6 +32,8 @@ import org.springframework.web.bind.annotation.*;
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import static java.util.stream.Collectors.joining;
@@ -50,6 +50,7 @@ public class UserController {
     @PostMapping("/master")
     public ResponseUserDto registerUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
         ValidationDto.handleErrors(errors);
+        log.debug("[registerUserMaster] user: " + dto.toString());
 
         AppUser appUser = dto.buildUser();
         appUser.addUserInfo(dto.buildUserInfo());
@@ -65,6 +66,7 @@ public class UserController {
     public ResponseUserDto addUserFollower
             (@Valid @RequestBody AddUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
+        log.debug("[addUserFollower] user: " + principal.getName() + "follower: "+ dto.getUsername());
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
@@ -73,7 +75,7 @@ public class UserController {
         AppUser vulnerable = dto.buildUser();
         vulnerable.addUserInfo(dto.buildUserInfo());
 
-        AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups);
+        AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups, admin);
 
         notifyAllUsersFromTeamGroups(teamGroups);
 
@@ -84,6 +86,7 @@ public class UserController {
     @PostMapping("/device")
     public ResponseUserDto addUserDevice(@Valid @RequestBody AddUserDeviceDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
+        log.debug("[addUserDevice] user: " + principal.getName() + "device: "+ dto.getMacAddress());
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
@@ -105,8 +108,8 @@ public class UserController {
     @DeleteMapping("/device")
     public ResponseEntity deleteDevicesFromUser
             (@RequestBody @Valid DeleteDevicesDto dto, Errors errors, Principal principal) {
-
         ValidationDto.handleErrors(errors);
+        log.debug("[deleteDevicesFromUser] user: " + principal.getName() + " devices: "+ dto.getMacAddresses());
 
         if(dto.getMacAddresses()==null&&dto.getUsername()==null)
             throw new NotFoundException("either username or macAddresses is mandatory");
@@ -118,6 +121,7 @@ public class UserController {
 
     @DeleteMapping("/master")
     public ResponseEntity deleteUser(Principal principal) {
+        log.debug("[deleteUser] : " + principal.getName());
         appUserService.deleteUser(principal.getName());
         return ResponseEntity.ok("deleted");
     }
@@ -141,6 +145,20 @@ public class UserController {
                 .orElseThrow(() -> new NotFoundException("User not found"));
 
         return ResponseUserDto.of(user);
+    }
+
+    @GetMapping(value = "/getSubAccount")
+    public ResponseSubAccountsDto getSubAccounts(Principal principal) {
+        log.debug("[getSubAccounts] for: " + principal.getName());
+        AppUser current = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        if(current.getUserRole().equals(UserRole.USER_FOLLOWER)) {
+            throw new AccessDeniedException("followers have no sub accounts");
+        }
+
+        Map<Long, String> relatedUserIdsWithRelationType = appUserService.getAllRelatedWithRelationType(current);
+
+        return new ResponseSubAccountsDto(relatedUserIdsWithRelationType);
     }
 
 
