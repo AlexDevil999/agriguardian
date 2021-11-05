@@ -47,19 +47,17 @@ public class TeamGroupService {
     @Transactional
     public TeamGroup deleteAppUserFromTeamGroupByTeamGroupAdmin(AppUser deleter, Long tgId, Long appUserToDeleteId){
 
-        AppUserTeamGroup appUserTeamGroupToDelete =appUserTeamGroupRepository.findByAppUserId(appUserToDeleteId).orElseThrow
+        TeamGroup editedTeamGroup = findById(tgId).orElseThrow
+                (() -> new NotFoundException("group with id "+tgId+" was not found"));
+
+        AppUserTeamGroup appUserTeamGroupToDelete = appUserTeamGroupRepository.findByAppUserIdAndTeamGroup(appUserToDeleteId,editedTeamGroup).orElseThrow
                 (() -> new NotFoundException("user with id: "+appUserToDeleteId + " was not found in a group"));
 
         AppUser appUserToDelete = appUserTeamGroupToDelete.getAppUser();
 
-        TeamGroup editedTeamGroup = findById(tgId).orElseThrow
-                (() -> new NotFoundException("group with id "+tgId+" was not found"));
 
         if(appUserToDelete.equals(deleter))
             throw new ConflictException("Prohibited to delete yourself");
-
-        if(!editedTeamGroup.containsUser(appUserToDelete))
-            throw new ConflictException("group does not contain user: "+ appUserToDeleteId);
 
         if(!editedTeamGroup.extractAdmins().contains(deleter))
             throw new ConflictException("group does not contain guardian: "+ deleter.getId());
@@ -201,7 +199,7 @@ public class TeamGroupService {
         if(!appUserRelationsRepository.findByControllerAndUserFollower(deleter,follower).isPresent()){
             throw new ConflictException("user " + deleter.getUsername() + " is not allowed to remove user "+ follower.getUsername());
         }
-        AppUserTeamGroup appUserTeamGroupToDelete = appUserTeamGroupRepository.findByAppUserId(follower.getId())
+        AppUserTeamGroup appUserTeamGroupToDelete = appUserTeamGroupRepository.findByAppUserIdAndTeamGroup(follower.getId(),teamGroup)
                 .orElseThrow(() -> new NotFoundException("can not find user with id: " + follower.getId()));
         try {
             teamGroup.removeAppUserTeamGroupFromGroup(appUserTeamGroupToDelete);
