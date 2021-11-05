@@ -36,7 +36,7 @@ public class FollowerController {
         AppUser followerToDeleteFromGroup = appUserService.findById(childId).orElseThrow(() -> new NotFoundException("user with id: " + childId + "does not exists"));
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
-        teamGroupService.removeControlledFollowerFromTeamGroup(deleter,followerToDeleteFromGroup,thisGroup);
+        thisGroup = teamGroupService.removeControlledFollowerFromTeamGroup(deleter,followerToDeleteFromGroup,thisGroup);
         return ResponseTeamGroupDto.of(thisGroup);
     }
 

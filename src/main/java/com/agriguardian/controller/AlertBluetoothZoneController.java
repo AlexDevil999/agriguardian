@@ -157,6 +157,10 @@ public class AlertBluetoothZoneController {
 
         TeamGroup teamGroupForCurrentBluetoothZone= currentUsersBluetoothZone.getTeamGroup();
 
+        if(currentUsersBluetoothZone.getTeamGroup().getId()!=dto.getTeamGroupId()){
+            throw new ConflictException("user "+ principal.getName()+ "cannot change BLE zone from group " + dto.getTeamGroupId());
+        }
+
         if (!teamGroupForCurrentBluetoothZone.extractAdmins().contains(thisUser)) {
             throw new AccessDeniedException("user does not have rights on recourse: teamGroup " + teamGroupForCurrentBluetoothZone.getId());
         }

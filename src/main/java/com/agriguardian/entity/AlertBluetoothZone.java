@@ -70,6 +70,16 @@ public class AlertBluetoothZone {
         }
     }
 
+    public void removeVulnerable(AppUser user) {
+        if(appUserBluetoothZones == null)
+            return;
+
+        else {
+            AppUserBluetoothZone toDelete = new AppUserBluetoothZone(this.id,user,this);
+            appUserBluetoothZones.remove(toDelete);
+        }
+    }
+
     public void emptySet(){
         appUserBluetoothZones.removeAll(appUserBluetoothZones);
     }

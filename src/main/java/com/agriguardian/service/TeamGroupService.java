@@ -1,5 +1,7 @@
 package com.agriguardian.service;
 
+import com.agriguardian.entity.AlertBluetoothZone;
+import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
@@ -9,10 +11,7 @@ import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
-import com.agriguardian.repository.AppUserRelationsRepository;
-import com.agriguardian.repository.AppUserRepository;
-import com.agriguardian.repository.AppUserTeamGroupRepository;
-import com.agriguardian.repository.TeamGroupRepository;
+import com.agriguardian.repository.*;
 import com.agriguardian.util.RandomCodeGenerator;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -33,6 +32,8 @@ public class TeamGroupService {
     private final AppUserRepository appUserRepository;
     private final AppUserTeamGroupRepository appUserTeamGroupRepository;
     private final AppUserRelationsRepository appUserRelationsRepository;
+    private final AlertBluetoothZoneRepository alertBluetoothZoneRepository;
+    private final AlertGeoZoneRepository alertGeoZoneRepository;
 
     public TeamGroup save(TeamGroup tg) {
         try {
@@ -71,6 +72,8 @@ public class TeamGroupService {
 
         try {
             editedTeamGroup.removeAppUserTeamGroupFromGroup(appUserTeamGroupToDelete);
+
+            removeAppUserFromTeamGroupZones(appUserToDelete, editedTeamGroup);
 
             return save(editedTeamGroup);
         }
@@ -202,6 +205,9 @@ public class TeamGroupService {
                 .orElseThrow(() -> new NotFoundException("can not find user with id: " + follower.getId()));
         try {
             teamGroup.removeAppUserTeamGroupFromGroup(appUserTeamGroupToDelete);
+
+            removeAppUserFromTeamGroupZones(follower, teamGroup);
+
             return save(teamGroup);
         }
         catch (Exception e){
@@ -218,6 +224,22 @@ public class TeamGroupService {
         }   while (existsByGuardianCode(code)||existsByVulnerableCode(code));
 
         return code;
+    }
+
+    private void removeAppUserFromTeamGroupZones(AppUser toRemove, TeamGroup teamgroup){
+        if(teamgroup.getAlertBluetoothZones()!=null) {
+            for (AlertBluetoothZone BLEZone : teamgroup.getAlertBluetoothZones()) {
+                BLEZone.removeVulnerable(toRemove);
+                alertBluetoothZoneRepository.save(BLEZone);
+            }
+        }
+
+        if(teamgroup.getAlertGeoZones()!=null) {
+            for (AlertGeoZone GEOZone : teamgroup.getAlertGeoZones()) {
+                GEOZone.removeVulnerable(toRemove);
+                alertGeoZoneRepository.save(GEOZone);
+            }
+        }
     }
 
 

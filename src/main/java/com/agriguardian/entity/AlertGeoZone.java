@@ -78,6 +78,14 @@ public class AlertGeoZone {
         }
     }
 
+    public void removeVulnerable(AppUser user){
+        if(appUserGeoZones==null)
+            return;
+
+        AppUserGeoZone toDelete = new AppUserGeoZone(this.id,user,this);
+        appUserGeoZones.remove(toDelete);
+    }
+
     public void emptyVulnerables(){
         appUserGeoZones.removeAll(appUserGeoZones);
     }
