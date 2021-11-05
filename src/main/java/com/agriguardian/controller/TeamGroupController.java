@@ -7,11 +7,9 @@ import com.agriguardian.dto.teamGroup.JoinTeamGroupDto;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
-import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.GroupRole;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.NotFoundException;
-import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.TeamGroupService;
 import com.agriguardian.service.interfaces.Notificator;
@@ -67,7 +65,7 @@ public class TeamGroupController {
                                                   @PathVariable("userId") Long userId,
                                                   @PathVariable("tgId") Long tgId) {
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-        TeamGroup updatedTg = teamGroupService.deleteAppUserFromTeamGroup(deleter,tgId,userId);
+        TeamGroup updatedTg = teamGroupService.deleteAppUserFromTeamGroupByTeamGroupAdmin(deleter,tgId,userId);
         return ResponseTeamGroupDto.of(updatedTg);
 
     }

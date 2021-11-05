@@ -9,6 +9,7 @@ import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
+import com.agriguardian.repository.AppUserRelationsRepository;
 import com.agriguardian.repository.AppUserRepository;
 import com.agriguardian.repository.AppUserTeamGroupRepository;
 import com.agriguardian.repository.TeamGroupRepository;
@@ -31,6 +32,7 @@ public class TeamGroupService {
     private final TeamGroupRepository teamGroupRepository;
     private final AppUserRepository appUserRepository;
     private final AppUserTeamGroupRepository appUserTeamGroupRepository;
+    private final AppUserRelationsRepository appUserRelationsRepository;
 
     public TeamGroup save(TeamGroup tg) {
         try {
@@ -42,7 +44,7 @@ public class TeamGroupService {
     }
 
     @Transactional
-    public TeamGroup deleteAppUserFromTeamGroup(AppUser deleter, Long tgId, Long appUserToDeleteId){
+    public TeamGroup deleteAppUserFromTeamGroupByTeamGroupAdmin(AppUser deleter, Long tgId, Long appUserToDeleteId){
 
         AppUserTeamGroup appUserTeamGroupToDelete =appUserTeamGroupRepository.findByAppUserId(appUserToDeleteId).orElseThrow
                 (() -> new NotFoundException("user with id: "+appUserToDeleteId + " was not found in a group"));
@@ -189,6 +191,23 @@ public class TeamGroupService {
     public void addUserToTeamGroup(AppUser user,TeamGroup teamGroup, GroupRole groupRole) {
         AppUserTeamGroup autg = user.addTeamGroup(teamGroup, groupRole);
         appUserTeamGroupRepository.save(autg);
+    }
+
+    @Transactional
+    public TeamGroup removeControlledFollowerFromTeamGroup(AppUser deleter, AppUser follower, TeamGroup teamGroup){
+        if(!appUserRelationsRepository.findByControllerAndUserFollower(deleter,follower).isPresent()){
+            throw new ConflictException("user " + deleter.getUsername() + " is not allowed to remove user "+ follower.getUsername());
+        }
+        AppUserTeamGroup appUserTeamGroupToDelete = appUserTeamGroupRepository.findByAppUserId(follower.getId())
+                .orElseThrow(() -> new NotFoundException("can not find user with id: " + follower.getId()));
+        try {
+            teamGroup.removeAppUserTeamGroupFromGroup(appUserTeamGroupToDelete);
+            return save(teamGroup);
+        }
+        catch (Exception e){
+            log.error("[deleteFromTeamGroup] failed to delete a user {} from tg {}; rsn: {}", follower.getUsername() ,teamGroup.getId(), e.getMessage());
+            throw new InternalErrorException("failed to delete user from tg; rsn: " + e.getMessage());
+        }
     }
 
     private String generateUniqueInvitationCode(){
