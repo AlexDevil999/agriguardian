@@ -147,7 +147,7 @@ public class UserController {
         return ResponseUserDto.of(user);
     }
 
-    @GetMapping(value = "/getSubAccount")
+    @GetMapping(value = "/getSubAccounts")
     public ResponseSubAccountsDto getSubAccounts(Principal principal) {
         log.debug("[getSubAccounts] for: " + principal.getName());
         AppUser current = appUserService.findByUsernameOrThrowNotFound(principal.getName());
