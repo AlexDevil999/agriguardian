@@ -30,6 +30,20 @@ public class ResponseUserDto {
 
 
     public static ResponseUserDto of(AppUser u) {
+        if(u.getUserInfo()==null||u.getUserInfo().getUserAvatar()==null){
+            return ResponseUserDto.builder()
+                    .id(u.getId())
+                    .username(u.getUsername())
+                    .subscription(SubscriptionDto.of(u.getSubscription()))
+                    .ownerOfGroup(u.getOwnGroup())
+                    .groups(defineTeamGroups(u))
+                    .createdOnMs(u.getCreatedOnMs())
+                    .status(u.getStatus())
+                    .userRole(u.getUserRole())
+                    .userInfo(UserInfoDto.of(u.getUserInfo()))
+                    .macAddress(u.getMacAddress())
+                    .build();
+        }
         return ResponseUserDto.builder()
                 .id(u.getId())
                 .username(u.getUsername())

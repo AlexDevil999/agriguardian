@@ -39,15 +39,6 @@ public class AppUser {
     @Column(name = "fcm_token")
     private String fcmToken;
 
-
-    public UserInfo getUserInfo() {
-        if(userInfo!=null)
-            return userInfo;
-        else{
-            return new UserInfo(0,null,null,null,null,null,null,null,null,null,null);
-        }
-    }
-
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private UserInfo userInfo;
     @OneToOne(mappedBy = "appUser", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
