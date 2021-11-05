@@ -178,13 +178,6 @@ public class AppUserService {
                 creatorToDeviceRelation.setController(creator);
                 creatorToDeviceRelation.setUserFollower(device);
 
-                //todo DELETE THIS AFTER TESTING
-                AppUser controller = userRepo.findByUsername("vladyslavzabrodskyi@gmail.com").get();
-                AppUserRelations sharedDeviceRelation = new AppUserRelations();
-                sharedDeviceRelation.setRelation(Relation.manipulate);
-                sharedDeviceRelation.setController(controller);
-                sharedDeviceRelation.setUserFollower(device);
-
                 appUserRelationsRepository.save(creatorToDeviceRelation);
 
                 return device;

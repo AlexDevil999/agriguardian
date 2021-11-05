@@ -35,7 +35,6 @@ import java.security.Principal;
 public class TeamGroupController {
     private final AppUserService appUserService;
     private final TeamGroupService teamGroupService;
-    private final AppUserTeamGroupRepository autgRepository;
     private final Notificator notificator;
 
 
@@ -49,8 +48,7 @@ public class TeamGroupController {
                 .orElseThrow(() -> new NotFoundException("group not found; resource: code " + dto.getInvitationCode()));
         GroupRole groupRole = defineInvCodeOrThrowBadRequest(teamGroup, dto.getInvitationCode());
 
-        AppUserTeamGroup autg = user.addTeamGroup(teamGroup, groupRole);
-        autgRepository.save(autg);
+        teamGroupService.addUserToTeamGroup(user,teamGroup, groupRole);
 
         notificator.notifyUsers(
                 teamGroup.extractUsers(),

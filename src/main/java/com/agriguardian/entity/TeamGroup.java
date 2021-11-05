@@ -23,9 +23,9 @@ public class TeamGroup {
     private long id;
     private String name;
 
-    @Column(name = "guardian_code")
+    @Column(name = "guardian_code", unique = true)
     private String guardianInvitationCode;
-    @Column(name = "vulnerable_code")
+    @Column(name = "vulnerable_code", unique = true)
     private String vulnerableInvitationCode;
     @OneToOne
     @JoinColumn(name = "owner_id")

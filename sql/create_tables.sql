@@ -62,8 +62,8 @@ create table if not exists team_groups
 (
     id              serial primary key,
     name            text,
-    guardian_code   text,
-    vulnerable_code text,
+    guardian_code   text   unique,
+    vulnerable_code text   unique,
     owner_id        bigint not null,
     foreign key (owner_id) references app_users (id)
 );

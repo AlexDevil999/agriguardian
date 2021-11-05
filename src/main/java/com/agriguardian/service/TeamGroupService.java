@@ -178,13 +178,8 @@ public class TeamGroupService {
             throw new BadRequestException("user " + u.getUsername() + "already have group (id " + u.getTeamGroup().getId() + ")");
         }
 
-        //todo add verification for uniqueness
-        String guardianInvitationCode = RandomCodeGenerator.generateInvitationCode();
-        String vulnerableInvitationCode;
-        do {
-            vulnerableInvitationCode = RandomCodeGenerator.generateInvitationCode();
-        } while (vulnerableInvitationCode.equals(guardianInvitationCode));
-
+        String guardianInvitationCode = generateUniqueInvitationCode();
+        String vulnerableInvitationCode = generateUniqueInvitationCode();
 
         TeamGroup tg = TeamGroup.builder()
                 .guardianInvitationCode(guardianInvitationCode)
@@ -197,4 +192,22 @@ public class TeamGroupService {
         u.setTeamGroup(tg);
         return tg;
     }
+
+    @Transactional
+    public void addUserToTeamGroup(AppUser user,TeamGroup teamGroup, GroupRole groupRole) {
+        AppUserTeamGroup autg = user.addTeamGroup(teamGroup, groupRole);
+        appUserTeamGroupRepository.save(autg);
+    }
+
+    private String generateUniqueInvitationCode(){
+        String code;
+
+        do {
+            code = RandomCodeGenerator.generateInvitationCode();
+        }   while (existsByGuardianCode(code)||existsByVulnerableCode(code));
+
+        return code;
+    }
+
+
 }
