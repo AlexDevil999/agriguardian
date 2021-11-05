@@ -40,7 +40,6 @@ public class ResponseUserDto {
                 .status(u.getStatus())
                 .userRole(u.getUserRole())
                 .userInfo(UserInfoDto.of(u.getUserInfo()))
-                .userAvatar(u.getUserInfo().getUserAvatar())
                 .macAddress(u.getMacAddress())
                 .build();
     }
