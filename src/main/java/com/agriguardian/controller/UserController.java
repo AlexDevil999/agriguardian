@@ -202,8 +202,9 @@ public class UserController {
         return ResponseUserDto.of(user);
     }
 
+    @PreAuthorize("hasAuthority('USER_MASTER')")
     @GetMapping(value = "/getSubAccounts")
-    public ResponseSubAccountsDto getSubAccounts(Principal principal) {
+    public List<SubAccountDto> getSubAccounts(Principal principal) {
         log.debug("[getSubAccounts] for: " + principal.getName());
         AppUser current = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
@@ -211,9 +212,9 @@ public class UserController {
             throw new AccessDeniedException("followers have no sub accounts");
         }
 
-        Map<Long, String> relatedUserIdsWithRelationType = appUserService.getAllRelatedWithRelationType(current);
+        Map<AppUser, String> relatedUserIdsWithRelationType = appUserService.getAllRelatedWithRelationType(current);
 
-        return new ResponseSubAccountsDto(relatedUserIdsWithRelationType);
+        return new ResponseSubAccountsDto(relatedUserIdsWithRelationType).getSubAccounts();
     }
 
 

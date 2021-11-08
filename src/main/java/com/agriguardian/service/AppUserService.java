@@ -269,11 +269,11 @@ public class AppUserService {
         return appUserRelationsRepository.findByController(master);
     }
 
-    public Map<Long, String> getAllRelatedWithRelationType(AppUser master){
+    public Map<AppUser, String> getAllRelatedWithRelationType(AppUser master){
         List<AppUserRelations> userRelations = getAllUserRelations(master);
-        Map<Long, String> subAccountIdAndRelation =
+        Map<AppUser, String> subAccountIdAndRelation =
                 userRelations.stream().collect(Collectors.
-                        toMap(appUserRelations -> appUserRelations.getUserFollower().getId(),
+                        toMap(appUserRelations -> appUserRelations.getUserFollower(),
                                 appUserRelations -> appUserRelations.getRelation().name()));
 
         return subAccountIdAndRelation;
