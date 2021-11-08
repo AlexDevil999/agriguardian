@@ -85,7 +85,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
-    @PostMapping("/follower/edit")
+    @PutMapping("/follower/edit")
     public ResponseUserDto editUserFollower
             (@Valid @RequestBody EditUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
