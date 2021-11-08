@@ -279,6 +279,22 @@ public class AppUserService {
         return subAccountIdAndRelation;
     }
 
+    public AppUser editUser(AppUser editedUser, AppUser thisUser) {
+        thisUser.editUser(editedUser);
+        try{
+            return userRepo.save(thisUser);
+        } catch (Exception e){
+            log.error("[editUser] failed to edit a user; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to edit a user; rsn: " + e.getMessage());
+        }
+    }
+
+    public boolean masterCanEditVulnerable(AppUser master , AppUser follower){
+        Optional<AppUserRelations> relation = appUserRelationsRepository.findByControllerAndUserFollowerAndRelation(master,follower,Relation.created);
+
+        return relation.isPresent();
+    }
+
     private boolean existsByMacAddress(String macAddress) {
         try {
             return userRepo.existsByMacAddress(macAddress);

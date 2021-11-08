@@ -29,7 +29,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 public class TeamGroupService {
     private final TeamGroupRepository teamGroupRepository;
-    private final AppUserRepository appUserRepository;
     private final AppUserTeamGroupRepository appUserTeamGroupRepository;
     private final AppUserRelationsRepository appUserRelationsRepository;
     private final AlertBluetoothZoneRepository alertBluetoothZoneRepository;
@@ -65,6 +64,14 @@ public class TeamGroupService {
         if(editedTeamGroup.extractAdmins().contains(appUserToDelete)){
             if(!editedTeamGroup.getOwner().equals(deleter)){
                 throw new ConflictException("only owner can remove guardians");
+            }
+        }
+
+        if(!editedTeamGroup.getOwner().equals(deleter)) {
+            if (appUserToDelete.getUserRole().equals(UserRole.USER_FOLLOWER)) {
+                if (!appUserRelationsRepository.findByControllerAndUserFollower(deleter, appUserToDelete).isPresent()){
+                    throw new ConflictException("master can delete only his folowers");
+                }
             }
         }
 

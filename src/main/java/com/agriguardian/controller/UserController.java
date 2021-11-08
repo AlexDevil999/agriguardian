@@ -13,6 +13,7 @@ import com.agriguardian.enums.GroupRole;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.AccessDeniedException;
+import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.TeamGroupRepository;
 import com.agriguardian.service.AppUserService;
@@ -35,6 +36,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static java.util.stream.Collectors.joining;
 
@@ -62,11 +64,64 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
-    @PostMapping("/follower")
+    @PutMapping("/master/edit")
+    public ResponseUserDto editUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+        log.debug("[editUserMaster] user: " + dto.toString());
+        AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        AppUser editedUser = dto.buildUser();
+        editedUser.addUserInfo(dto.buildUserInfo());
+        editedUser.addCreditCard(dto.buildCreditCard());
+
+        AppUser edited = appUserService.editUser(editedUser, appUserToEdit);
+
+        if(edited.getAppUserTeamGroups()!=null) {
+            Set<TeamGroup> shouldGetNotification = edited.getAppUserTeamGroups().stream().map(appUserTeamGroup -> appUserTeamGroup.getTeamGroup()).collect(Collectors.toSet());
+            notifyAllUsersFromTeamGroups(shouldGetNotification);
+        }
+
+        return ResponseUserDto.of(edited);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PostMapping("/follower/edit")
+    public ResponseUserDto editUserFollower
+            (@Valid @RequestBody EditUserFollowerDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+        log.debug("[addUserFollower] user: " + principal.getName() + "follower: "+ dto.getOldUsername());
+
+        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(dto.getOldUsername());
+
+        if(appUserToEdit.getUserRole()!=UserRole.USER_FOLLOWER){
+            throw new ConflictException("user " + appUserToEdit.getUsername() + "is not a follower");
+        }
+
+        if(!appUserService.masterCanEditVulnerable(admin, appUserToEdit)){
+            throw new AccessDeniedException("master " + admin.getUsername() + "may not edit follower" + appUserToEdit.getUsername());
+        }
+
+        AppUser editedUser = dto.buildUser();
+        editedUser.addUserInfo(dto.buildUserInfo());
+
+        AppUser edited = appUserService.editUser(editedUser,appUserToEdit);
+
+        if(edited.getAppUserTeamGroups()!=null) {
+            Set<TeamGroup> shouldGetNotification = edited.getAppUserTeamGroups().stream().map(appUserTeamGroup -> appUserTeamGroup.getTeamGroup()).collect(Collectors.toSet());
+            notifyAllUsersFromTeamGroups(shouldGetNotification);
+        }
+
+        return ResponseUserDto.of(edited);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PutMapping("/follower")
     public ResponseUserDto addUserFollower
             (@Valid @RequestBody AddUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
-        log.debug("[addUserFollower] user: " + principal.getName() + "follower: "+ dto.getUsername());
+        log.debug("[editUserFollower] user: " + principal.getName() + "follower: "+ dto.getUsername());
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 

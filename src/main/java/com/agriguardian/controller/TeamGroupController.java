@@ -8,7 +8,9 @@ import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.enums.GroupRole;
+import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
+import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.TeamGroupService;
@@ -46,7 +48,23 @@ public class TeamGroupController {
                 .orElseThrow(() -> new NotFoundException("group not found; resource: code " + dto.getInvitationCode()));
         GroupRole groupRole = defineInvCodeOrThrowBadRequest(teamGroup, dto.getInvitationCode());
 
+        if(user.getUserRole().equals(UserRole.USER_FOLLOWER)){
+            if(groupRole==GroupRole.GUARDIAN)
+                throw new ConflictException("follower may not be invited as a guardian to group");
+
+            if(dto.getFollowerIds()!=null){
+                throw new ConflictException("follower may not add devices to group");
+            }
+        }
+
         teamGroupService.addUserToTeamGroup(user,teamGroup, groupRole);
+
+        if(dto.getFollowerIds()!=null){
+            for (Long id:dto.getFollowerIds()) {
+                AppUser userToAddToGroup = appUserService.findById(id).orElseThrow(() -> new NotFoundException("user with id: "+id+"was not found"));
+                teamGroupService.addUserToTeamGroup(userToAddToGroup,teamGroup,GroupRole.VULNERABLE);
+            }
+        }
 
         notificator.notifyUsers(
                 teamGroup.extractUsers(),

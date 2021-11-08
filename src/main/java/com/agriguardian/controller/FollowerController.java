@@ -24,7 +24,7 @@ import java.security.Principal;
 @Log4j2
 @AllArgsConstructor
 @RestController
-@RequestMapping("/api/v1/followers")
+@RequestMapping("/api/v1/follower")
 public class FollowerController {
     private final TeamGroupService teamGroupService;
     private final AppUserService appUserService;

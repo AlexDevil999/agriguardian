@@ -149,4 +149,11 @@ public class AppUser {
             return appUserGeoZones.stream().map(AppUserGeoZone::getAlertGeoZone).collect(Collectors.toList());
         }
     }
+
+    public void editUser(AppUser editedUser){
+        this.setUsername(editedUser.getUsername());
+        this.setPassword(editedUser.getPassword());
+        this.setCard(editedUser.getCard());
+        this.setUserInfo(editedUser.getUserInfo());
+    }
 }
