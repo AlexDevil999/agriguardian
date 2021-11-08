@@ -84,6 +84,14 @@ public class TeamGroupController {
                                                   @PathVariable("tgId") Long tgId) {
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup updatedTg = teamGroupService.deleteAppUserFromTeamGroupByTeamGroupAdmin(deleter,tgId,userId);
+
+        notificator.notifyUsers(
+                updatedTg.extractUsers(),
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(updatedTg.getId())
+                        .build()
+        );
         return ResponseTeamGroupDto.of(updatedTg);
 
     }
