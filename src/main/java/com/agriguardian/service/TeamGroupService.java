@@ -226,22 +226,13 @@ public class TeamGroupService {
 
     @Transactional
     public void setNewCodes(TeamGroup teamGroup,boolean resetVulnerable, boolean resetGuardian){
-        String vulnerableCode="";
-        String guardianCode="";
-        if(resetVulnerable){
-            vulnerableCode= generateUniqueInvitationCode();
-        }
-        if(resetGuardian){
-            guardianCode = generateUniqueInvitationCode();
-        }
-
         try {
-            if (!vulnerableCode.isEmpty()) {
-                teamGroup.setVulnerableInvitationCode(vulnerableCode);
+            if (resetVulnerable) {
+                teamGroup.setVulnerableInvitationCode(generateUniqueInvitationCode());
             }
 
-            if (!guardianCode.isEmpty()) {
-                teamGroup.setGuardianInvitationCode(vulnerableCode);
+            if (resetGuardian) {
+                teamGroup.setGuardianInvitationCode(generateUniqueInvitationCode());
             }
 
             teamGroupRepository.save(teamGroup);
