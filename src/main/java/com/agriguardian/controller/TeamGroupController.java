@@ -119,7 +119,7 @@ public class TeamGroupController {
             throw new ConflictException("only owner can refresh codes");
         }
 
-        teamGroupService.setNewCodes(thisGroup, (Boolean.TRUE).equals(dto.getVulnerableCode()), (Boolean.TRUE).equals(dto.getGuardianCode().equals));
+        teamGroupService.setNewCodes(thisGroup, (Boolean.TRUE).equals(dto.getVulnerableCode()), (Boolean.TRUE).equals(dto.getGuardianCode()));
 
         notificator.notifyUsers(
                 thisGroup.extractUsers(),
