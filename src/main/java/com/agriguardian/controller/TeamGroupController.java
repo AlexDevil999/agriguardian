@@ -42,6 +42,15 @@ public class TeamGroupController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/join")
+    public ResponseUserDto createGroup(Principal principal) {
+        AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        teamGroupService.createTeamGroupForUser(thisUser);
+
+        return ResponseUserDto.of(thisUser);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PostMapping("/join")
     public ResponseUserDto joinGroup(@Valid @RequestBody JoinTeamGroupDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 

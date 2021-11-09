@@ -175,7 +175,7 @@ public class TeamGroupService {
         });
     }
 
-    public TeamGroup createTeamGroup(AppUser u) {
+    private TeamGroup createTeamGroup(AppUser u) {
         if (u.getTeamGroup() != null) {
             throw new BadRequestException("user " + u.getUsername() + "already have group (id " + u.getTeamGroup().getId() + ")");
         }
