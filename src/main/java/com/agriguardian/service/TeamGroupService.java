@@ -131,6 +131,9 @@ public class TeamGroupService {
     //todo check if it fits here
     @Transactional
     public void createTeamGroupForUser(AppUser user){
+        if(teamGroupRepository.existsByOwner(user)){
+            throw new ConflictException("user already has a teamGroup");
+        }
         try {
             TeamGroup tg = teamGroupRepository.save(createTeamGroup(user));
             AppUserTeamGroup autg = user.addTeamGroup(tg, GroupRole.GUARDIAN);

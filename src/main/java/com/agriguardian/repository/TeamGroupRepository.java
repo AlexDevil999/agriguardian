@@ -1,5 +1,6 @@
 package com.agriguardian.repository;
 
+import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -16,4 +17,6 @@ public interface TeamGroupRepository extends CrudRepository<TeamGroup, Long> {
     Optional<TeamGroup> findByGuardianInvitationCode(String code);
 
     Optional<TeamGroup> findByVulnerableInvitationCode(String code);
+
+    boolean existsByOwner(AppUser appUser);
 }
