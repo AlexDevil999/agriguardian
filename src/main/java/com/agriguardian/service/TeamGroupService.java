@@ -225,7 +225,7 @@ public class TeamGroupService {
     }
 
     @Transactional
-    public void setNewCodes(TeamGroup teamGroup,boolean resetVulnerable, boolean resetGuardian){
+    public void setNewCodes(TeamGroup teamGroup, boolean resetVulnerable, boolean resetGuardian){
         try {
             if (resetVulnerable) {
                 teamGroup.setVulnerableInvitationCode(generateUniqueInvitationCode());

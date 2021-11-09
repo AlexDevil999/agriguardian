@@ -108,10 +108,12 @@ public class TeamGroupController {
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
-    @PutMapping("refreshCodes/{tgId}")
-    public ResponseTeamGroupDto refreshGroupCodes(Principal principal,
-                                                  RefreshCodesDto dto,
+    @PutMapping("/refreshCodes/{tgId}")
+    public ResponseTeamGroupDto refreshGroupCodes(@Valid @RequestBody RefreshCodesDto dto,
+                                                  Principal principal,
+                                                  Errors errors,
                                                   @PathVariable("tgId") Long tgId) {
+        ValidationDto.handleErrors(errors);
         AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup thisGroup = teamGroupService.findById(tgId).orElseThrow(() -> new NotFoundException("team group with id :" + tgId + "does not exists"));
 
@@ -119,7 +121,7 @@ public class TeamGroupController {
             throw new ConflictException("only owner can refresh codes");
         }
 
-        teamGroupService.setNewCodes(thisGroup, (Boolean.TRUE).equals(dto.getVulnerableCode()), (Boolean.TRUE).equals(dto.getGuardianCode()));
+        teamGroupService.setNewCodes(thisGroup, Boolean.TRUE.equals(dto.getVulnerableCode()), Boolean.TRUE.equals(dto.getGuardianCode()));
 
         notificator.notifyUsers(
                 thisGroup.extractUsers(),
