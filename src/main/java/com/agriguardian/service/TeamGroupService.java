@@ -221,6 +221,34 @@ public class TeamGroupService {
         }
     }
 
+    @Transactional
+    public void setNewCodes(TeamGroup teamGroup,boolean resetVulnerable, boolean resetGuardian){
+        String vulnerableCode="";
+        String guardianCode="";
+        if(resetVulnerable){
+            vulnerableCode= generateUniqueInvitationCode();
+        }
+        if(resetGuardian){
+            guardianCode = generateUniqueInvitationCode();
+        }
+
+        try {
+            if (!vulnerableCode.isEmpty()) {
+                teamGroup.setVulnerableInvitationCode(vulnerableCode);
+            }
+
+            if (!guardianCode.isEmpty()) {
+                teamGroup.setGuardianInvitationCode(vulnerableCode);
+            }
+
+            teamGroupRepository.save(teamGroup);
+
+        } catch (Exception e){
+            log.error("[setNewCodes] failed refresh codes for tg {}; rsn: {}", teamGroup.getId(), e.getMessage());
+            throw new InternalErrorException("failed refresh codes for tg rsn:" + e.getMessage());
+        }
+    }
+
     private String generateUniqueInvitationCode(){
         String code;
 

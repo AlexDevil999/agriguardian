@@ -1,6 +1,7 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.dto.MessageDto;
+import com.agriguardian.dto.RefreshCodesDto;
 import com.agriguardian.dto.ResponseTeamGroupDto;
 import com.agriguardian.dto.appUser.ResponseUserDto;
 import com.agriguardian.dto.teamGroup.JoinTeamGroupDto;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Optional;
 
 
 @Log4j2
@@ -93,6 +95,31 @@ public class TeamGroupController {
                         .build()
         );
         return ResponseTeamGroupDto.of(updatedTg);
+
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PutMapping("refreshCodes/{tgId}")
+    public ResponseTeamGroupDto refreshGroupCodes(Principal principal,
+                                                  RefreshCodesDto dto,
+                                                  @PathVariable("tgId") Long tgId) {
+        AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        TeamGroup thisGroup = teamGroupService.findById(tgId).orElseThrow(() -> new NotFoundException("team group with id :" + tgId + "does not exists"));
+
+        if(!thisGroup.getOwner().equals(thisUser)){
+            throw new ConflictException("only owner can refresh codes");
+        }
+
+        teamGroupService.setNewCodes(thisGroup, dto.getVulnerableCode().equals(Boolean.TRUE), dto.getGuardianCode().equals(Boolean.TRUE));
+
+        notificator.notifyUsers(
+                thisGroup.extractUsers(),
+                MessageDto.builder()
+                        .event(EventType.TEAM_GROUP_UPDATED)
+                        .groupId(thisGroup.getId())
+                        .build()
+        );
+        return ResponseTeamGroupDto.of(thisGroup);
 
     }
 
