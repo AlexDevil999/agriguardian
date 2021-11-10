@@ -177,27 +177,17 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
-    @DeleteMapping("/device")
-    public ResponseEntity deleteDevicesFromUser
-            (@RequestBody @Valid DeleteDevicesDto dto, Errors errors, Principal principal) {
-        ValidationDto.handleErrors(errors);
-        log.debug("[deleteDevicesFromUser] user: " + principal.getName() + " devices: "+ dto.getMacAddresses());
+    @DeleteMapping("/follower/delete/{id}")
+    public ResponseUserDto deleteFollowerFromUser
+            (@PathVariable(name="id")Long id, Principal principal) {
+        log.debug("[deleteFollowerFromUser] user: " + principal.getName() + " id: "+ id);
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-        appUserService.deleteDevicesFromUser(dto.getMacAddresses(),admin);
-        return ResponseEntity.ok(dto);
-    }
+        appUserService.deleteFollowerFromUser(id,admin);
 
-    @PreAuthorize("hasAuthority('USER_MASTER')")
-    @DeleteMapping("/follower")
-    public ResponseEntity deleteFollowerFromUser
-            (@RequestBody @Valid DeleteFollowerDto dto, Errors errors, Principal principal) {
-        ValidationDto.handleErrors(errors);
-        log.debug("[deleteDevicesFromUser] user: " + principal.getName() + " devices: "+ dto.getUsername());
 
-        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-        appUserService.deleteFollowerFromUser(dto.getUsername(),admin);
-        return ResponseEntity.ok(dto);
+        AppUser adminAfterDeletion = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        return ResponseUserDto.of(adminAfterDeletion);
     }
 
     @DeleteMapping("/master")

@@ -112,41 +112,19 @@ public class AppUserService {
         }
     }
 
-
     @Transactional
-    public void deleteDevicesFromUser(Set<String> macAddresses, AppUser master) {
-
-        for (String macAddress : macAddresses) {
-            if (!existsByMacAddress(macAddress)) {
-                throw new NotFoundException("device with mac Address: " + macAddress + " was not found");
-            }
-            if(!appUserRelationsRepository.findByControllerAndUserFollowerAndRelation(master,userRepo.findByMacAddress(macAddress),Relation.created).isPresent()){
-                throw new ConflictException("user: " + master.getUsername() + "may not delete device with mac address: " + macAddress);
-            }
+    public void deleteFollowerFromUser(Long id, AppUser master) {
+        if(!userRepo.existsById(id)){
+            throw new NotFoundException("user: " + id + "was not found");
         }
-
-        try {
-            macAddresses.forEach(userRepo::deleteByMacAddress);
-
-        } catch (Exception e) {
-            log.error("[saveUserFollowerIfNotExist] failed to delete devices {}; rsn: {}", macAddresses, e.getMessage());
-            throw new InternalErrorException("failed to delete devices; rsn: " + e.getMessage());
-        }
-    }
-
-    @Transactional
-    public void deleteFollowerFromUser(String username, AppUser master) {
-        if(!existsByUsername(username)){
-            throw new NotFoundException("user: " + username + "was not found");
-        }
-        if(!appUserRelationsRepository.findByControllerAndUserFollowerAndRelation(master,findByUsername(username).get(),Relation.created).isPresent()){
-            throw new ConflictException(master.getUsername() + "may not delete user " + username);
+        if(!appUserRelationsRepository.findByControllerAndUserFollowerAndRelation(master,userRepo.findById(id).get(),Relation.created).isPresent()){
+            throw new ConflictException(master.getUsername() + "may not delete user " + id);
         }
         try {
-            userRepo.deleteByUsername(username);
+            userRepo.deleteById(id);
 
         } catch (Exception e) {
-            log.error("[saveUserFollowerIfNotExist] failed to delete user {}; rsn: {}", username, e.getMessage());
+            log.error("[saveUserFollowerIfNotExist] failed to delete user {}; rsn: {}", id, e.getMessage());
             throw new InternalErrorException("failed to delete devices; rsn: " + e.getMessage());
         }
     }
