@@ -158,6 +158,8 @@ public class AppUserService {
         }
 
         try {
+            List<AppUser> created = appUserRelationsRepository.findByControllerAndRelation(userRepo.findByUsername(username).get(), Relation.created).stream().map(appUserRelations -> appUserRelations.getUserFollower()).collect(Collectors.toList());
+            created.stream().forEach(appUser -> userRepo.delete(appUser));
             userRepo.deleteByUsername(username);
         } catch (Exception e) {
             log.error("[deleteUser] failed to delete a user {}; rsn: {}", username, e.getMessage());
