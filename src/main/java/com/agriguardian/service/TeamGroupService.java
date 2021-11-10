@@ -225,6 +225,23 @@ public class TeamGroupService {
     }
 
     @Transactional
+    public TeamGroup addControlledFollowerToTeamGroup(AppUser deleter, AppUser follower, TeamGroup teamGroup){
+        if(!appUserRelationsRepository.findByControllerAndUserFollower(deleter,follower).isPresent()){
+            throw new ConflictException("user " + deleter.getUsername() + " is not allowed to remove user "+ follower.getUsername());
+        }
+
+        try {
+            AppUserTeamGroup autg = follower.addTeamGroup(teamGroup, GroupRole.VULNERABLE);
+            appUserTeamGroupRepository.save(autg);
+            return teamGroupRepository.findById(teamGroup.getId()).get();
+        }
+        catch (Exception e){
+            log.error("[deleteFromTeamGroup] failed to delete a user {} from tg {}; rsn: {}", follower.getUsername() ,teamGroup.getId(), e.getMessage());
+            throw new InternalErrorException("failed to delete user from tg; rsn: " + e.getMessage());
+        }
+    }
+
+    @Transactional
     public void setNewCodes(TeamGroup teamGroup, boolean resetVulnerable, boolean resetGuardian){
         try {
             if (resetVulnerable) {

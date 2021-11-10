@@ -32,11 +32,24 @@ public class FollowerController {
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/delete/{groupId}/{childId}")
     public ResponseTeamGroupDto deleteFollowerFromGroup(@PathVariable(name = "groupId") long groupId, @PathVariable(name = "childId") long childId, Principal principal) {
+
         TeamGroup thisGroup = teamGroupService.findById(groupId).orElseThrow(() -> new NotFoundException("group with id: " + groupId + " does not exists"));
         AppUser followerToDeleteFromGroup = appUserService.findById(childId).orElseThrow(() -> new NotFoundException("user with id: " + childId + "does not exists"));
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
         thisGroup = teamGroupService.removeControlledFollowerFromTeamGroup(deleter,followerToDeleteFromGroup,thisGroup);
+        return ResponseTeamGroupDto.of(thisGroup);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PostMapping("add/{groupId}/{childId}")
+    public ResponseTeamGroupDto addFollowerToGroup(@PathVariable(name = "groupId") long groupId, @PathVariable(name = "childId") long childId, Principal principal) {
+
+        TeamGroup thisGroup = teamGroupService.findById(groupId).orElseThrow(() -> new NotFoundException("group with id: " + groupId + " does not exists"));
+        AppUser followerToDeleteFromGroup = appUserService.findById(childId).orElseThrow(() -> new NotFoundException("user with id: " + childId + "does not exists"));
+        AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        thisGroup = teamGroupService.addControlledFollowerToTeamGroup(deleter,followerToDeleteFromGroup,thisGroup);
         return ResponseTeamGroupDto.of(thisGroup);
     }
 
