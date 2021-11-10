@@ -114,7 +114,7 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
-    @PutMapping("/follower")
+    @PostMapping("/follower")
     public ResponseUserDto addUserFollower
             (@Valid @RequestBody AddUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
