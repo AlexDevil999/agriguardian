@@ -15,6 +15,8 @@ public interface AppUserRepository extends CrudRepository<AppUser, Long> {
 
     boolean existsByMacAddress(String macAddress);
 
+    AppUser findByMacAddress(String macAddress);
+
     void deleteByUsername(String username);
 
     void deleteByMacAddress(String macAddress);

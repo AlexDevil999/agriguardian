@@ -1,10 +1,7 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.config.Props;
-import com.agriguardian.dto.DeleteDevicesDto;
-import com.agriguardian.dto.FcmCredentialsDto;
-import com.agriguardian.dto.MessageDto;
-import com.agriguardian.dto.RegistrationConfirmationDto;
+import com.agriguardian.dto.*;
 import com.agriguardian.dto.appUser.*;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
@@ -179,7 +176,6 @@ public class UserController {
         return ResponseUserDto.of(saved);
     }
 
-    //todo REWORK
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/device")
     public ResponseEntity deleteDevicesFromUser
@@ -187,11 +183,20 @@ public class UserController {
         ValidationDto.handleErrors(errors);
         log.debug("[deleteDevicesFromUser] user: " + principal.getName() + " devices: "+ dto.getMacAddresses());
 
-        if(dto.getMacAddresses()==null&&dto.getUsername()==null)
-            throw new NotFoundException("either username or macAddresses is mandatory");
+        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+        appUserService.deleteDevicesFromUser(dto.getMacAddresses(),admin);
+        return ResponseEntity.ok(dto);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @DeleteMapping("/follower")
+    public ResponseEntity deleteFollowerFromUser
+            (@RequestBody @Valid DeleteFollowerDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+        log.debug("[deleteDevicesFromUser] user: " + principal.getName() + " devices: "+ dto.getUsername());
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-        appUserService.deleteDevice(dto.getUsername(),dto.getMacAddresses());
+        appUserService.deleteFollowerFromUser(dto.getUsername(),admin);
         return ResponseEntity.ok(dto);
     }
 

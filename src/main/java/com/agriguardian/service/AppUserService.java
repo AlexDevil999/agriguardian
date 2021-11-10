@@ -114,32 +114,40 @@ public class AppUserService {
 
 
     @Transactional
-    public void deleteDevice(String username , Set<String> macAddresses) {
-        if(username!=null) {
-            if (!existsByUsername(username)) {
-                throw new BadRequestException("user " + username + " does not exists");
-            }
-        }
+    public void deleteDevicesFromUser(Set<String> macAddresses, AppUser master) {
 
-        if(macAddresses!=null) {
-            for (String macAddress : macAddresses) {
-                if (!existsByMacAddress(macAddress)) {
-                    throw new NotFoundException("device with mac Address: " + macAddress + " was not found");
-                }
+        for (String macAddress : macAddresses) {
+            if (!existsByMacAddress(macAddress)) {
+                throw new NotFoundException("device with mac Address: " + macAddress + " was not found");
+            }
+            if(!appUserRelationsRepository.findByControllerAndUserFollowerAndRelation(master,userRepo.findByMacAddress(macAddress),Relation.created).isPresent()){
+                throw new ConflictException("user: " + master.getUsername() + "may not delete device with mac address: " + macAddress);
             }
         }
 
         try {
-            //todo change when implement device
-            if(username!=null)
-                userRepo.deleteByUsername(username);
-
-            if(macAddresses!=null)
-                macAddresses.forEach(userRepo::deleteByMacAddress);
+            macAddresses.forEach(userRepo::deleteByMacAddress);
 
         } catch (Exception e) {
-            log.error("[saveUserFollowerIfNotExist] failed to delete a devices {}; rsn: {}", macAddresses, e.getMessage());
-            throw new InternalErrorException("failed to delete user; rsn: " + e.getMessage());
+            log.error("[saveUserFollowerIfNotExist] failed to delete devices {}; rsn: {}", macAddresses, e.getMessage());
+            throw new InternalErrorException("failed to delete devices; rsn: " + e.getMessage());
+        }
+    }
+
+    @Transactional
+    public void deleteFollowerFromUser(String username, AppUser master) {
+        if(!existsByUsername(username)){
+            throw new NotFoundException("user: " + username + "was not found");
+        }
+        if(!appUserRelationsRepository.findByControllerAndUserFollowerAndRelation(master,findByUsername(username).get(),Relation.created).isPresent()){
+            throw new ConflictException(master.getUsername() + "may not delete user " + username);
+        }
+        try {
+            userRepo.deleteByUsername(username);
+
+        } catch (Exception e) {
+            log.error("[saveUserFollowerIfNotExist] failed to delete user {}; rsn: {}", username, e.getMessage());
+            throw new InternalErrorException("failed to delete devices; rsn: " + e.getMessage());
         }
     }
 
