@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.Optional;
+import java.util.Set;
 
 
 @Log4j2
@@ -70,11 +70,8 @@ public class TeamGroupController {
 
         teamGroupService.addUserToTeamGroup(user,teamGroup, groupRole);
 
-        if(dto.getFollowerIds()!=null){
-            for (Long id:dto.getFollowerIds()) {
-                AppUser userToAddToGroup = appUserService.findById(id).orElseThrow(() -> new NotFoundException("user with id: "+id+"was not found"));
-                teamGroupService.addUserToTeamGroup(userToAddToGroup,teamGroup,GroupRole.VULNERABLE);
-            }
+        if(dto.getFollowerIds()!=null) {
+            addFollowerToTeamGroup(dto.getFollowerIds(), teamGroup);
         }
 
         notificator.notifyUsers(
@@ -87,6 +84,7 @@ public class TeamGroupController {
 
         return ResponseUserDto.of(user);
     }
+
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/{tgId}/{userId}")
@@ -154,5 +152,12 @@ public class TeamGroupController {
         if (tg.getGuardianInvitationCode().equals(code)) return GroupRole.GUARDIAN;
         else if (tg.getVulnerableInvitationCode().equals(code)) return GroupRole.VULNERABLE;
         else throw new BadRequestException("unknown code: " + code);
+    }
+
+    private void addFollowerToTeamGroup(Set<Long> followerIds, TeamGroup teamGroup) {
+        for (Long id: followerIds) {
+            AppUser userToAddToGroup = appUserService.findById(id).orElseThrow(() -> new NotFoundException("user with id: "+id+"was not found"));
+            teamGroupService.addUserToTeamGroup(userToAddToGroup, teamGroup,GroupRole.VULNERABLE);
+        }
     }
 }

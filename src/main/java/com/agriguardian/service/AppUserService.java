@@ -151,29 +151,30 @@ public class AppUserService {
 
     @Transactional
     public AppUser saveUserDeviceIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups, AppUser creator) {
-            if (existsByUsername(appUser.getUsername())) {
-                throw new BadRequestException("user " + appUser.getUsername() + " already exists");
-            }
+
+        if (existsByUsername(appUser.getUsername())) {
+            throw new BadRequestException("user " + appUser.getUsername() + " already exists");
+        }
 
         if (existsByMacAddress(appUser.getMacAddress())) {
             throw new BadRequestException("device with mac address " + appUser.getMacAddress() + " already exists");
         }
 
-            try {
-                AppUser deviceToSave = setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
+        try {
+            AppUser deviceToSave = setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
 
-                AppUser device = userRepo.save(deviceToSave);
-                device.setUsername("device_" + device.getId());
-                device = userRepo.save(deviceToSave);
+            AppUser device = userRepo.save(deviceToSave);
+            device.setUsername("device_" + device.getId());
+            device = userRepo.save(deviceToSave);
 
-                teamGroupService.saveDeviceToTeamGroups(device,teamGroups);
+            teamGroupService.saveDeviceToTeamGroups(device,teamGroups);
 
-                AppUserRelations creatorToDeviceRelation = masterToFollowerRelation(creator,device,Relation.created);
+            AppUserRelations creatorToDeviceRelation = masterToFollowerRelation(creator,device,Relation.created);
 
-                appUserRelationsRepository.save(creatorToDeviceRelation);
+            appUserRelationsRepository.save(creatorToDeviceRelation);
 
-                return device;
-            } catch (Exception e) {
+            return device;
+        } catch (Exception e) {
                 log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
                 throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
             }

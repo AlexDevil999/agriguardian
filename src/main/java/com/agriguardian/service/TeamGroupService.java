@@ -54,7 +54,6 @@ public class TeamGroupService {
 
         AppUser appUserToDelete = appUserTeamGroupToDelete.getAppUser();
 
-
         if(appUserToDelete.equals(deleter))
             throw new ConflictException("Prohibited to delete yourself");
 
@@ -70,7 +69,7 @@ public class TeamGroupService {
         if(!editedTeamGroup.getOwner().equals(deleter)) {
             if (appUserToDelete.getUserRole().equals(UserRole.USER_FOLLOWER)) {
                 if (!appUserRelationsRepository.findByControllerAndUserFollower(deleter, appUserToDelete).isPresent()){
-                    throw new ConflictException("master can delete only his folowers");
+                    throw new ConflictException("master can delete only his followers");
                 }
             }
         }

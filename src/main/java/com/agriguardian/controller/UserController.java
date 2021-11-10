@@ -71,6 +71,12 @@ public class UserController {
         editedUser.addUserInfo(dto.buildUserInfo());
         editedUser.addCreditCard(dto.buildCreditCard());
 
+        AppUser edited = editUserAndNotifyHisGroupsMembers(appUserToEdit, editedUser);
+
+        return ResponseUserDto.of(edited);
+    }
+
+    private AppUser editUserAndNotifyHisGroupsMembers(AppUser appUserToEdit, AppUser editedUser) {
         AppUser edited = appUserService.editUser(editedUser, appUserToEdit);
 
         if(edited.getAppUserTeamGroups()!=null) {
@@ -78,7 +84,7 @@ public class UserController {
             notifyAllUsersFromTeamGroups(shouldGetNotification);
         }
 
-        return ResponseUserDto.of(edited);
+        return edited;
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
@@ -103,12 +109,7 @@ public class UserController {
         AppUser editedUser = dto.buildUser();
         editedUser.addUserInfo(dto.buildUserInfo());
 
-        AppUser edited = appUserService.editUser(editedUser,appUserToEdit);
-
-        if(edited.getAppUserTeamGroups()!=null) {
-            Set<TeamGroup> shouldGetNotification = edited.getAppUserTeamGroups().stream().map(appUserTeamGroup -> appUserTeamGroup.getTeamGroup()).collect(Collectors.toSet());
-            notifyAllUsersFromTeamGroups(shouldGetNotification);
-        }
+        AppUser edited = editUserAndNotifyHisGroupsMembers(appUserToEdit, editedUser);
 
         return ResponseUserDto.of(edited);
     }
