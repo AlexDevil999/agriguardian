@@ -4,6 +4,7 @@ import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.entity.manyToMany.AppUserRelations;
 import com.agriguardian.enums.Relation;
+import com.agriguardian.enums.Restrictions;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.BadRequestException;
@@ -184,6 +185,37 @@ public class AppUserService {
                 log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
                 throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
             }
+    }
+
+    @Transactional
+    public AppUser saveUserBeaconIfNotExist(AppUser appUser, Status status, Set<TeamGroup> teamGroups, AppUser creator) {
+        if (existsByUsername(appUser.getUsername())) {
+            throw new BadRequestException("user " + appUser.getUsername() + " already exists");
+        }
+
+        if (existsByMacAddress(appUser.getMacAddress())) {
+            throw new BadRequestException("device with mac address " + appUser.getMacAddress() + " already exists");
+        }
+
+        try {
+            AppUser deviceToSave = setAppUserDetails(appUser, status, UserRole.USER_FOLLOWER);
+            deviceToSave.setRestrictions(Restrictions.cannotSendGpsData);
+
+            AppUser device = userRepo.save(deviceToSave);
+            device.setUsername("beacon_" + device.getId());
+            device = userRepo.save(deviceToSave);
+
+            teamGroupService.saveDeviceToTeamGroups(device,teamGroups);
+
+            AppUserRelations creatorToDeviceRelation = masterToFollowerRelation(creator,device,Relation.created);
+
+            appUserRelationsRepository.save(creatorToDeviceRelation);
+
+            return device;
+        } catch (Exception e) {
+            log.error("[saveUserFollowerIfNotExist] failed to save a user {}; rsn: {}", appUser, e.getMessage());
+            throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
+        }
     }
 
     public Optional<AppUser> findById(Long id) {

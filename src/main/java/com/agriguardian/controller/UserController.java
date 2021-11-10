@@ -158,6 +158,27 @@ public class UserController {
         return ResponseUserDto.of(saved);
     }
 
+    @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PostMapping("/beacon")
+    public ResponseUserDto addUserBeacon(@Valid @RequestBody AddUserDeviceDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+        log.debug("[addUserDevice] user: " + principal.getName() + "beacon: "+ dto.getMacAddress());
+
+        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        Set<TeamGroup> teamGroups = extractAndCheckTeamGroups(dto.getTeamGroups(), admin);
+
+        AppUser vulnerable = dto.buildUser();
+        vulnerable.setPassword(props.getDevicePass());
+        vulnerable.addUserInfo(dto.buildUserInfo());
+
+        AppUser saved = appUserService.saveUserBeaconIfNotExist(vulnerable, Status.ACTIVATED, teamGroups, admin);
+
+        notifyAllUsersFromTeamGroups(teamGroups);
+
+        return ResponseUserDto.of(saved);
+    }
+
     //todo REWORK
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/device")

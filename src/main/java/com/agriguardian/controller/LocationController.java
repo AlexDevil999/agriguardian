@@ -6,6 +6,7 @@ import com.agriguardian.dto.ViolationDto;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.EventType;
+import com.agriguardian.enums.Restrictions;
 import com.agriguardian.exception.BadRequestException;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.interfaces.Notificator;
@@ -21,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import java.security.Principal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -38,11 +40,21 @@ public class LocationController {
     public ViolationDto notifyLocation(@Valid @RequestBody GeoMonitoringDto geo, Errors errors, Principal principal) {
         //todo add storing of history
         ValidationDto.handleErrors(errors);
+        AppUser user = userService.findByUsernameOrThrowNotFound(principal.getName());
+
+        if(user.getRestrictions().equals(Restrictions.cannotSendGpsData)){
+            log.debug("beacon: "+ principal.getName() + "may not send GPS data");
+
+            return ViolationDto.builder()
+                    .userId(user.getId())
+                    .violatedZones(Arrays.asList())
+                    .build();
+        }
+
         if (geo.getLocations().isEmpty()) {
             throw new BadRequestException("field 'locations' may not be empty");
         }
 
-        AppUser user = userService.findByUsernameOrThrowNotFound(principal.getName());
         log.debug("[notifyLocation] {} notifies location {}", user.getUsername(), geo);
 
         List<AlertGeoZone> violatedZones = userMonitoringService.monitor(user, geo.findLastLocation().getPoint());
