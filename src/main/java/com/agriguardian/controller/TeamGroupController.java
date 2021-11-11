@@ -53,6 +53,7 @@ public class TeamGroupController {
     @PostMapping("/join")
     public ResponseUserDto joinGroup(@Valid @RequestBody JoinTeamGroupDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
+        log.trace(principal.getName() + "trying to join the group by code " + dto.getInvitationCode());
 
         AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup teamGroup = teamGroupService.findByInvitationCode(dto.getInvitationCode())
@@ -91,6 +92,8 @@ public class TeamGroupController {
     public ResponseTeamGroupDto deleteUserFromTeamGroup(Principal principal,
                                                   @PathVariable("userId") Long userId,
                                                   @PathVariable("tgId") Long tgId) {
+        log.trace(principal.getName() + "deleting user from group as admin");
+
         AppUser deleter = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         TeamGroup updatedTg = teamGroupService.deleteAppUserFromTeamGroupByTeamGroupAdmin(deleter,tgId,userId);
 

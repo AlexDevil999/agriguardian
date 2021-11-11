@@ -76,17 +76,6 @@ public class UserController {
         return ResponseUserDto.of(edited);
     }
 
-    private AppUser editUserAndNotifyHisGroupsMembers(AppUser appUserToEdit, AppUser editedUser) {
-        AppUser edited = appUserService.editUser(editedUser, appUserToEdit);
-
-        if(edited.getAppUserTeamGroups()!=null) {
-            Set<TeamGroup> shouldGetNotification = edited.getAppUserTeamGroups().stream().map(appUserTeamGroup -> appUserTeamGroup.getTeamGroup()).collect(Collectors.toSet());
-            notifyAllUsersFromTeamGroups(shouldGetNotification);
-        }
-
-        return edited;
-    }
-
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PutMapping("/follower/edit")
     public ResponseUserDto editUserFollower
@@ -265,5 +254,16 @@ public class UserController {
                             .build()
             );
         });
+    }
+
+    private AppUser editUserAndNotifyHisGroupsMembers(AppUser appUserToEdit, AppUser editedUser) {
+        AppUser edited = appUserService.editUser(editedUser, appUserToEdit);
+
+        if(edited.getAppUserTeamGroups()!=null) {
+            Set<TeamGroup> shouldGetNotification = edited.getAppUserTeamGroups().stream().map(appUserTeamGroup -> appUserTeamGroup.getTeamGroup()).collect(Collectors.toSet());
+            notifyAllUsersFromTeamGroups(shouldGetNotification);
+        }
+
+        return edited;
     }
 }

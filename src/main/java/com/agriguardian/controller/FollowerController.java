@@ -31,7 +31,10 @@ public class FollowerController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/delete/{groupId}/{childId}")
-    public ResponseTeamGroupDto deleteFollowerFromGroup(@PathVariable(name = "groupId") long groupId, @PathVariable(name = "childId") long childId, Principal principal) {
+    public ResponseTeamGroupDto deleteFollowerFromGroup(@PathVariable(name = "groupId") long groupId,
+                                                        @PathVariable(name = "childId") long childId,
+                                                        Principal principal) {
+        log.trace("[deleteFollowerFromGroup] "+principal.getName() + " trying to delete follower from teamGroup " + groupId);
 
         TeamGroup thisGroup = teamGroupService.findById(groupId).orElseThrow(() -> new NotFoundException("group with id: " + groupId + " does not exists"));
         AppUser followerToDeleteFromGroup = appUserService.findById(childId).orElseThrow(() -> new NotFoundException("user with id: " + childId + "does not exists"));
@@ -43,7 +46,10 @@ public class FollowerController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("add/{groupId}/{childId}")
-    public ResponseTeamGroupDto addFollowerToGroup(@PathVariable(name = "groupId") long groupId, @PathVariable(name = "childId") long childId, Principal principal) {
+    public ResponseTeamGroupDto addFollowerToGroup(@PathVariable(name = "groupId") long groupId,
+                                                   @PathVariable(name = "childId") long childId,
+                                                   Principal principal) {
+        log.trace("[addFollowerToGroup] "+principal.getName() + " trying to add follower to teamGroup " + groupId);
 
         TeamGroup thisGroup = teamGroupService.findById(groupId).orElseThrow(() -> new NotFoundException("group with id: " + groupId + " does not exists"));
         AppUser followerToDeleteFromGroup = appUserService.findById(childId).orElseThrow(() -> new NotFoundException("user with id: " + childId + "does not exists"));
