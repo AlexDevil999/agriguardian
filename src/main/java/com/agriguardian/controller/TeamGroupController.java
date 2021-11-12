@@ -49,7 +49,7 @@ public class TeamGroupController {
         return ResponseUserDto.of(thisUser);
     }
 
-    @PreAuthorize("hasAuthority('USER_MASTER')")
+
     @PostMapping("/join")
     public ResponseUserDto joinGroup(@Valid @RequestBody JoinTeamGroupDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
