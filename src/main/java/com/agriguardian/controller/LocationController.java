@@ -42,7 +42,7 @@ public class LocationController {
         ValidationDto.handleErrors(errors);
         AppUser user = userService.findByUsernameOrThrowNotFound(principal.getName());
 
-        if(user.getRestrictions().equals(Restrictions.cannotSendGpsData)){
+        if(Restrictions.cannotSendGpsData.equals(user.getRestrictions())){
             log.debug("beacon: "+ principal.getName() + "may not send GPS data");
 
             return ViolationDto.builder()
