@@ -199,6 +199,9 @@ public class TeamGroupService {
 
     @Transactional
     public void addUserToTeamGroup(AppUser user,TeamGroup teamGroup, GroupRole groupRole) {
+        if(appUserTeamGroupRepository.findByAppUserIdAndTeamGroup(user.getId(), teamGroup).isPresent()){
+            throw new ConflictException("user " + user.getUsername() + "is already in this teamGroup");
+        }
         AppUserTeamGroup autg = user.addTeamGroup(teamGroup, groupRole);
         appUserTeamGroupRepository.save(autg);
     }
@@ -209,7 +212,7 @@ public class TeamGroupService {
             throw new ConflictException("user " + deleter.getUsername() + " is not allowed to remove user "+ follower.getUsername());
         }
         AppUserTeamGroup appUserTeamGroupToDelete = appUserTeamGroupRepository.findByAppUserIdAndTeamGroup(follower.getId(),teamGroup)
-                .orElseThrow(() -> new NotFoundException("can not find user with id: " + follower.getId()));
+                .orElseThrow(() -> new NotFoundException("can not find user with id: " + follower.getId() + "in team group: " + teamGroup.getId()));
         try {
             teamGroup.removeAppUserTeamGroupFromGroup(appUserTeamGroupToDelete);
 
