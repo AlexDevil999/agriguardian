@@ -229,7 +229,7 @@ public class TeamGroupService {
     @Transactional
     public TeamGroup addControlledFollowerToTeamGroup(AppUser deleter, AppUser follower, TeamGroup teamGroup){
         if(!appUserRelationsRepository.findByControllerAndUserFollower(deleter,follower).isPresent()){
-            throw new ConflictException("user " + deleter.getUsername() + " is not allowed to remove user "+ follower.getUsername());
+            throw new ConflictException("user " + deleter.getUsername() + " is not allowed to manipulate user "+ follower.getUsername());
         }
 
         try {
