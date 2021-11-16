@@ -307,6 +307,7 @@ public class AppUserService {
     public AppUser editUser(AppUser editedUser, AppUser thisUser) {
         thisUser.editUser(editedUser);
         try{
+            setPassword(thisUser,thisUser.getPassword());
             return userRepo.save(thisUser);
         } catch (Exception e){
             log.error("[editUser] failed to edit a user; rsn: {}", e.getMessage());
@@ -318,6 +319,11 @@ public class AppUserService {
         Optional<AppUserRelations> relation = appUserRelationsRepository.findByControllerAndUserFollowerAndRelation(master,follower,Relation.created);
 
         return relation.isPresent();
+    }
+
+    public AppUser setPassword(AppUser appUser, String password){
+        appUser.setPassword(passwordEncryptor.encode(password));
+        return appUser;
     }
 
     private boolean existsByMacAddress(String macAddress) {
@@ -333,10 +339,10 @@ public class AppUserService {
         return Long.sum(appUser.getOtpCreatedOnMs(),lifetimeMs)>System.currentTimeMillis();
     }
 
-    private AppUser setAppUserDetails(AppUser appUser, Status status, UserRole userFollower) {
+    private AppUser setAppUserDetails(AppUser appUser, Status status, UserRole userRole) {
         long time = System.currentTimeMillis();
         appUser.setStatus(status);
-        appUser.setUserRole(userFollower);
+        appUser.setUserRole(userRole);
         appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
         appUser.setCreatedOnMs(time);
         appUser.setOtpCreatedOnMs(time);

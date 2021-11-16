@@ -117,7 +117,7 @@ public class UserController {
             throw new ConflictException("user " + appUserToEdit.getUsername() + "is not a follower");
         }
 
-        AppUser editedUser = dto.buildUser();
+        AppUser editedUser = dto.buildUser(appUserToEdit.getPassword());
         editedUser.addUserInfo(dto.buildUserInfo());
 
         AppUser edited = editUserAndNotifyHisGroupsMembers(appUserToEdit, editedUser);
