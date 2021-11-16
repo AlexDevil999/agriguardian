@@ -35,6 +35,7 @@ public class AppUserService {
     private final EmailSenderService emailSenderService;
     private final TeamGroupService teamGroupService;
     private final AppUserRelationsRepository appUserRelationsRepository;
+    private final UserInfoRepository userInfoRepository;
 
 
     public AppUser save(AppUser appUser) {
@@ -304,6 +305,7 @@ public class AppUserService {
         return subAccountIdAndRelation;
     }
 
+    @Transactional
     public AppUser editUser(AppUser editedUser, AppUser thisUser) {
         thisUser.editUser(editedUser);
         try{

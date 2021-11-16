@@ -154,6 +154,6 @@ public class AppUser {
         this.setUsername(editedUser.getUsername());
         this.setPassword(editedUser.getPassword());
         this.setCard(editedUser.getCard());
-        this.setUserInfo(editedUser.getUserInfo());
+        this.userInfo.editUserInfo(editedUser.getUserInfo());
     }
 }

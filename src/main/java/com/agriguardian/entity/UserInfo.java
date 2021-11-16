@@ -11,6 +11,7 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@EqualsAndHashCode(of = "id")
 public class UserInfo {
     @Id
     @SequenceGenerator(name = "userInfoSequence", sequenceName = "user_info_id_seq", allocationSize = 1)
@@ -37,5 +38,17 @@ public class UserInfo {
 
     public void addAppUser(AppUser user) {
         user.addUserInfo(this);
+    }
+
+    public void editUserInfo(UserInfo editedInfo){
+        this.name=editedInfo.getName();
+        this.userAvatar=editedInfo.getUserAvatar();
+        this.country=editedInfo.getCountry();
+        this.county=editedInfo.getCounty();
+        this.city= editedInfo.getCity();
+        this.street=editedInfo.getStreet();
+        this.zipAreaCode=editedInfo.getZipAreaCode();
+        this.phoneCode= editedInfo.getPhoneCode();
+        this.phoneNumber= editedInfo.phoneNumber;
     }
 }
