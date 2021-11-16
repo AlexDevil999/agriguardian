@@ -11,17 +11,15 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 public class EditUserFollowerSelfDto {
-    @NotBlank(message = "field 'username' is mandatory")
-    private String oldUsername;
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
     @NotBlank(message = "field 'userAvatar' is mandatory")
     private Integer userAvatar;
 
 
-    public AppUser buildUser(String password) {
+    public AppUser buildUser(String password, String username) {
         return AppUser.builder()
-                .username(oldUsername.toLowerCase().trim())
+                .username(username.toLowerCase().trim())
                 .password(password)
                 .build();
     }

@@ -81,7 +81,7 @@ public class UserController {
     public ResponseUserDto editUserFollower
             (@Valid @RequestBody EditUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
-        log.debug("[addUserFollower] user: " + principal.getName() + "follower: "+ dto.getOldUsername());
+        log.debug("[editUserFollower] user: " + principal.getName() + "follower: "+ dto.getOldUsername());
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
@@ -107,17 +107,15 @@ public class UserController {
     public ResponseUserDto editUserFollowerSelf
             (@Valid @RequestBody EditUserFollowerSelfDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
-        log.debug("[addUserFollower] user: " + principal.getName() + "follower: "+ dto.getOldUsername());
+        log.debug("[editUserFollowerSelf] user: " + principal.getName() + "follower: "+ principal.getName());
 
-        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
-
-        AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(dto.getOldUsername());
+        AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
         if(appUserToEdit.getUserRole()!=UserRole.USER_FOLLOWER){
             throw new ConflictException("user " + appUserToEdit.getUsername() + "is not a follower");
         }
 
-        AppUser editedUser = dto.buildUser(appUserToEdit.getPassword());
+        AppUser editedUser = dto.buildUser(appUserToEdit.getPassword(), appUserToEdit.getUsername());
         editedUser.addUserInfo(dto.buildUserInfo());
 
         AppUser edited = editUserAndNotifyHisGroupsMembers(appUserToEdit, editedUser);
