@@ -107,7 +107,7 @@ public class UserController {
     public ResponseUserDto editUserFollowerSelf
             (@Valid @RequestBody EditUserFollowerSelfDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
-        log.debug("[editUserFollowerSelf] user: " + principal.getName() + "follower: "+ principal.getName());
+        log.debug("[editUserFollowerSelf] user: " + principal.getName());
 
         AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 

@@ -13,7 +13,7 @@ import javax.validation.constraints.NotNull;
 public class EditUserFollowerSelfDto {
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
-    @NotBlank(message = "field 'userAvatar' is mandatory")
+    @NotNull(message = "field 'userAvatar' is mandatory")
     private Integer userAvatar;
 
 
