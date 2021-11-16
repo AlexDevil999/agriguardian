@@ -62,7 +62,7 @@ public class UserController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PutMapping("/master/edit")
-    public ResponseUserDto editUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors, Principal principal) {
+    public ResponseUserDto editUserMaster(@Valid @RequestBody EditUserMasterDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
         log.debug("[editUserMaster] user: " + dto.toString());
         AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
@@ -93,6 +93,28 @@ public class UserController {
 
         if(!appUserService.masterCanEditVulnerable(admin, appUserToEdit)){
             throw new AccessDeniedException("master " + admin.getUsername() + "may not edit follower" + appUserToEdit.getUsername());
+        }
+
+        AppUser editedUser = dto.buildUser();
+        editedUser.addUserInfo(dto.buildUserInfo());
+
+        AppUser edited = editUserAndNotifyHisGroupsMembers(appUserToEdit, editedUser);
+
+        return ResponseUserDto.of(edited);
+    }
+
+    @PutMapping("/follower/editSelf")
+    public ResponseUserDto editUserFollowerSelf
+            (@Valid @RequestBody EditUserFollowerSelfDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+        log.debug("[addUserFollower] user: " + principal.getName() + "follower: "+ dto.getOldUsername());
+
+        AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(dto.getOldUsername());
+
+        if(appUserToEdit.getUserRole()!=UserRole.USER_FOLLOWER){
+            throw new ConflictException("user " + appUserToEdit.getUsername() + "is not a follower");
         }
 
         AppUser editedUser = dto.buildUser();

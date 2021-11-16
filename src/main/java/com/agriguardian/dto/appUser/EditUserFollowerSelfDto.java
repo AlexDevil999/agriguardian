@@ -10,13 +10,11 @@ import javax.validation.constraints.NotNull;
 
 @Getter
 @ToString
-public class EditUserFollowerDto {
+public class EditUserFollowerSelfDto {
     @NotBlank(message = "field 'username' is mandatory")
     private String oldUsername;
-    @NotBlank(message = "field 'NewUsername' is mandatory")
-    private String newUsername;
     @NotNull(message = "field 'password' may not be null")
-    private String newPassword;
+    private String oldPassword;
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
     @NotBlank(message = "field 'userAvatar' is mandatory")
@@ -25,8 +23,8 @@ public class EditUserFollowerDto {
 
     public AppUser buildUser() {
         return AppUser.builder()
-                .username(newUsername.toLowerCase().trim())
-                .password(newPassword)
+                .username(oldUsername.toLowerCase().trim())
+                .password(oldPassword)
                 .build();
     }
 
