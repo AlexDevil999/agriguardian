@@ -81,11 +81,11 @@ public class UserController {
     public ResponseUserDto editUserFollower
             (@Valid @RequestBody EditUserFollowerDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
-        log.debug("[editUserFollower] user: " + principal.getName() + "follower: "+ dto.getOldUsername());
+        log.debug("[editUserFollower] user: " + principal.getName() + "follower: "+ dto.getId());
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
-        AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(dto.getOldUsername());
+        AppUser appUserToEdit = appUserService.findById(dto.getId()).orElseThrow(new NotFoundException("user with id: " + dto.getId() + " was not found"));
 
         if(appUserToEdit.getUserRole()!=UserRole.USER_FOLLOWER){
             throw new ConflictException("user " + appUserToEdit.getUsername() + "is not a follower");
