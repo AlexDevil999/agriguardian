@@ -85,7 +85,7 @@ public class UserController {
 
         AppUser admin = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
-        AppUser appUserToEdit = appUserService.findById(dto.getId()).orElseThrow(new NotFoundException("user with id: " + dto.getId() + " was not found"));
+        AppUser appUserToEdit = appUserService.findById(dto.getId()).orElseThrow(() -> new NotFoundException("user with id: " + dto.getId() + " was not found"));
 
         if(appUserToEdit.getUserRole()!=UserRole.USER_FOLLOWER){
             throw new ConflictException("user " + appUserToEdit.getUsername() + "is not a follower");
