@@ -152,7 +152,7 @@ public class AppUser {
 
     public void editUser(AppUser editedUser){
         this.setUsername(editedUser.getUsername());
-        this.setPassword(editedUser.getPassword());
+        Optional.ofNullable(editedUser.getPassword()).ifPresent(this::setPassword);
         this.setCard(editedUser.getCard());
         this.userInfo.editUserInfo(editedUser.getUserInfo());
     }

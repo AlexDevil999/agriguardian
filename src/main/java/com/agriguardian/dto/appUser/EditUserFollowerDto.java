@@ -15,8 +15,9 @@ public class EditUserFollowerDto {
     private String oldUsername;
     @NotBlank(message = "field 'NewUsername' is mandatory")
     private String newUsername;
-    @NotNull(message = "field 'password' may not be null")
+
     private String newPassword;
+
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
     @NotNull(message = "field 'userAvatar' is mandatory")

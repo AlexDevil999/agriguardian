@@ -15,7 +15,7 @@ import javax.validation.constraints.NotNull;
 public class EditUserMasterDto {
     @NotBlank(message = "field 'username/email' is mandatory")
     private String username;
-    @NotNull(message = "field 'password' may not be null")
+
     private String password;
 
     @NotBlank(message = "field 'name' is mandatory")
