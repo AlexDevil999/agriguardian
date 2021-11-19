@@ -63,7 +63,7 @@ public class TcpConfig {
 
         @ServiceActivator(inputChannel="toEcho")
         public String upCase(String in) {
-            log.debug("TCP: " + in + " connected");
+            log.debug("TCPESTABLISHED : " + in + " connected");
             return in.toUpperCase();
         }
 
