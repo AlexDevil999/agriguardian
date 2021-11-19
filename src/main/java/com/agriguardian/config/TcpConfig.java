@@ -25,7 +25,6 @@ import org.springframework.messaging.MessageHandler;
 @Log4j2
 public class TcpConfig {
 
-    //@Value("${tcp.port}")
     private int port=8088;
 
 
