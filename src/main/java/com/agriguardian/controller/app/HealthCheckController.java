@@ -38,7 +38,7 @@ public class HealthCheckController {
     public String TCPCheck() {
         try {
             GreetClient client = new GreetClient();
-            client.startConnection(ip, 8088);
+            client.startConnection("localhost", 8088);
             String response = client.sendMessage("tcp is working");
             client.stopConnection();
             return response;
