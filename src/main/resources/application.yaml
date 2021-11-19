@@ -4,7 +4,9 @@ spring:
     username: postgres
     password: TqTjBw2yOYn80lzKypMR
 
-
+tcp:
+  port: 8080
+  ip: localhost
 
 jwt:
   token:
