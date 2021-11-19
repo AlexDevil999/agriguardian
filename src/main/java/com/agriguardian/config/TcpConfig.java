@@ -26,6 +26,8 @@ import org.springframework.messaging.MessageHandler;
 public class TcpConfig {
 
     private int port=8088;
+    @Value("${tcp.ip}")
+    private String ip;
 
 
 //    @Bean
@@ -34,7 +36,6 @@ public class TcpConfig {
 //        TcpOutboundGateway gate = new TcpOutboundGateway();
 //        gate.setConnectionFactory(connectionFactory);
 //        gate.setOutputChannelName("resultToString");
-//
 //        return gate;
 //    }
 
@@ -75,7 +76,7 @@ public class TcpConfig {
 
 //    @Bean
 //    public AbstractClientConnectionFactory clientCF() {
-//        return new TcpNetClientConnectionFactory("localhost", this.port);
+//        return new TcpNetClientConnectionFactory(ip, this.port);
 //    }
 
     @Bean

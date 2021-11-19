@@ -67,6 +67,7 @@ public class HealthCheckController {
 
         public void startConnection(String ip, int port) throws IOException {
             clientSocket = new Socket(ip, port);
+            clientSocket.setSoTimeout(10000);
             out = new PrintWriter(clientSocket.getOutputStream(), true);
             in = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
         }
