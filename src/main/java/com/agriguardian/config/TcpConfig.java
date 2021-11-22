@@ -1,7 +1,6 @@
 package com.agriguardian.config;
 
 import lombok.extern.log4j.Log4j2;
-import org.apache.tomcat.util.json.JSONParser;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -11,21 +10,15 @@ import org.springframework.integration.annotation.ServiceActivator;
 import org.springframework.integration.annotation.Transformer;
 import org.springframework.integration.channel.DirectChannel;
 import org.springframework.integration.config.EnableIntegration;
-import org.springframework.integration.dsl.IntegrationFlow;
-import org.springframework.integration.dsl.IntegrationFlows;
-import org.springframework.integration.dsl.Transformers;
-import org.springframework.integration.ip.dsl.Tcp;
 import org.springframework.integration.ip.tcp.TcpInboundGateway;
 import org.springframework.integration.ip.tcp.TcpOutboundGateway;
 import org.springframework.integration.ip.tcp.connection.AbstractClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.AbstractServerConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.TcpNetClientConnectionFactory;
 import org.springframework.integration.ip.tcp.connection.TcpNetServerConnectionFactory;
-import org.springframework.integration.ip.tcp.serializer.MapJsonSerializer;
 import org.springframework.integration.ip.tcp.serializer.TcpCodecs;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
-import org.springframework.messaging.MessageHeaders;
 
 @EnableIntegration
 @IntegrationComponentScan
@@ -47,16 +40,13 @@ public class TcpConfig {
 //        return gate;
 //    }
 
-
-
     @Bean
-    public IntegrationFlow server() {
-        return IntegrationFlows.from(Tcp.inboundAdapter(serverCF())
-                        .errorChannel("tcpIn.errorChannel")
-                        .id("tcpIn"))
-                .transform(Transformers.objectToString())
-                .channel(fromTcp())
-                .get();
+    public TcpInboundGateway tcpInGate(AbstractServerConnectionFactory connectionFactory)  {
+        TcpInboundGateway inGate = new TcpInboundGateway();
+        inGate.setConnectionFactory(connectionFactory);
+        inGate.setRequestChannel(fromTcp());
+
+        return inGate;
     }
 
     @Bean
@@ -92,11 +82,9 @@ public class TcpConfig {
 
     @Bean
     public AbstractServerConnectionFactory serverCF() {
-        TcpNetServerConnectionFactory tcpNetServerConnectionFactory = new TcpNetServerConnectionFactory(this.port);
-        tcpNetServerConnectionFactory.setDeserializer(TcpCodecs.lengthHeader2());
-        tcpNetServerConnectionFactory.setBacklog(30);
-        return tcpNetServerConnectionFactory;
-
+        TcpNetServerConnectionFactory tcpNetServerConnectionFactory= new TcpNetServerConnectionFactory(this.port);
+        tcpNetServerConnectionFactory.setDeserializer(TcpCodecs.lengthHeader4());
+        return new TcpNetServerConnectionFactory(this.port);
     }
 
 }
