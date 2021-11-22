@@ -44,6 +44,7 @@ public class HealthCheckController {
             return response;
         }
         catch (Exception e){
+            log.error("tcp is not working: " + e.getMessage());
             return "tcp is not working";
         }
     }
