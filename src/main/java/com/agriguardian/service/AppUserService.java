@@ -309,7 +309,9 @@ public class AppUserService {
     public AppUser editUser(AppUser editedUser, AppUser thisUser) {
         thisUser.editUser(editedUser);
         try{
-            setPassword(thisUser,thisUser.getPassword());
+            if(editedUser.getPassword()!=null) {
+                setPassword(thisUser, editedUser.getPassword());
+            }
             return userRepo.save(thisUser);
         } catch (Exception e){
             log.error("[editUser] failed to edit a user; rsn: {}", e.getMessage());
