@@ -151,8 +151,8 @@ public class AppUser {
     }
 
     public void editUser(AppUser editedUser){
+        Optional.ofNullable(editedUser.getCard()).ifPresent(creditCard -> this.setCard(creditCard));
         this.setUsername(editedUser.getUsername());
-        this.setCard(editedUser.getCard());
         this.userInfo.editUserInfo(editedUser.getUserInfo());
     }
 }

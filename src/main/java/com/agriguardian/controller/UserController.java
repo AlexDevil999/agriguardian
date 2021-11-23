@@ -77,6 +77,18 @@ public class UserController {
     }
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
+    @PutMapping("/master/password/edit")
+    public ResponseUserDto editUserMasterPassword(@Valid @RequestBody EditUserPasswordDto dto, Errors errors, Principal principal) {
+        ValidationDto.handleErrors(errors);
+        log.debug("[editUserMasterPassword] user: " + dto.toString());
+        AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        AppUser edited = appUserService.setNewPasswordForUser(appUserToEdit, dto.getOldPassword(), dto.getNewPassword());
+
+        return ResponseUserDto.of(edited);
+    }
+
+    @PreAuthorize("hasAuthority('USER_MASTER')")
     @PutMapping("/follower/edit")
     public ResponseUserDto editUserFollower
             (@Valid @RequestBody EditUserFollowerDto dto, Errors errors, Principal principal) {

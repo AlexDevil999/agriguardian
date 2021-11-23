@@ -18,6 +18,7 @@ import com.agriguardian.util.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.expression.AccessException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -224,6 +225,25 @@ public class AppUserService {
         }
     }
 
+    public AppUser setNewPasswordForUser(AppUser user, String oldPassword, String newPassword){
+        if(!user.getPassword().equals(passwordEncryptor.encode(oldPassword))){
+            throw new ConflictException("password is not correct");
+        }
+        if(oldPassword.equals(newPassword)){
+            throw new ConflictException("new password should differ from old");
+        }
+
+        user.setPassword(passwordEncryptor.encode(newPassword));
+
+        try{
+            return userRepo.save(user);
+        }
+        catch (Exception e){
+            log.error("[setNewPasswordForUser] failed to set new password; rsn: {}", e.getMessage());
+            throw new InternalErrorException("failed to save user. rsn: " + e.getMessage());
+        }
+    }
+
     public boolean exists(Long id) {
         try {
             return userRepo.existsById(id);
@@ -309,9 +329,6 @@ public class AppUserService {
     public AppUser editUser(AppUser editedUser, AppUser thisUser) {
         thisUser.editUser(editedUser);
         try{
-            if(editedUser.getPassword()!=null) {
-                setPassword(thisUser, editedUser.getPassword());
-            }
             return userRepo.save(thisUser);
         } catch (Exception e){
             log.error("[editUser] failed to edit a user; rsn: {}", e.getMessage());

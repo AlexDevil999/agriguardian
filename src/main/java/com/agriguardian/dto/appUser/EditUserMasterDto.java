@@ -16,8 +16,6 @@ public class EditUserMasterDto {
     @NotBlank(message = "field 'username/email' is mandatory")
     private String username;
 
-    private String password;
-
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
 
@@ -42,7 +40,6 @@ public class EditUserMasterDto {
     public AppUser buildUser() {
         return AppUser.builder()
                 .username(username.toLowerCase().trim())
-                .password(password)
                 .build();
     }
 

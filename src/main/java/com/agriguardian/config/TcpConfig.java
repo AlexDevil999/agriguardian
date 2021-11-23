@@ -1,5 +1,6 @@
 package com.agriguardian.config;
 
+import io.grpc.netty.shaded.io.netty.handler.codec.http2.DefaultHttp2HeadersDecoder;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -84,7 +85,7 @@ public class TcpConfig {
     public AbstractServerConnectionFactory serverCF() {
         TcpNetServerConnectionFactory tcpNetServerConnectionFactory= new TcpNetServerConnectionFactory(this.port);
         tcpNetServerConnectionFactory.setDeserializer(TcpCodecs.lengthHeader4());
-        return new TcpNetServerConnectionFactory(this.port);
+        return tcpNetServerConnectionFactory;
     }
 
 }
