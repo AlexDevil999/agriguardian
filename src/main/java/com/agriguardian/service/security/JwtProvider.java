@@ -41,6 +41,7 @@ public class JwtProvider {
     public AppUserAuthDetails readTokenInfo(String token) {
         Claims claims = this.extractClaim(token);
         String username = claims.getSubject();
+        log.debug("[readTokenInfo] username from token is: " + username);
         Object o = claims.get("role");
         if (o instanceof String) {
             return AppUserAuthDetails.build(username, String.class.cast(o));
