@@ -60,7 +60,6 @@ public class UserController {
         return ResponseUserDto.of(saved);
     }
 
-    @PreAuthorize("hasAuthority('USER_MASTER')")
     @PutMapping("/master/edit")
     public ResponseUserDto editUserMaster(@Valid @RequestBody EditUserMasterDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
