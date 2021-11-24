@@ -13,12 +13,8 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 public class EditUserMasterDto {
-    @NotBlank(message = "field 'username/email' is mandatory")
-    private String username;
-
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
-
     @NotBlank(message = "field 'country' is mandatory")
     private String country;
     @NotBlank(message = "field 'county' is mandatory")
@@ -37,7 +33,7 @@ public class EditUserMasterDto {
     private Integer userAvatar;
 
 
-    public AppUser buildUser() {
+    public AppUser buildUser(String username) {
         return AppUser.builder()
                 .username(username.toLowerCase().trim())
                 .build();

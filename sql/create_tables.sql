@@ -112,6 +112,29 @@ create table if not exists geo_zones
     foreign key (team_group_id) references team_groups (id)
 );
 
+create table if not exists app_users_relations
+(
+    controller_id  bigint not null,
+    follower_id    bigint not null,
+    relation       text,
+    PRIMARY KEY (controller_id, follower_id),
+    foreign key (controller_id) references app_users (id),
+    foreign key (follower_id) references app_users (id)
+);
+
+create table if not exists zone_scheduling_rule
+(
+    id                serial primary key,
+    day_start         text,
+    day_end           text,
+    timeStart         TIME,
+    timeEnd           TIME,
+    timeZone          text,
+    alert_geo_zone_id bigint not null,
+
+    foreign key (alert_geo_zone_id) references geo_zones (id)
+);
+
 create table if not exists app_user_geo_zones
 (
     id                serial primary key,

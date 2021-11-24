@@ -37,6 +37,12 @@ public class AlertGeoZone {
             orphanRemoval = true)
     private Set<AppUserGeoZone> appUserGeoZones;
 
+    @OneToMany(mappedBy = "alertGeoZone",
+            fetch = FetchType.LAZY,
+            cascade = CascadeType.ALL,
+            orphanRemoval = true)
+    private Set<ZoneSchedulingRule> zoneSchedulingRules;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "figure")
     private Figure figureType;

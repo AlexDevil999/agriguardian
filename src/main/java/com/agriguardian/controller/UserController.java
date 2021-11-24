@@ -67,7 +67,7 @@ public class UserController {
         log.debug("[editUserMaster] user: " + dto.toString());
         AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
-        AppUser editedUser = dto.buildUser();
+        AppUser editedUser = dto.buildUser(principal.getName());
         editedUser.addUserInfo(dto.buildUserInfo());
         editedUser.addCreditCard(dto.buildCreditCard());
 
