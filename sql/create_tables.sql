@@ -130,6 +130,7 @@ create table if not exists zone_scheduling_rule
     timeStart         TIME,
     timeEnd           TIME,
     timeZone          text,
+    schedulePeriod    text,
     alert_geo_zone_id bigint not null,
 
     foreign key (alert_geo_zone_id) references geo_zones (id)

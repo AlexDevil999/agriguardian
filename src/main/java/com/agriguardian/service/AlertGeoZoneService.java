@@ -1,18 +1,18 @@
 package com.agriguardian.service;
 
 import com.agriguardian.domain.Point;
-import com.agriguardian.entity.AlertBluetoothZone;
-import com.agriguardian.entity.AlertGeoZone;
-import com.agriguardian.entity.AppUser;
-import com.agriguardian.entity.TeamGroup;
+import com.agriguardian.entity.*;
 import com.agriguardian.entity.manyToMany.AppUserBluetoothZone;
 import com.agriguardian.entity.manyToMany.AppUserGeoZone;
 import com.agriguardian.enums.Figure;
+import com.agriguardian.enums.SchedulePeriod;
 import com.agriguardian.enums.ZoneRule;
+import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.InternalErrorException;
 import com.agriguardian.exception.NotFoundException;
 import com.agriguardian.repository.AlertGeoZoneRepository;
 import com.agriguardian.repository.AppUserGeoZoneRepository;
+import com.agriguardian.repository.ZoneSchedulingRuleRepository;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -28,6 +28,7 @@ import java.util.Set;
 public class AlertGeoZoneService {
     private final AlertGeoZoneRepository zoneRepository;
     private final AppUserGeoZoneRepository appUserGeoZoneRepository;
+    private final ZoneSchedulingRuleRepository zoneSchedulingRuleRepository;
 
 
     @Transactional
@@ -52,6 +53,7 @@ public class AlertGeoZoneService {
                 .build();
 
 
+        ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
         zone.addTeamGroup(group);
 
         vulnerables.forEach(v -> {
@@ -59,8 +61,12 @@ public class AlertGeoZoneService {
         });
 
         if(figure.equals(Figure.POLYGON))
-        zone.bordersByPoints(borders);
+            zone.bordersByPoints(borders);
+
+        zoneSchedulingRule.setAlertGeoZone(zone);
+        zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
         try {
+            zoneSchedulingRuleRepository.save(zoneSchedulingRule);
             return zoneRepository.save(zone);
         }
         catch (Exception e){
@@ -137,4 +143,5 @@ public class AlertGeoZoneService {
             throw new InternalErrorException("failed to retrieve a geoZone. rsn: " + e.getMessage());
         }
     }
+
 }

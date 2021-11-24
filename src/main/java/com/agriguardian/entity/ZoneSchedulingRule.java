@@ -5,9 +5,6 @@ import lombok.*;
 import javax.persistence.*;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
-import java.time.OffsetDateTime;
-import java.time.Period;
-import java.util.List;
 
 @Entity
 @Table(name = "zone_scheduling_rule")

@@ -1,3 +1,5 @@
+drop table if exists zone_scheduling_rule;
+
 drop table if exists borders;
 
 drop table if exists app_user_geo_zones;
