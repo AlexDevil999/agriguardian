@@ -63,6 +63,7 @@ public class UserController {
     @PutMapping("/master/edit")
     public ResponseUserDto editUserMaster(@Valid @RequestBody EditUserMasterDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
+        log.debug("[editUserMaster] editor: " + principal.getName());
         log.debug("[editUserMaster] user: " + dto.toString());
         AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
