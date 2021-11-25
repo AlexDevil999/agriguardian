@@ -45,7 +45,7 @@ public class AlertGeoZoneController {
 
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping
-    public ResponseAlertGeoZoneDto addAlertGeoZone(@Valid @RequestBody AddTeamGroupRuleDto dto, Errors errors, Principal principal) {
+    public ResponseAlertGeoZoneDto addAlertGeoZone(@Valid @RequestBody AddGeoZoneDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
 
         log.trace("user {} is trying to create geoZone", principal.getName());

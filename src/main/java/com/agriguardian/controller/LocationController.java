@@ -40,6 +40,7 @@ public class LocationController {
     public ViolationDto notifyLocation(@Valid @RequestBody GeoMonitoringDto geo, Errors errors, Principal principal) {
         //todo add storing of history
         ValidationDto.handleErrors(errors);
+        log.error("amount of coordinates: " + geo.getLocations().size());
         AppUser user = userService.findByUsernameOrThrowNotFound(principal.getName());
 
         if(Restrictions.cannotSendGpsData.equals(user.getRestrictions())){
