@@ -226,7 +226,7 @@ public class AppUserService {
     }
 
     public AppUser setNewPasswordForUser(AppUser user, String oldPassword, String newPassword){
-        if(!user.getPassword().equals(passwordEncryptor.encode(oldPassword))){
+        if(!passwordEncryptor.matches(oldPassword,user.getPassword())){
             throw new ConflictException("password is not correct");
         }
         if(oldPassword.equals(newPassword)){
