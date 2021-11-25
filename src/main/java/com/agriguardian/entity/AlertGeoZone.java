@@ -15,6 +15,7 @@ import java.util.stream.Collectors;
 @Getter
 @Setter
 @Builder
+@ToString
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
@@ -61,6 +62,14 @@ public class AlertGeoZone {
 
     public void addTeamGroup(TeamGroup teamGroup) {
         teamGroup.addAlertGeoZone(this);
+    }
+
+    public void addSchedulingRule(ZoneSchedulingRule zoneSchedulingRule){
+        if(this.getZoneSchedulingRules()==null)
+            this.zoneSchedulingRules = new HashSet<>();
+
+        this.zoneSchedulingRules.add(zoneSchedulingRule);
+
     }
 
     public AppUserGeoZone addVulnerable(AppUser user) {

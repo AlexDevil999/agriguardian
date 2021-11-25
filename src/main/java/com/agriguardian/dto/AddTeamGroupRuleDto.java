@@ -16,6 +16,7 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString
 public class AddTeamGroupRuleDto {
     @NotNull(message = "field 'teamGroupId' may not be null")
     private Long teamGroupId;

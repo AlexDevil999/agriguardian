@@ -54,6 +54,7 @@ public class AlertGeoZoneService {
 
 
         ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
+        zoneSchedulingRule.setAlertGeoZone(zone);
         zone.addTeamGroup(group);
 
         vulnerables.forEach(v -> {
@@ -63,10 +64,10 @@ public class AlertGeoZoneService {
         if(figure.equals(Figure.POLYGON))
             zone.bordersByPoints(borders);
 
-        zoneSchedulingRule.setAlertGeoZone(zone);
         zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
+
+        zone.addSchedulingRule(zoneSchedulingRule);
         try {
-            zoneSchedulingRuleRepository.save(zoneSchedulingRule);
             return zoneRepository.save(zone);
         }
         catch (Exception e){
