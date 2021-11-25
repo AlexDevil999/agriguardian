@@ -47,6 +47,7 @@ public class AlertGeoZoneController {
     @PostMapping
     public ResponseAlertGeoZoneDto addAlertGeoZone(@Valid @RequestBody AddGeoZoneDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
+        log.error("[bordersAmount]: " + dto.getBorders().size());
 
         log.trace("user {} is trying to create geoZone", principal.getName());
 
@@ -97,6 +98,7 @@ public class AlertGeoZoneController {
     public ResponseAlertGeoZoneDto editGeoZone
             (@Valid @RequestBody EditGeoZoneDto dto, Errors errors, Principal principal){
         ValidationDto.handleErrors(errors);
+        log.error("[bordersAmount]: " + dto.getBorders().size());
 
         log.trace("user {} is trying to edit geoZone", principal.getName());
 
