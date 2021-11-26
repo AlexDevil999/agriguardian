@@ -1,6 +1,7 @@
 package com.agriguardian.dto;
 
 import com.agriguardian.domain.Point;
+import com.agriguardian.entity.ZoneSchedulingRule;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.enums.ZoneType;
@@ -28,7 +29,7 @@ public class AddGeoZoneDto {
     private ZoneRule rule;
     private String name;
 
-    private ZoneRule zoneRule;
+    private ZoneSchedulingRule schedulingRule;
     private String timeZone;
     private DayOfWeek dayStart;
     private DayOfWeek dayEnd;
