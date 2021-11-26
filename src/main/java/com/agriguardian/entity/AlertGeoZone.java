@@ -126,6 +126,10 @@ public class AlertGeoZone {
         });
     }
 
+    public void emptyBorders(){
+        borders.removeAll(borders);
+    }
+
     public List<Border> bordersByPoints(List<Point> points) {
         if (borders == null) borders = new ArrayList<>();
         int[] index = {0};

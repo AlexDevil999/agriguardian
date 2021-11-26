@@ -99,6 +99,7 @@ public class AlertGeoZoneService {
                 currentZone.setFigureType(figure);
                 currentZone.setRadius(radius);
             } else if (figure.equals(Figure.POLYGON)) {
+                currentZone.emptyBorders();
                 currentZone.bordersByPoints(borders);
                 currentZone.setFigureType(figure);
             }
