@@ -6,6 +6,7 @@ import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.Border;
 import com.agriguardian.entity.ZoneSchedulingRule;
 import com.agriguardian.enums.Figure;
+import com.agriguardian.enums.SchedulePeriod;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.service.interfaces.UserMonitor;
 import lombok.AllArgsConstructor;
@@ -55,6 +56,8 @@ public class UserMonitorImp implements UserMonitor {
     }
 
     private boolean zoneIsActive(ZoneSchedulingRule zoneSchedulingRule) {
+        if(zoneSchedulingRule.getSchedulePeriod()== SchedulePeriod.CONSTANT)
+            return true;
         LocalDateTime now = LocalDateTime.now(ZoneId.of(zoneSchedulingRule.getTimeZone()));
         if(now.toEpochSecond(ZoneOffset.of(zoneSchedulingRule.getTimeZone()))< zoneSchedulingRule.getRuleStartsToWork())
             return false;
