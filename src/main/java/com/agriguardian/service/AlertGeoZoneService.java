@@ -18,6 +18,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -41,7 +42,8 @@ public class AlertGeoZoneService {
             TeamGroup group,
             Set<AppUser> vulnerables,
             List<Point> borders,
-            String name) {
+            String name,
+            List<ZoneSchedulingRule> zoneSchedulingRules) {
 
         AlertGeoZone zone = AlertGeoZone.builder()
                 .rule(rule)
@@ -53,8 +55,12 @@ public class AlertGeoZoneService {
                 .build();
 
 
-        ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
-        zoneSchedulingRule.setAlertGeoZone(zone);
+        if(!Optional.ofNullable(zoneSchedulingRules).isPresent()) {
+            zoneSchedulingRules = new ArrayList<>();
+            ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
+            zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
+            zoneSchedulingRules.add(zoneSchedulingRule);
+        }
         zone.addTeamGroup(group);
 
         vulnerables.forEach(v -> {
@@ -64,11 +70,11 @@ public class AlertGeoZoneService {
         if(figure.equals(Figure.POLYGON))
             zone.bordersByPoints(borders);
 
-        zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
-
-        zone.addSchedulingRule(zoneSchedulingRule);
         try {
-            return zoneRepository.save(zone);
+            AlertGeoZone savedZone = zoneRepository.save(zone);
+            zoneSchedulingRules.forEach(zoneSchedulingRule -> zoneSchedulingRule.setAlertGeoZone(savedZone));
+            zoneSchedulingRules.forEach(zoneSchedulingRule -> zoneSchedulingRuleRepository.save(zoneSchedulingRule));
+            return savedZone;
         }
         catch (Exception e){
             log.error("[createNew] failed to create new geoZone {}; rsn: {}", zone, e.getMessage());
@@ -82,9 +88,8 @@ public class AlertGeoZoneService {
              Double centerLon,Figure figure,
              Integer radius, TeamGroup group,
              List<Point> borders, ZoneRule rule,
-             Set<AppUser> vulnerables, String name) {
-
-
+             Set<AppUser> vulnerables, String name,
+             List<ZoneSchedulingRule> zoneSchedulingRules) {
 
             AlertGeoZone currentZone = zoneRepository.findById(id)
                     .orElseThrow(() -> new NotFoundException("zone with id: " + id + " does not exists"));
@@ -92,23 +97,32 @@ public class AlertGeoZoneService {
             currentZone.setRule(rule);
             Optional.ofNullable(name).ifPresent(currentZone::setName);
 
+            currentZone.emptyRules();
+            if(!Optional.ofNullable(zoneSchedulingRules).isPresent()){
+                log.debug("creating zone with no specified scheduling rule");
+                ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
+                zoneSchedulingRule.setAlertGeoZone(currentZone);
+                zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
+                currentZone.addSchedulingRule(zoneSchedulingRule);
+            }
+            zoneSchedulingRules.forEach(currentZone::addSchedulingRule);
+            zoneSchedulingRules.forEach(zoneSchedulingRule -> zoneSchedulingRule.setAlertGeoZone(currentZone));
 
+
+            currentZone.setFigureType(figure);
+            currentZone.emptyBorders();
             if (figure.equals(Figure.CIRCLE)) {
                 currentZone.setCenterLat(centerLat);
                 currentZone.setCenterLon(centerLon);
-                currentZone.setFigureType(figure);
                 currentZone.setRadius(radius);
             } else if (figure.equals(Figure.POLYGON)) {
-                currentZone.emptyBorders();
                 currentZone.bordersByPoints(borders);
-                currentZone.setFigureType(figure);
             }
 
             currentZone.emptyVulnerables();
 
         try {
             AlertGeoZone savedZone = zoneRepository.save(currentZone);
-
 
             vulnerables.forEach(v -> {
                 AppUserGeoZone userZone = savedZone.addVulnerable(v);

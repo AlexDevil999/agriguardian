@@ -13,7 +13,6 @@ import java.time.LocalTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(of = "id")
 public class ZoneSchedulingRule {
     @Id
     @SequenceGenerator(name = "zoneSchedulingRuleSequence", sequenceName = "zone_scheduling_rule_id_seq", allocationSize = 1)

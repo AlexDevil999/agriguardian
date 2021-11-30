@@ -16,6 +16,7 @@ import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -24,10 +25,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.security.Principal;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -47,7 +45,7 @@ public class AlertGeoZoneController {
     @PostMapping
     public ResponseAlertGeoZoneDto addAlertGeoZone(@Valid @RequestBody AddGeoZoneDto dto, Errors errors, Principal principal) {
         ValidationDto.handleErrors(errors);
-        log.error("[bordersAmount]: " + dto.getBorders().size());
+        Optional.ofNullable(dto.getBorders()).ifPresent(points ->log.debug("[bordersAmount]: " + points.size()));
 
         log.trace("user {} is trying to create geoZone", principal.getName());
 
@@ -79,7 +77,8 @@ public class AlertGeoZoneController {
                 teamGroup,
                 vulnerables,
                 dto.getBorders(),
-                dto.getName() != null ? dto.getName() : user.getUserInfo().getName() + "'s"
+                dto.getName() != null ? dto.getName() : user.getUserInfo().getName() + "'s",
+                dto.createZoneSchedulingRules()
         );
 
         notificator.notifyUsers(
@@ -98,7 +97,7 @@ public class AlertGeoZoneController {
     public ResponseAlertGeoZoneDto editGeoZone
             (@Valid @RequestBody EditGeoZoneDto dto, Errors errors, Principal principal){
         ValidationDto.handleErrors(errors);
-        log.error("[bordersAmount]: " + dto.getBorders().size());
+        Optional.ofNullable(dto.getBorders()).ifPresent(points -> log.error("[bordersAmount]: " + points.size()));
 
         log.trace("user {} is trying to edit geoZone", principal.getName());
 
@@ -123,7 +122,8 @@ public class AlertGeoZoneController {
                         dto.getGeoZoneId(),dto.getCenterLat(),
                         dto.getCenterLon(),dto.getFigureType(),dto.getRadius(),
                         teamGroupForCurrentGeoZone,dto.getBorders(),
-                        dto.getRule(),vulnerables,dto.getName()
+                        dto.getRule(),vulnerables,dto.getName(),
+                        dto.createZoneSchedulingRules()
                 );
 
         notificator.notifyUsers(

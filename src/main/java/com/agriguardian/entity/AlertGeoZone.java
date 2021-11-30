@@ -105,6 +105,10 @@ public class AlertGeoZone {
         appUserGeoZones.removeAll(appUserGeoZones);
     }
 
+    public void emptyRules(){
+        zoneSchedulingRules.removeAll(zoneSchedulingRules);
+    }
+
     public Set<AppUser> extractVulnerables() {
         if (appUserGeoZones == null) return new HashSet<>();
         return appUserGeoZones.stream().map(AppUserGeoZone::getAppUser).collect(Collectors.toSet());

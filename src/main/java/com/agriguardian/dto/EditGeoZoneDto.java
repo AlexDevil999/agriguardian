@@ -1,13 +1,19 @@
 package com.agriguardian.dto;
 
 import com.agriguardian.domain.Point;
+import com.agriguardian.entity.ZoneSchedulingRule;
 import com.agriguardian.enums.Figure;
+import com.agriguardian.enums.SchedulePeriod;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.enums.ZoneType;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
+import java.time.DayOfWeek;
+import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -28,6 +34,8 @@ public class EditGeoZoneDto {
     @NotNull(message = "field 'figureType' may not be null")
     private Figure figureType;
 
+    private List<SchedulePeriodDto> schedulePeriodDtos;
+
     private String name;
     private Double centerLon;
     private Double centerLat;
@@ -36,4 +44,14 @@ public class EditGeoZoneDto {
 
     @NotEmpty(message = "field 'vulnerables' may not be empty")
     private Set<Long> vulnerables;
+
+    public List<ZoneSchedulingRule> createZoneSchedulingRules(){
+
+        if(schedulePeriodDtos==null)
+            return null;
+
+        List<ZoneSchedulingRule> zoneSchedulingRules = new ArrayList<>(schedulePeriodDtos.size());
+        schedulePeriodDtos.forEach(schedulePeriodDto -> zoneSchedulingRules.add(schedulePeriodDto.createSchedulingRule()));
+        return zoneSchedulingRules;
+    }
 }

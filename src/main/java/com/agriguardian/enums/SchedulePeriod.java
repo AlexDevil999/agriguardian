@@ -16,5 +16,7 @@ public enum SchedulePeriod {
     /**
      * this rule means zone is always working
      */
-    CONSTANT
+    CONSTANT,
+
+    ONE_DAY,
 }
