@@ -72,8 +72,10 @@ public class AlertGeoZoneService {
 
         try {
             AlertGeoZone savedZone = zoneRepository.save(zone);
-            zoneSchedulingRules.forEach(zoneSchedulingRule -> zoneSchedulingRule.setAlertGeoZone(savedZone));
-            zoneSchedulingRules.forEach(zoneSchedulingRule -> zoneSchedulingRuleRepository.save(zoneSchedulingRule));
+            zoneSchedulingRules.forEach(zoneSchedulingRule -> {
+                zoneSchedulingRule.setAlertGeoZone(savedZone);
+                zoneSchedulingRuleRepository.save(zoneSchedulingRule);
+            });
             return savedZone;
         }
         catch (Exception e){
@@ -100,12 +102,15 @@ public class AlertGeoZoneService {
             currentZone.emptyRules();
             if(!Optional.ofNullable(zoneSchedulingRules).isPresent()){
                 log.debug("creating zone with no specified scheduling rule");
+                zoneSchedulingRules = new ArrayList<>();
                 ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
-                zoneSchedulingRule.setAlertGeoZone(currentZone);
                 zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
-                currentZone.addSchedulingRule(zoneSchedulingRule);
+                zoneSchedulingRules.add(zoneSchedulingRule);
             }
-            zoneSchedulingRules.forEach(currentZone::addSchedulingRule);
+
+            zoneSchedulingRules.forEach(zoneSchedulingRule ->
+            {currentZone.addSchedulingRule(zoneSchedulingRule);
+            zoneSchedulingRule.setAlertGeoZone(currentZone);});
             zoneSchedulingRules.forEach(zoneSchedulingRule -> zoneSchedulingRule.setAlertGeoZone(currentZone));
 
 
