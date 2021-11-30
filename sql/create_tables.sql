@@ -124,14 +124,15 @@ create table if not exists app_users_relations
 
 create table if not exists zone_scheduling_rule
 (
-    id                serial primary key,
-    day_start         text,
-    day_end           text,
-    timeStart         TIME,
-    timeEnd           TIME,
-    timeZone          text,
-    schedulePeriod    text,
-    alert_geo_zone_id bigint not null,
+    id                  serial primary key,
+    day_start           text,
+    day_end             text,
+    timeStart           TIME,
+    timeEnd             TIME,
+    timeZone            text,
+    schedulePeriod      text,
+    alert_geo_zone_id   bigint not null,
+    relu_starts_to_work bigint,
 
     foreign key (alert_geo_zone_id) references geo_zones (id)
 );

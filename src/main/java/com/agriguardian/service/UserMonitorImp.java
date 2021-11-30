@@ -4,6 +4,7 @@ import com.agriguardian.domain.Point;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.Border;
+import com.agriguardian.entity.ZoneSchedulingRule;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.service.interfaces.UserMonitor;
@@ -15,6 +16,9 @@ import org.locationtech.jts.geom.Polygon;
 import org.locationtech.jts.geom.impl.CoordinateArraySequence;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -30,13 +34,45 @@ public class UserMonitorImp implements UserMonitor {
         List<AlertGeoZone> allGeoZones = user.extractAlertGeoZones();
 
         //todo refactor when multiple zone types (e.g. circle and so on) will be available
-        allGeoZones = allGeoZones.stream().filter(zone -> Figure.POLYGON == zone.getFigureType()).collect(Collectors.toList());
+        allGeoZones = allGeoZones.stream().filter(zone -> Figure.POLYGON == zone.getFigureType()).filter(alertGeoZone -> {
+
+            List<ZoneSchedulingRule> currentRules = alertGeoZone.getZoneSchedulingRules().stream().filter(
+                    zoneSchedulingRule -> zoneIsActive(zoneSchedulingRule)
+            ).collect(Collectors.toList());
+
+           if(currentRules.isEmpty())
+               return false;
+
+           return true;
+
+        }).collect(Collectors.toList());
 
         return allGeoZones.stream()
                 .filter(zone -> {
                     boolean isLocationInside = isLocationInsideZone(zone, point);
                     return isZoneViolated(zone, isLocationInside);
                 }).collect(Collectors.toList());
+    }
+
+    private boolean zoneIsActive(ZoneSchedulingRule zoneSchedulingRule) {
+        LocalDateTime now = LocalDateTime.now(ZoneId.of(zoneSchedulingRule.getTimeZone()));
+        if(now.toEpochSecond(ZoneOffset.of(zoneSchedulingRule.getTimeZone()))< zoneSchedulingRule.getRuleStartsToWork())
+            return false;
+
+        if(now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayStart()) < 0 || now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayEnd()) > 0)
+            return false;
+
+        if(now.getDayOfWeek()== zoneSchedulingRule.getDayStart()){
+            if(now.toLocalTime().isBefore(zoneSchedulingRule.getTimeStart()))
+                return false;
+        }
+
+        if(now.getDayOfWeek()== zoneSchedulingRule.getDayEnd()){
+            if(now.toLocalTime().isAfter(zoneSchedulingRule.getTimeStart()))
+                return false;
+        }
+
+        return true;
     }
 
 

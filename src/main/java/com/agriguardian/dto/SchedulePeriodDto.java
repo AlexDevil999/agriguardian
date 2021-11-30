@@ -14,6 +14,7 @@ import java.time.LocalTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SchedulePeriodDto {
+    private Long startsToWorkAtMillis;
     private SchedulePeriod schedulePeriod;
     private String timeZone;
     private DayOfWeek dayStart;
@@ -31,6 +32,7 @@ public class SchedulePeriodDto {
         zoneSchedulingRule.setTimeZone(timeZone);
         zoneSchedulingRule.setTimeStart(LocalTime.parse(timeStart));
         zoneSchedulingRule.setTimeEnd(LocalTime.parse(timeEnd));
+        zoneSchedulingRule.setRuleStartsToWork(startsToWorkAtMillis);
 
         return zoneSchedulingRule;
     }

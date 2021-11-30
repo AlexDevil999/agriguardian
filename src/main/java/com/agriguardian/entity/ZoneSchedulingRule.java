@@ -1,9 +1,12 @@
 package com.agriguardian.entity;
 import com.agriguardian.enums.SchedulePeriod;
+import com.google.type.DateTime;
 import lombok.*;
 
 import javax.persistence.*;
+import java.sql.Timestamp;
 import java.time.DayOfWeek;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 
 @Entity
@@ -30,6 +33,7 @@ public class ZoneSchedulingRule {
 
     private LocalTime timeStart;
     private LocalTime timeEnd;
+    private Long ruleStartsToWork;
 
     private String timeZone;
 
