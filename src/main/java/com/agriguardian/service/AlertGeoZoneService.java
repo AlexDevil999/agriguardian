@@ -125,6 +125,7 @@ public class AlertGeoZoneService {
             }
 
             currentZone.emptyVulnerables();
+            appUserGeoZoneRepository.deleteAppUserGeoZoneByAlertGeoZoneId(currentZone.getId());
 
         try {
             AlertGeoZone savedZone = zoneRepository.save(currentZone);
