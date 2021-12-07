@@ -36,4 +36,17 @@ public class SchedulePeriodDto {
 
         return zoneSchedulingRule;
     }
+
+    public static SchedulePeriodDto of(ZoneSchedulingRule zoneSchedulingRule){
+        SchedulePeriodDto schedulePeriodDto = new SchedulePeriodDto();
+        schedulePeriodDto.setSchedulePeriod(zoneSchedulingRule.getSchedulePeriod());
+        schedulePeriodDto.setDayStart(zoneSchedulingRule.getDayStart());
+        schedulePeriodDto.setDayEnd(zoneSchedulingRule.getDayEnd());
+        schedulePeriodDto.setTimeZone(zoneSchedulingRule.getTimeZone());
+        schedulePeriodDto.setTimeStart(schedulePeriodDto.getTimeStart());
+        schedulePeriodDto.setTimeEnd(schedulePeriodDto.getTimeEnd());
+        schedulePeriodDto.setStartsToWorkAtMillis(zoneSchedulingRule.getRuleStartsToWork());
+
+        return schedulePeriodDto;
+    }
 }

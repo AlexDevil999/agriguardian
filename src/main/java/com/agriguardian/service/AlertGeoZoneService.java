@@ -100,6 +100,7 @@ public class AlertGeoZoneService {
             Optional.ofNullable(name).ifPresent(currentZone::setName);
 
             currentZone.emptyRules();
+            zoneSchedulingRuleRepository.deleteByAlertGeoZoneId(currentZone.getId());
             if(!Optional.ofNullable(zoneSchedulingRules).isPresent()){
                 log.debug("creating zone with no specified scheduling rule");
                 zoneSchedulingRules = new ArrayList<>();

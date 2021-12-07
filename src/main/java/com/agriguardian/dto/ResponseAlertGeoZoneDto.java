@@ -3,6 +3,7 @@ package com.agriguardian.dto;
 import com.agriguardian.domain.Point;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.ZoneSchedulingRule;
 import com.agriguardian.enums.Figure;
 import com.agriguardian.enums.ZoneRule;
 import lombok.Builder;
@@ -23,8 +24,7 @@ public class ResponseAlertGeoZoneDto {
     private ZoneRule rule;
     private Long teamGroup;
     private Set<Long> vulnerables;
-
-
+    private Set<SchedulePeriodDto> schedulingRules;
     private Figure figureType;
     private Double centerLon;
     private Double centerLat;
@@ -47,6 +47,7 @@ public class ResponseAlertGeoZoneDto {
                     .centerLon(zone.getCenterLon())
                     .radius(zone.getRadius())
                     .borders(zone.getBorders().stream().map(Point::of).collect(Collectors.toList()))
+                    .schedulingRules(zone.getZoneSchedulingRules().stream().map(SchedulePeriodDto::of).collect(Collectors.toSet()))
                     .build();
         }
         else{
@@ -60,6 +61,7 @@ public class ResponseAlertGeoZoneDto {
                     .centerLat(zone.getCenterLat())
                     .centerLon(zone.getCenterLon())
                     .radius(zone.getRadius())
+                    .schedulingRules(zone.getZoneSchedulingRules().stream().map(SchedulePeriodDto::of).collect(Collectors.toSet()))
                     .build();
         }
     }
