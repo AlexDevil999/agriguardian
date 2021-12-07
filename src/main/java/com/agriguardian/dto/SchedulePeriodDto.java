@@ -44,8 +44,17 @@ public class SchedulePeriodDto {
         schedulePeriodDto.setDayStart(Optional.ofNullable(zoneSchedulingRule.getDayStart()).orElse(null));
         schedulePeriodDto.setDayEnd(Optional.ofNullable(zoneSchedulingRule.getDayEnd()).orElse(null));
         schedulePeriodDto.setTimeZone(Optional.ofNullable(zoneSchedulingRule.getTimeZone()).orElse(null));
-        schedulePeriodDto.setTimeStart(Optional.of(zoneSchedulingRule.getTimeStart().toString()).orElse(null));
-        schedulePeriodDto.setTimeEnd(Optional.of(zoneSchedulingRule.getTimeEnd().toString()).orElse(null));
+
+        if(zoneSchedulingRule.getTimeStart()!=null)
+            schedulePeriodDto.setTimeStart(zoneSchedulingRule.getTimeStart().toString());
+        else
+            schedulePeriodDto.setTimeStart(null);
+
+        if(zoneSchedulingRule.getTimeEnd()!=null)
+            schedulePeriodDto.setTimeEnd(zoneSchedulingRule.getTimeEnd().toString());
+        else
+            schedulePeriodDto.setTimeEnd(null);
+
         schedulePeriodDto.setStartsToWorkAtMillis(Optional.ofNullable(zoneSchedulingRule.getRuleStartsToWork()).orElse(null));
 
         return schedulePeriodDto;
