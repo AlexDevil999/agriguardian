@@ -7,6 +7,7 @@ import lombok.*;
 import javax.validation.constraints.Pattern;
 import java.time.DayOfWeek;
 import java.time.LocalTime;
+import java.util.Optional;
 
 @Builder
 @Getter
@@ -39,13 +40,13 @@ public class SchedulePeriodDto {
 
     public static SchedulePeriodDto of(ZoneSchedulingRule zoneSchedulingRule){
         SchedulePeriodDto schedulePeriodDto = new SchedulePeriodDto();
-        schedulePeriodDto.setSchedulePeriod(zoneSchedulingRule.getSchedulePeriod());
-        schedulePeriodDto.setDayStart(zoneSchedulingRule.getDayStart());
-        schedulePeriodDto.setDayEnd(zoneSchedulingRule.getDayEnd());
-        schedulePeriodDto.setTimeZone(zoneSchedulingRule.getTimeZone());
-        schedulePeriodDto.setTimeStart(zoneSchedulingRule.getTimeStart().toString());
-        schedulePeriodDto.setTimeEnd(zoneSchedulingRule.getTimeEnd().toString());
-        schedulePeriodDto.setStartsToWorkAtMillis(zoneSchedulingRule.getRuleStartsToWork());
+        schedulePeriodDto.setSchedulePeriod(Optional.ofNullable(zoneSchedulingRule.getSchedulePeriod()).orElse(null));
+        schedulePeriodDto.setDayStart(Optional.ofNullable(zoneSchedulingRule.getDayStart()).orElse(null));
+        schedulePeriodDto.setDayEnd(Optional.ofNullable(zoneSchedulingRule.getDayEnd()).orElse(null));
+        schedulePeriodDto.setTimeZone(Optional.ofNullable(zoneSchedulingRule.getTimeZone()).orElse(null));
+        schedulePeriodDto.setTimeStart(Optional.of(zoneSchedulingRule.getTimeStart().toString()).orElse(null));
+        schedulePeriodDto.setTimeEnd(Optional.of(zoneSchedulingRule.getTimeEnd().toString()).orElse(null));
+        schedulePeriodDto.setStartsToWorkAtMillis(Optional.ofNullable(zoneSchedulingRule.getRuleStartsToWork()).orElse(null));
 
         return schedulePeriodDto;
     }
