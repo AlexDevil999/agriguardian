@@ -73,6 +73,7 @@ public class AlertGeoZoneService {
         try {
             AlertGeoZone savedZone = zoneRepository.save(zone);
             zoneSchedulingRules.forEach(zoneSchedulingRule -> {
+                zone.addSchedulingRule(zoneSchedulingRule);
                 zoneSchedulingRule.setAlertGeoZone(savedZone);
                 zoneSchedulingRuleRepository.save(zoneSchedulingRule);
             });

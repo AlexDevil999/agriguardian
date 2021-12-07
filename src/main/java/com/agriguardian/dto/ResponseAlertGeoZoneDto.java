@@ -34,6 +34,7 @@ public class ResponseAlertGeoZoneDto {
 
 
     public static ResponseAlertGeoZoneDto of(AlertGeoZone zone) {
+        System.out.println("HERE: "  + zone.getZoneSchedulingRules());
         if(zone.getFigureType().equals(Figure.POLYGON)) {
             Collections.sort(zone.getBorders());
             return ResponseAlertGeoZoneDto.builder()
