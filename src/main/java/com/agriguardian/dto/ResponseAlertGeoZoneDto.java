@@ -24,7 +24,7 @@ public class ResponseAlertGeoZoneDto {
     private ZoneRule rule;
     private Long teamGroup;
     private Set<Long> vulnerables;
-    private Set<SchedulePeriodDto> schedulingRules;
+    private Set<SchedulePeriodDto> schedulePeriodDtos;
     private Figure figureType;
     private Double centerLon;
     private Double centerLat;
@@ -47,7 +47,7 @@ public class ResponseAlertGeoZoneDto {
                     .centerLon(zone.getCenterLon())
                     .radius(zone.getRadius())
                     .borders(zone.getBorders().stream().map(Point::of).collect(Collectors.toList()))
-                    .schedulingRules(zone.getZoneSchedulingRules().stream().map(SchedulePeriodDto::of).collect(Collectors.toSet()))
+                    .schedulePeriodDtos(zone.getZoneSchedulingRules().stream().map(SchedulePeriodDto::of).collect(Collectors.toSet()))
                     .build();
         }
         else{
@@ -61,7 +61,7 @@ public class ResponseAlertGeoZoneDto {
                     .centerLat(zone.getCenterLat())
                     .centerLon(zone.getCenterLon())
                     .radius(zone.getRadius())
-                    .schedulingRules(zone.getZoneSchedulingRules().stream().map(SchedulePeriodDto::of).collect(Collectors.toSet()))
+                    .schedulePeriodDtos(zone.getZoneSchedulingRules().stream().map(SchedulePeriodDto::of).collect(Collectors.toSet()))
                     .build();
         }
     }
