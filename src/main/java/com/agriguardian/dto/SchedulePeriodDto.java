@@ -43,8 +43,8 @@ public class SchedulePeriodDto {
         schedulePeriodDto.setDayStart(zoneSchedulingRule.getDayStart());
         schedulePeriodDto.setDayEnd(zoneSchedulingRule.getDayEnd());
         schedulePeriodDto.setTimeZone(zoneSchedulingRule.getTimeZone());
-        schedulePeriodDto.setTimeStart(schedulePeriodDto.getTimeStart());
-        schedulePeriodDto.setTimeEnd(schedulePeriodDto.getTimeEnd());
+        schedulePeriodDto.setTimeStart(zoneSchedulingRule.getTimeStart().toString());
+        schedulePeriodDto.setTimeEnd(zoneSchedulingRule.getTimeEnd().toString());
         schedulePeriodDto.setStartsToWorkAtMillis(zoneSchedulingRule.getRuleStartsToWork());
 
         return schedulePeriodDto;
