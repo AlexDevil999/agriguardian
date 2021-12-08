@@ -28,12 +28,15 @@ public class SchedulePeriodDto {
     public ZoneSchedulingRule createSchedulingRule(){
         ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
         zoneSchedulingRule.setSchedulePeriod(schedulePeriod);
+        zoneSchedulingRule.setRuleStartsToWork(startsToWorkAtMillis);
+        if(schedulePeriod==SchedulePeriod.CONSTANT)
+            return zoneSchedulingRule;
+
         zoneSchedulingRule.setDayStart(dayStart);
         zoneSchedulingRule.setDayEnd(dayEnd);
         zoneSchedulingRule.setTimeZone(timeZone);
         zoneSchedulingRule.setTimeStart(LocalTime.parse(timeStart));
         zoneSchedulingRule.setTimeEnd(LocalTime.parse(timeEnd));
-        zoneSchedulingRule.setRuleStartsToWork(startsToWorkAtMillis);
 
         return zoneSchedulingRule;
     }
