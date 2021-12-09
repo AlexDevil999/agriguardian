@@ -122,7 +122,7 @@ public class TeamGroupController {
             throw new ConflictException("only owner can refresh codes");
         }
 
-        teamGroupService.setNewCodes(thisGroup, Boolean.TRUE.equals(dto.getVulnerableCode()), Boolean.TRUE.equals(dto.getGuardianCode()));
+        TeamGroup tgWithNewCodes = teamGroupService.setNewCodes(thisGroup, Boolean.TRUE.equals(dto.getVulnerableCode()), Boolean.TRUE.equals(dto.getGuardianCode()));
 
         notificator.notifyUsers(
                 thisGroup.extractUsers(),
@@ -131,7 +131,7 @@ public class TeamGroupController {
                         .groupId(thisGroup.getId())
                         .build()
         );
-        return ResponseTeamGroupDto.of(thisGroup);
+        return ResponseTeamGroupDto.of(tgWithNewCodes);
 
     }
 

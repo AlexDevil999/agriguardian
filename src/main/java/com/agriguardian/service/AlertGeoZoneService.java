@@ -54,13 +54,13 @@ public class AlertGeoZoneService {
                 .name(name)
                 .build();
 
-
         if(!Optional.ofNullable(zoneSchedulingRules).isPresent()) {
             zoneSchedulingRules = new ArrayList<>();
             ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
             zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
             zoneSchedulingRules.add(zoneSchedulingRule);
         }
+
         zone.addTeamGroup(group);
 
         vulnerables.forEach(v -> {
@@ -102,13 +102,6 @@ public class AlertGeoZoneService {
 
             currentZone.emptyRules();
             zoneSchedulingRuleRepository.deleteByAlertGeoZoneId(currentZone.getId());
-            if(!Optional.ofNullable(zoneSchedulingRules).isPresent()){
-                log.debug("creating zone with no specified scheduling rule");
-                zoneSchedulingRules = new ArrayList<>();
-                ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
-                zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
-                zoneSchedulingRules.add(zoneSchedulingRule);
-            }
 
             zoneSchedulingRules.forEach(zoneSchedulingRule ->
             {currentZone.addSchedulingRule(zoneSchedulingRule);

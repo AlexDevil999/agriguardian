@@ -1,4 +1,4 @@
-package com.agriguardian.dto;
+package com.agriguardian.dto.geoZone;
 
 import com.agriguardian.entity.ZoneSchedulingRule;
 import com.agriguardian.enums.SchedulePeriod;

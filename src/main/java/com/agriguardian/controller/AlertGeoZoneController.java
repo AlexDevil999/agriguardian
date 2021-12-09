@@ -1,6 +1,9 @@
 package com.agriguardian.controller;
 
 import com.agriguardian.dto.*;
+import com.agriguardian.dto.geoZone.AddGeoZoneDto;
+import com.agriguardian.dto.geoZone.EditGeoZoneDto;
+import com.agriguardian.dto.geoZone.ResponseAlertGeoZoneDto;
 import com.agriguardian.entity.*;
 import com.agriguardian.entity.manyToMany.AppUserTeamGroup;
 import com.agriguardian.enums.Figure;
@@ -16,7 +19,6 @@ import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.http.HttpEntity;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -27,7 +29,6 @@ import javax.validation.Valid;
 import java.security.Principal;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Log4j2
 @AllArgsConstructor

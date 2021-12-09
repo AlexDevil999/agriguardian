@@ -1,18 +1,14 @@
-package com.agriguardian.dto;
+package com.agriguardian.dto.geoZone;
 
 import com.agriguardian.domain.Point;
 import com.agriguardian.entity.ZoneSchedulingRule;
 import com.agriguardian.enums.Figure;
-import com.agriguardian.enums.SchedulePeriod;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.enums.ZoneType;
 import lombok.*;
 
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
-import java.time.DayOfWeek;
-import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -22,21 +18,20 @@ import java.util.Set;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class EditGeoZoneDto {
-    @NotNull(message = "field 'geoZoneId' may not be null")
-    private Long geoZoneId;
+@ToString
+public class AddGeoZoneDto {
     @NotNull(message = "field 'teamGroupId' may not be null")
     private Long teamGroupId;
     @NotNull(message = "field 'type' may not be null")
     private ZoneType type;
     @NotNull(message = "field 'rule' may not be null")
     private ZoneRule rule;
-    @NotNull(message = "field 'figureType' may not be null")
-    private Figure figureType;
+    private String name;
 
     private List<SchedulePeriodDto> schedulePeriodDtos;
 
-    private String name;
+
+    private Figure figureType;
     private Double centerLon;
     private Double centerLat;
     private Integer radius;

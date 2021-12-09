@@ -244,7 +244,7 @@ public class TeamGroupService {
     }
 
     @Transactional
-    public void setNewCodes(TeamGroup teamGroup, boolean resetVulnerable, boolean resetGuardian){
+    public TeamGroup setNewCodes(TeamGroup teamGroup, boolean resetVulnerable, boolean resetGuardian){
         try {
             if (resetVulnerable) {
                 teamGroup.setVulnerableInvitationCode(generateUniqueInvitationCode());
@@ -254,7 +254,7 @@ public class TeamGroupService {
                 teamGroup.setGuardianInvitationCode(generateUniqueInvitationCode());
             }
 
-            teamGroupRepository.save(teamGroup);
+            return teamGroupRepository.save(teamGroup);
 
         } catch (Exception e){
             log.error("[setNewCodes] failed refresh codes for tg {}; rsn: {}", teamGroup.getId(), e.getMessage());
