@@ -10,6 +10,7 @@ import com.agriguardian.enums.SchedulePeriod;
 import com.agriguardian.enums.ZoneRule;
 import com.agriguardian.service.interfaces.UserMonitor;
 import lombok.AllArgsConstructor;
+import lombok.extern.log4j.Log4j2;
 import org.locationtech.jts.geom.Coordinate;
 import org.locationtech.jts.geom.GeometryFactory;
 import org.locationtech.jts.geom.LinearRing;
@@ -26,6 +27,7 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Log4j2
 public class UserMonitorImp implements UserMonitor {
 
 
@@ -58,7 +60,10 @@ public class UserMonitorImp implements UserMonitor {
     private boolean zoneIsActive(ZoneSchedulingRule zoneSchedulingRule) {
         if(zoneSchedulingRule.getSchedulePeriod()== SchedulePeriod.CONSTANT)
             return true;
+
         LocalDateTime now = LocalDateTime.now(ZoneId.of(zoneSchedulingRule.getTimeZone()));
+        log.debug("[zoneIsActive]: " + now + " epoch: " + now.toEpochSecond(ZoneOffset.of(zoneSchedulingRule.getTimeZone())));
+        log.debug("[zoneIsActive]: starts to work " + zoneSchedulingRule.getRuleStartsToWork());
         if(now.toEpochSecond(ZoneOffset.of(zoneSchedulingRule.getTimeZone()))< zoneSchedulingRule.getRuleStartsToWork())
             return false;
 
