@@ -103,6 +103,13 @@ public class AlertGeoZoneService {
             currentZone.emptyRules();
             zoneSchedulingRuleRepository.deleteByAlertGeoZoneId(currentZone.getId());
 
+        if(!Optional.ofNullable(zoneSchedulingRules).isPresent()) {
+            zoneSchedulingRules = new ArrayList<>();
+            ZoneSchedulingRule zoneSchedulingRule = new ZoneSchedulingRule();
+            zoneSchedulingRule.setSchedulePeriod(SchedulePeriod.CONSTANT);
+            zoneSchedulingRules.add(zoneSchedulingRule);
+        }
+
             zoneSchedulingRules.forEach(zoneSchedulingRule ->
             {currentZone.addSchedulingRule(zoneSchedulingRule);
             zoneSchedulingRule.setAlertGeoZone(currentZone);});
