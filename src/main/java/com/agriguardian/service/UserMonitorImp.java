@@ -62,9 +62,12 @@ public class UserMonitorImp implements UserMonitor {
             return true;
 
         LocalDateTime now = LocalDateTime.now(ZoneId.of(zoneSchedulingRule.getTimeZone()));
+        log.debug("now: " + now.toEpochSecond(ZoneOffset.of(zoneSchedulingRule.getTimeZone()))*1000 + " starts to work: " + zoneSchedulingRule.getRuleStartsToWork());
         if(now.toEpochSecond(ZoneOffset.of(zoneSchedulingRule.getTimeZone()))*1000< zoneSchedulingRule.getRuleStartsToWork())
             return false;
 
+        log.debug("now is lesser then dayStart: " + (now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayStart()) < 0));
+        log.debug("now is bigger then dayEnd: " + (now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayEnd()) > 0));
         if(now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayStart()) < 0 || now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayEnd()) > 0)
             return false;
 
