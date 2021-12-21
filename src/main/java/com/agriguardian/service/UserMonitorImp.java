@@ -46,6 +46,7 @@ public class UserMonitorImp implements UserMonitor {
            if(currentRules.isEmpty())
                return false;
 
+           log.debug("[monitor]: countOfRules: " + currentRules.size());
            return true;
 
         }).collect(Collectors.toList());
@@ -66,8 +67,8 @@ public class UserMonitorImp implements UserMonitor {
         if(now.toEpochSecond(ZoneOffset.of(zoneSchedulingRule.getTimeZone()))*1000< zoneSchedulingRule.getRuleStartsToWork())
             return false;
 
-        log.debug("now is lesser then dayStart: " + (now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayStart()) < 0));
-        log.debug("now is bigger then dayEnd: " + (now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayEnd()) > 0));
+        log.debug("[zoneIsActive] now is lesser then dayStart: " + (now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayStart()) < 0));
+        log.debug("[zoneIsActive] now is bigger then dayEnd: " + (now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayEnd()) > 0));
         if(now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayStart()) < 0 || now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayEnd()) > 0)
             return false;
 
@@ -80,6 +81,8 @@ public class UserMonitorImp implements UserMonitor {
             if(now.toLocalTime().isAfter(zoneSchedulingRule.getTimeStart()))
                 return false;
         }
+
+        log.debug("[zoneIsActive] adding rule to a list");
 
         return true;
     }
