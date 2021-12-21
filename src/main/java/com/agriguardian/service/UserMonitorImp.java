@@ -72,14 +72,16 @@ public class UserMonitorImp implements UserMonitor {
         if(now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayStart()) < 0 || now.getDayOfWeek().compareTo(zoneSchedulingRule.getDayEnd()) > 0)
             return false;
 
+        log.debug("[zoneIsActive]: " + now.toLocalTime() + " startsAt: " + zoneSchedulingRule.getTimeStart() + " endAt: " + zoneSchedulingRule.getTimeEnd());
         if(now.getDayOfWeek()== zoneSchedulingRule.getDayStart()){
             if(now.toLocalTime().isBefore(zoneSchedulingRule.getTimeStart()))
                 return false;
         }
 
         if(now.getDayOfWeek()== zoneSchedulingRule.getDayEnd()){
-            if(now.toLocalTime().isAfter(zoneSchedulingRule.getTimeStart()))
+            if(now.toLocalTime().isAfter(zoneSchedulingRule.getTimeEnd())){
                 return false;
+            }
         }
 
         log.debug("[zoneIsActive] adding rule to a list");
