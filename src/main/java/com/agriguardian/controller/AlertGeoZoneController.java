@@ -171,6 +171,21 @@ public class AlertGeoZoneController {
         return response;
     }
 
+    @GetMapping("/group-geo-zones/{id}")
+    public  Set<ResponseAlertGeoZoneDto> findZonesForGroup(@PathVariable Long id, Principal principal) {
+        AppUser user = appUserService.findByUsernameOrThrowNotFound(principal.getName());
+
+        TeamGroup thisTeamGroup = teamGroupService.findById(id).orElseThrow((()-> new NotFoundException("no teamGroup with id " + id)));
+
+        if(user.getAppUserTeamGroups().stream().noneMatch(appUserTeamGroup -> appUserTeamGroup.getTeamGroup().equals(thisTeamGroup)))
+            throw new NotFoundException("user: " + user.getId() + "not in teamGroup: " + id);
+
+        Set<ResponseAlertGeoZoneDto> response =
+                thisTeamGroup.getAlertGeoZones().stream().map(ResponseAlertGeoZoneDto::of).collect(Collectors.toSet());
+
+        return response;
+    }
+
     //todo add permisions and verifications
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @DeleteMapping("/{id}")
