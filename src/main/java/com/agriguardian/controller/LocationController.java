@@ -73,8 +73,8 @@ public class LocationController {
                             .violatedZoneId(zone.getId())
                             .violatedZoneName(zone.getName())
                             .time(geo.findLastLocation().getTime())
-                            .lat(geo.findLastLocation().getPoint().getLat())
-                            .lon(geo.findLastLocation().getPoint().getLon())
+                            .lat(String.valueOf(geo.findLastLocation().getPoint().getLat()))
+                            .lon(String.valueOf(geo.findLastLocation().getPoint().getLon()))
                             .violatedZoneRule(zone.getRule().name())
                             .build()
             );
