@@ -19,6 +19,7 @@ public class MessageDto {
     private Long violatedZoneId;
     private String violatedZoneName;
     private Long time;
-    private Point point;
+    private Double lon;
+    private Double lat;
     private String violatedZoneRule;
 }
