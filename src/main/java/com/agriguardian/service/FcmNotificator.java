@@ -34,6 +34,7 @@ public class FcmNotificator implements Notificator {
 
     @Override
     public void notifyUsers(Set<AppUser> recipients, MessageDto message) {
+        log.debug("messageIs: " + mapper.convertValue(message, Map.class));
         recipients.forEach(user -> {
             try {
                 if (ValidationString.isBlank(user.getFcmToken())) {
