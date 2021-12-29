@@ -1,7 +1,10 @@
 package com.agriguardian.dto;
 
+import com.agriguardian.domain.Point;
 import com.agriguardian.entity.EventType;
 import lombok.*;
+
+import javax.validation.constraints.NotNull;
 
 @Getter
 @Setter
@@ -15,6 +18,7 @@ public class MessageDto {
     private String userFullName;
     private Long violatedZoneId;
     private String violatedZoneName;
-    private LocationDto location;
+    private Long time;
+    private Point point;
     private String violatedZoneRule;
 }
