@@ -40,8 +40,8 @@ public class FcmNotificator implements Notificator {
                     log.error("firebase cloud massaging token is absent; user: {} {}", user.getId(), user.getUsername());
                     return;
                 }
-                sendNotification(message.getEvent().name(), mapper.writeValueAsString(message), null, user.getFcmToken());
-            } catch (FirebaseMessagingException | JsonProcessingException e) {
+                sendNotification(message.getEvent().name(), null, mapper.convertValue(message, Map.class), user.getFcmToken());
+            } catch (FirebaseMessagingException e) {
                 //todo add resendiong
                 log.error("[notifyUsers] failed to notify user [{}]; reason : {}", user.getId(), e.getMessage());
             } catch (Exception e) {
@@ -53,17 +53,10 @@ public class FcmNotificator implements Notificator {
 
     public String sendNotification(String subject, String content, Map<String, String> data, String token) throws FirebaseMessagingException {
 
-        Notification notification = Notification
-                .builder()
-                .setTitle(subject)
-                .setBody(content)
-                .build();
-
-
         Message message = Message
                 .builder()
+                .putAllData(data)
                 .setToken(token)
-                .setNotification(notification)
                 .build();
 
         log.trace("notification for {} is being sent", subject);
