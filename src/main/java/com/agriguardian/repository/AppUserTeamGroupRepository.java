@@ -12,4 +12,5 @@ import java.util.Optional;
 @Repository
 public interface AppUserTeamGroupRepository extends CrudRepository<AppUserTeamGroup, Long> {
     Optional<AppUserTeamGroup> findByAppUserIdAndTeamGroup(long id, TeamGroup teamGroup);
+    Boolean existsByAppUserIdAndTeamGroup(long id, TeamGroup teamGroup);
 }

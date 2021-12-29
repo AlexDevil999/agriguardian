@@ -111,8 +111,8 @@ public class AlertGeoZoneService {
         }
 
             zoneSchedulingRules.forEach(zoneSchedulingRule ->
-            {currentZone.addSchedulingRule(zoneSchedulingRule);
-            zoneSchedulingRule.setAlertGeoZone(currentZone);});
+                {currentZone.addSchedulingRule(zoneSchedulingRule);
+                zoneSchedulingRule.setAlertGeoZone(currentZone);});
             zoneSchedulingRules.forEach(zoneSchedulingRule -> zoneSchedulingRule.setAlertGeoZone(currentZone));
 
 
