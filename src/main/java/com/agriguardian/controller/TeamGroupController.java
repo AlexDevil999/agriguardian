@@ -78,8 +78,8 @@ public class TeamGroupController {
         notificator.notifyUsers(
                 teamGroup.extractUsers(),
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(teamGroup.getId())
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(teamGroup.getId()))
                         .build()
         );
 
@@ -100,8 +100,8 @@ public class TeamGroupController {
         notificator.notifyUsers(
                 updatedTg.extractUsers(),
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(updatedTg.getId())
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(updatedTg.getId()))
                         .build()
         );
         return ResponseTeamGroupDto.of(updatedTg);
@@ -127,8 +127,8 @@ public class TeamGroupController {
         notificator.notifyUsers(
                 thisGroup.extractUsers(),
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(thisGroup.getId())
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(thisGroup.getId()))
                         .build()
         );
         return ResponseTeamGroupDto.of(tgWithNewCodes);

@@ -67,12 +67,12 @@ public class LocationController {
             notificator.notifyUsers(
                     zone.getTeamGroup().extractAdmins(),
                     MessageDto.builder()
-                            .userId(user.getId())
+                            .userId(String.valueOf(user.getId()))
                             .userFullName(user.getUserInfo().getName())
-                            .event(EventType.USER_VIOLATION)
-                            .violatedZoneId(zone.getId())
+                            .event(EventType.USER_VIOLATION.name())
+                            .violatedZoneId(String.valueOf(zone.getId()))
                             .violatedZoneName(zone.getName())
-                            .time(geo.findLastLocation().getTime())
+                            .time(String.valueOf(geo.findLastLocation().getTime()))
                             .lat(String.valueOf(geo.findLastLocation().getPoint().getLat()))
                             .lon(String.valueOf(geo.findLastLocation().getPoint().getLon()))
                             .violatedZoneRule(zone.getRule().name())

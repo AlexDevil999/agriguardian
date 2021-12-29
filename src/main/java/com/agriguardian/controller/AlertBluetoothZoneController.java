@@ -79,8 +79,8 @@ public class AlertBluetoothZoneController {
         notificator.notifyUsers(
                 teamGroup.extractUsers(),
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(teamGroup.getId())
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(teamGroup.getId()))
                         .build()
                 );
 
@@ -128,8 +128,8 @@ public class AlertBluetoothZoneController {
         notificator.notifyUsers(
                 userList,
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(tgId)
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(tgId))
                         .build()
         );
 
@@ -173,8 +173,8 @@ public class AlertBluetoothZoneController {
         notificator.notifyUsers(
                 editedBluetoothZone.getTeamGroup().extractUsers(),
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(editedBluetoothZone.getTeamGroup().getId())
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(editedBluetoothZone.getTeamGroup().getId()))
                         .build()
         );
 

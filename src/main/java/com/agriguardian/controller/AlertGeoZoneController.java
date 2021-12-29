@@ -85,8 +85,8 @@ public class AlertGeoZoneController {
         notificator.notifyUsers(
                 teamGroup.extractUsers(),
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(teamGroup.getId())
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(teamGroup.getId()))
                         .build()
         );
 
@@ -130,8 +130,8 @@ public class AlertGeoZoneController {
         notificator.notifyUsers(
                 editedGeoZone.getTeamGroup().extractUsers(),
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(editedGeoZone.getTeamGroup().getId())
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(editedGeoZone.getTeamGroup().getId()))
                         .build()
         );
 
@@ -208,8 +208,8 @@ public class AlertGeoZoneController {
         notificator.notifyUsers(
                 userList,
                 MessageDto.builder()
-                        .event(EventType.TEAM_GROUP_UPDATED)
-                        .groupId(tgId)
+                        .event(EventType.TEAM_GROUP_UPDATED.name())
+                        .groupId(String.valueOf(tgId))
                         .build()
         );
 

@@ -282,8 +282,8 @@ public class UserController {
             notificator.notifyUsers(
                     tg.extractUsers(),
                     MessageDto.builder()
-                            .event(EventType.TEAM_GROUP_UPDATED)
-                            .groupId(tg.getId())
+                            .event(EventType.TEAM_GROUP_UPDATED.name())
+                            .groupId(String.valueOf(tg.getId()))
                             .build()
             );
         });

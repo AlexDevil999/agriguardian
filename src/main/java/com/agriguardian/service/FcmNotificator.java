@@ -41,7 +41,7 @@ public class FcmNotificator implements Notificator {
                     log.error("firebase cloud massaging token is absent; user: {} {}", user.getId(), user.getUsername());
                     return;
                 }
-                sendNotification(message.getEvent().name(), null, mapper.convertValue(message, Map.class), user.getFcmToken());
+                sendNotification(message.getEvent(), null, mapper.convertValue(message, Map.class), user.getFcmToken());
             } catch (FirebaseMessagingException e) {
                 //todo add resendiong
                 log.error("[notifyUsers] failed to notify user [{}]; reason : {}", user.getId(), e.getMessage());
