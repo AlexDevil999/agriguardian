@@ -38,6 +38,7 @@ out/
 
 ###development files
 application.yml
+application.yaml
 
 temp/*
 logs/*

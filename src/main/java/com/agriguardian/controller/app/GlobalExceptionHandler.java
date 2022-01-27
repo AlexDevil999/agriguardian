@@ -52,6 +52,12 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(ERROR, e.getMessage()));
     }
 
+    @ExceptionHandler(UserFormTokenDoesNotExistsException.class)
+    public ResponseEntity<?> handleUserFormTokenDoesNotExistsException(UserFormTokenDoesNotExistsException e) {
+        log.warn("[handleConflictException]: response 'CONFLICT'; rsn: " + e.getMessage());
+        return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(Collections.singletonMap(ERROR, e.getMessage()));
+    }
+
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity<?> handleBadCredentialsException(BadCredentialsException e) {
         log.warn("[handleBadCredentialsException]: response 'NOT_FOUND'; rsn: " + e.getMessage());

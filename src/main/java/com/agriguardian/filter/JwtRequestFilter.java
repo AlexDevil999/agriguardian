@@ -5,6 +5,7 @@ import com.agriguardian.entity.AppUser;
 import com.agriguardian.enums.Status;
 import com.agriguardian.exception.BadTokenException;
 import com.agriguardian.exception.NotFoundException;
+import com.agriguardian.exception.UserFormTokenDoesNotExistsException;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.security.JwtProvider;
 import io.jsonwebtoken.JwtException;
@@ -55,7 +56,7 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     jwtProvider.isTokenAccess(token);
                     AppUserAuthDetails tokenInfo = jwtProvider.readTokenInfo(token);
 
-                    AppUser user = userService.findByUsername(tokenInfo.getUsername()).orElseThrow(() -> new NotFoundException("User not found: " + tokenInfo.getUsername()));
+                    AppUser user = userService.findByUsername(tokenInfo.getUsername()).orElseThrow(() -> new UserFormTokenDoesNotExistsException("User does not exists: " + tokenInfo.getUsername()));
                     if (Status.ACTIVATED != user.getStatus()) {
                         throw new AccessDeniedException("Account status is " + user.getStatus() + ". Need activation");
                     }
