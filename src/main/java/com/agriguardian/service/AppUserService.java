@@ -326,6 +326,10 @@ public class AppUserService {
 
     @Transactional
     public AppUser editUser(AppUser editedVariantOfUser, AppUser thisUser) {
+
+        if(existsByUsername(editedVariantOfUser.getUsername()))
+            throw new ConflictException("username: " + editedVariantOfUser.getUsername() + " has already been taken: ");
+
         thisUser.editUser(editedVariantOfUser);
         Optional.ofNullable(editedVariantOfUser.getPassword()).ifPresent(password -> setPasswordForUser(thisUser,editedVariantOfUser.getPassword()));
         try{
