@@ -18,7 +18,6 @@ import com.agriguardian.util.RandomCodeGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.expression.AccessException;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
@@ -326,8 +325,9 @@ public class AppUserService {
     }
 
     @Transactional
-    public AppUser editUser(AppUser editedUser, AppUser thisUser) {
-        thisUser.editUser(editedUser);
+    public AppUser editUser(AppUser editedVariantOfUser, AppUser thisUser) {
+        thisUser.editUser(editedVariantOfUser);
+        Optional.ofNullable(editedVariantOfUser.getPassword()).ifPresent(password -> setPasswordForUser(thisUser,editedVariantOfUser.getPassword()));
         try{
             return userRepo.save(thisUser);
         } catch (Exception e){
@@ -342,7 +342,7 @@ public class AppUserService {
         return relation.isPresent();
     }
 
-    public AppUser setPassword(AppUser appUser, String password){
+    public AppUser setPasswordForUser(AppUser appUser, String password){
         appUser.setPassword(passwordEncryptor.encode(password));
         return appUser;
     }
