@@ -328,7 +328,7 @@ public class AppUserService {
     public AppUser editUser(AppUser editedVariantOfUser, AppUser thisUser) {
 
         if(existsByUsername(editedVariantOfUser.getUsername()))
-            throw new ConflictException("username: " + editedVariantOfUser.getUsername() + " has already been taken: ");
+            throw new ConflictException(editedVariantOfUser.getUsername() + " already exists");
 
         thisUser.editUser(editedVariantOfUser);
         Optional.ofNullable(editedVariantOfUser.getPassword()).ifPresent(password -> setPasswordForUser(thisUser,editedVariantOfUser.getPassword()));
