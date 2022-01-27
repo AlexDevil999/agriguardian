@@ -327,7 +327,7 @@ public class AppUserService {
     @Transactional
     public AppUser editUser(AppUser editedVariantOfUser, AppUser thisUser) {
 
-        if(existsByUsername(editedVariantOfUser.getUsername()))
+        if(existsByUsername(editedVariantOfUser.getUsername())&&!thisUser.getUsername().equalsIgnoreCase(editedVariantOfUser.getUsername()))
             throw new ConflictException(editedVariantOfUser.getUsername() + " already exists");
 
         thisUser.editUser(editedVariantOfUser);
