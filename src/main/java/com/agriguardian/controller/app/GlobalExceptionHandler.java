@@ -52,8 +52,8 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(Collections.singletonMap(ERROR, e.getMessage()));
     }
 
-    @ExceptionHandler(UserFormTokenDoesNotExistsException.class)
-    public ResponseEntity<?> handleUserFormTokenDoesNotExistsException(UserFormTokenDoesNotExistsException e) {
+    @ExceptionHandler(UserFromTokenDoesNotExistsException.class)
+    public ResponseEntity<?> handleUserFormTokenDoesNotExistsException(UserFromTokenDoesNotExistsException e) {
         log.warn("[handleConflictException]: response 'CONFLICT'; rsn: " + e.getMessage());
         return ResponseEntity.status(HttpStatus.FAILED_DEPENDENCY).body(Collections.singletonMap(ERROR, e.getMessage()));
     }

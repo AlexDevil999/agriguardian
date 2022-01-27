@@ -4,8 +4,7 @@ import com.agriguardian.domain.AppUserAuthDetails;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.enums.Status;
 import com.agriguardian.exception.BadTokenException;
-import com.agriguardian.exception.NotFoundException;
-import com.agriguardian.exception.UserFormTokenDoesNotExistsException;
+import com.agriguardian.exception.UserFromTokenDoesNotExistsException;
 import com.agriguardian.service.AppUserService;
 import com.agriguardian.service.security.JwtProvider;
 import io.jsonwebtoken.JwtException;
@@ -56,17 +55,16 @@ public class JwtRequestFilter extends OncePerRequestFilter {
                     jwtProvider.isTokenAccess(token);
                     AppUserAuthDetails tokenInfo = jwtProvider.readTokenInfo(token);
 
-                    AppUser user = userService.findByUsername(tokenInfo.getUsername()).orElseThrow(() -> new UserFormTokenDoesNotExistsException("User does not exists: " + tokenInfo.getUsername()));
+                    AppUser user = userService.findByUsername(tokenInfo.getUsername()).orElseThrow(() -> new UserFromTokenDoesNotExistsException("User does not exists: " + tokenInfo.getUsername()));
                     if (Status.ACTIVATED != user.getStatus()) {
                         throw new AccessDeniedException("Account status is " + user.getStatus() + ". Need activation");
                     }
-
                     log.info("internalFilter: Token data: " + tokenInfo);
                     UsernamePasswordAuthenticationToken authToken = new UsernamePasswordAuthenticationToken(tokenInfo, null, tokenInfo.getAuthorities());
                     authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
                     SecurityContextHolder.getContext().setAuthentication(authToken);
                     chain.doFilter(request, response);
-                } catch (BadTokenException | JwtException | AccessDeniedException exception) {
+                } catch (BadTokenException | JwtException | UserFromTokenDoesNotExistsException | AccessDeniedException exception) {
                     if (REFRESH.equals(new ServletServerHttpRequest(request).getURI().getRawPath())) {
                         log.warn("internalFilter: " + exception);
                         chain.doFilter(request, response);
