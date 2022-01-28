@@ -18,6 +18,7 @@ jwt:
 aes:
   key: verysecret
 
+
 device:
   password: se1dkl4rfv3f4h7fgs98h2q96sjk
 
