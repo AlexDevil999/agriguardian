@@ -37,7 +37,6 @@ out/
 .vscode/
 
 ###development files
-application.yml
 application.yaml
 
 temp/*
