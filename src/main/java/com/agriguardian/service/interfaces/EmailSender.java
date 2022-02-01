@@ -2,7 +2,8 @@ package com.agriguardian.service.interfaces;
 
 public interface EmailSender {
     void send(String to, String email);
-    static String buildEmail(String name, String code){
+
+    static String buildEmailForAccountConfirmation(String name, String code){
         return "<div style=\"font-family:Helvetica,Arial,sans-serif;font-size:16px;margin:0;color:#0b0c0c\">\n" +
                 "\n" +
                 "<span style=\"display:none;font-size:1px;color:#fff;max-height:0\"></span>\n" +
@@ -69,6 +70,10 @@ public interface EmailSender {
                 "  </tbody></table><div class=\"yj6qo\"></div><div class=\"adL\">\n" +
                 "\n" +
                 "</div></div>";
+    }
+
+    static String buildEmailWithTemporaryPassword(String name, String otp){
+        return "<div>" + otp + "</div>";
     }
 }
 

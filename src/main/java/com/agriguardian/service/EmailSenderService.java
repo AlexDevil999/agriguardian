@@ -36,7 +36,8 @@ public class EmailSenderService implements EmailSender {
 
             mailSender.send(mimeMessage);
         } catch (MessagingException e) {
-            throw new InternalErrorException("failed to send an email. Reason: "+e.getMessage());
+            log.error("failed to send an email. Reason: " + e.getMessage());
+            throw new InternalErrorException("unexpected server error");
         }
     }
 

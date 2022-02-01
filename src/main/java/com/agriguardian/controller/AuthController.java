@@ -13,6 +13,7 @@ import com.agriguardian.service.AesEncryptor;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.AccessDeniedException;
@@ -45,11 +46,14 @@ class AuthController {
             user = appUserService.findByUsername(request.getUsername().trim());
         }
 
-        if (!user.isPresent() || !passwordEncryptor.matches(request.getPassword(), user.get().getPassword())) {
+        if (!user.isPresent()) {
             throw new BadCredentialsException("Bad credentials");
         }
 
         AppUser currentUser = user.get();
+
+        if(appUserService.badPassword(currentUser,request.getPassword()))
+            throw new BadCredentialsException("Bad credentials");
 
         if (Status.REGISTRATION == currentUser.getStatus()) {
             throw new AccessDeniedException("Unfinished registration: required confirmation of an email");
@@ -119,10 +123,11 @@ class AuthController {
         }
     }
 
-//    @GetMapping(value = "/refresh")
-//    public ResponseEntity forgotPassword(@RequestParam String email){
-//        if(!appUserService.existsByUsername(email))
-//            return ResponseEntity.ok(HttpStatus.OK);
-//        appUserService.sendTemporaryPassword(email);
-//    }
+    @PostMapping(value = "/password/forgot")
+    public ResponseEntity forgotPassword(@RequestParam String email){
+        if(!appUserService.existsByUsername(email))
+            return ResponseEntity.ok(HttpStatus.OK);
+        appUserService.sendTemporaryPassword(email);
+        return ResponseEntity.ok(HttpStatus.OK);
+    }
 }

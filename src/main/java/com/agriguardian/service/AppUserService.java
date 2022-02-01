@@ -30,6 +30,8 @@ import java.util.stream.Collectors;
 public class AppUserService {
     @Value("${code.lifetime}")
     private long lifetimeMs;
+    @Value("${temporaryPassword.lifetime}")
+    private long recoveredPasswordLifetime;
     private final AppUserRepository userRepo;
     private final PasswordEncryptor passwordEncryptor;
     private final EmailSenderService emailSenderService;
@@ -65,15 +67,31 @@ public class AppUserService {
         }
     }
 
-//    @Transactional
-//    public void sendTemporaryPassword(String email) {
-//        try {
-//            if(!existsByUsername(email))
-//
-//        } catch (Exception e) {
-//
-//        }
-//    }
+    @Transactional
+    public void sendTemporaryPassword(String email) {
+        try {
+            Optional<AppUser> appUser = userRepo.findByUsername(email);
+
+            if(!appUser.isPresent())
+                return;
+
+            AppUser thisUser = appUser.get();
+
+            if(!thisUser.getStatus().equals(Status.ACTIVATED))
+                return;
+
+            String tempPass = RandomCodeGenerator.generateTemporaryPassword();
+            thisUser.setOtp(tempPass);
+            thisUser.setOtpCreatedOnMs(System.currentTimeMillis());
+
+            sendEmailWithTemporaryPassword(email, tempPass);
+            userRepo.save(thisUser);
+
+        } catch (Exception e) {
+            log.error("[sendTemporaryPassword] unexpected error. email: {}; rsn: {}", email, e.getMessage());
+            throw new InternalErrorException("unexpected server error");
+        }
+    }
 
     @Transactional
     public AppUser saveUserMasterIfNotExist(AppUser appUser, Status status, Boolean withNewGroup) {
@@ -305,7 +323,7 @@ public class AppUserService {
     public void sendEmailConfirmationForUser(AppUser appUser){
         if(!appUser.getStatus().equals(Status.REGISTRATION))
             throw new ConflictException("user has already confirmed registration");
-        if(!usersOtpCodeIsValid(appUser)) {
+
             try{
                 appUser.setOtp(RandomCodeGenerator.generateConfirmationCode());
                 appUser.setOtpCreatedOnMs(System.currentTimeMillis());
@@ -315,9 +333,9 @@ public class AppUserService {
                 log.error("[sendEmailConfirmationForUser] failed to send verification email; rsn: {}", e.getMessage());
                 throw new InternalErrorException("failed to set new Otp a user; rsn: " + e.getMessage());
             }
-        }
+
         log.debug("[sendEmailConfirmationForUser] trying to send an email for user: {}", appUser.getUsername());
-        emailSenderService.send(appUser.getUsername(),EmailSender.buildEmail(appUser.getUsername(), appUser.getOtp()));
+        emailSenderService.send(appUser.getUsername(),EmailSender.buildEmailForAccountConfirmation(appUser.getUsername(), appUser.getOtp()));
     }
 
     public List<AppUserRelations> getAllUserRelations(AppUser master){
@@ -361,6 +379,17 @@ public class AppUserService {
         return appUser;
     }
 
+    public Boolean badPassword(AppUser user, String passwordFromRequest){
+        if(!passwordEncryptor.matches(passwordFromRequest, user.getPassword())){
+            if(!passwordFromRequest.equals(user.getOtp()))
+                return true;
+            if((Long.sum(user.getOtpCreatedOnMs(),recoveredPasswordLifetime)<System.currentTimeMillis()))
+                return true;
+        }
+
+        return false;
+    }
+
     private boolean existsByMacAddress(String macAddress) {
         try {
             return userRepo.existsByMacAddress(macAddress);
@@ -368,6 +397,10 @@ public class AppUserService {
             log.error("[existsByMacAddress] failed to retrieve a user; rsn: {}", e.getMessage());
             throw new InternalErrorException("failed to retrieve a user; rsn: " + e.getMessage());
         }
+    }
+
+    private void sendEmailWithTemporaryPassword(String email, String tempPass){
+        emailSenderService.send(email,tempPass);
     }
 
     private boolean usersOtpCodeIsValid(AppUser appUser){

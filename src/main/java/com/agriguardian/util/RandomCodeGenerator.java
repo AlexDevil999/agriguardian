@@ -1,11 +1,17 @@
 package com.agriguardian.util;
 
+import org.apache.commons.lang3.RandomStringUtils;
+
 import java.util.Random;
 
 public class RandomCodeGenerator {
 
     public static String generateConfirmationCode() {
         return generateRandomNumbers(4);
+    }
+
+    public static String generateTemporaryPassword() {
+        return RandomStringUtils.randomAscii(8,14);
     }
 
     public static String generateInvitationCode() {
