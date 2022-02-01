@@ -11,7 +11,7 @@ public class RandomCodeGenerator {
     }
 
     public static String generateTemporaryPassword() {
-        return RandomStringUtils.randomAscii(8,14);
+        return RandomStringUtils.randomAlphanumeric(10,15);
     }
 
     public static String generateInvitationCode() {
