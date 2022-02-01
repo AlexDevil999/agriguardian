@@ -65,6 +65,16 @@ public class AppUserService {
         }
     }
 
+//    @Transactional
+//    public void sendTemporaryPassword(String email) {
+//        try {
+//            if(!existsByUsername(email))
+//
+//        } catch (Exception e) {
+//
+//        }
+//    }
+
     @Transactional
     public AppUser saveUserMasterIfNotExist(AppUser appUser, Status status, Boolean withNewGroup) {
         if (existsByUsername(appUser.getUsername())) {

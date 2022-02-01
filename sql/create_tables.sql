@@ -12,7 +12,6 @@ create table if not exists app_users
     restrictions   text,
     refresh_token  text  unique,
     fcm_token      text,
-    rt_created_on  bigint,
     mac_address    text
 );
 

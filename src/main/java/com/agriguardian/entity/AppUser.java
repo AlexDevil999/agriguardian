@@ -54,8 +54,6 @@ public class AppUser {
     private long updatedOnMs;
     @Column(name = "otp_created_on")
     private long otpCreatedOnMs;
-    @Column(name = "rt_created_on")
-    private long rtCreatedOnMs;
     @Column(name = "mac_address")
     private String macAddress;
 
