@@ -12,18 +12,13 @@ import com.agriguardian.enums.UserRole;
 import com.agriguardian.exception.AccessDeniedException;
 import com.agriguardian.exception.ConflictException;
 import com.agriguardian.exception.NotFoundException;
-import com.agriguardian.repository.TeamGroupRepository;
 import com.agriguardian.service.AppUserService;
-import com.agriguardian.service.EmailSenderService;
-import com.agriguardian.service.interfaces.EmailSender;
 import com.agriguardian.service.interfaces.Notificator;
 import com.agriguardian.util.ValidationDto;
 import lombok.AllArgsConstructor;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.annotation.*;
 
@@ -85,7 +80,7 @@ public class UserController {
         log.debug("[editUserMasterPassword] user: " + dto.toString());
         AppUser appUserToEdit = appUserService.findByUsernameOrThrowNotFound(principal.getName());
 
-        AppUser edited = appUserService.setNewPasswordForUser(appUserToEdit, dto.getOldPassword(), dto.getNewPassword());
+        AppUser edited = appUserService.changePasswordForUser(appUserToEdit, dto.getOldPassword(), dto.getNewPassword());
 
         return ResponseUserDto.of(edited);
     }

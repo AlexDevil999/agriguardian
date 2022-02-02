@@ -253,11 +253,11 @@ public class AppUserService {
         }
     }
 
-    public AppUser setNewPasswordForUser(AppUser user, String oldPassword, String newPassword){
-        if(!passwordEncryptor.matches(oldPassword,user.getPassword())){
+    public AppUser changePasswordForUser(AppUser user, String currentPassword, String newPassword){
+        if(badPassword(user,currentPassword)){
             throw new ConflictException("password is not correct");
         }
-        if(oldPassword.equals(newPassword)){
+        if(currentPassword.equals(newPassword)){
             throw new ConflictException("new password should differ from old");
         }
 
