@@ -12,4 +12,5 @@ import java.util.List;
 public class ViolationDto {
     private Long userId;
     private List<Long> violatedZones;
+
 }

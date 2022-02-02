@@ -35,4 +35,5 @@ public class AppUserTeamGroup {
     public boolean storesBind(AppUser appUser, TeamGroup teamGroup) {
         return appUser.equals(this.appUser) && teamGroup.equals(this.teamGroup);
     }
+
 }

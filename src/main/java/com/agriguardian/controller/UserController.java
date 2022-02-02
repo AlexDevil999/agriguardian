@@ -48,6 +48,7 @@ public class UserController {
 
     @PostMapping("/master")
     public ResponseUserDto registerUserMaster(@Valid @RequestBody AddUserMasterDto dto, Errors errors) {
+
         ValidationDto.handleErrors(errors);
         log.debug("[registerUserMaster] user: " + dto.toString());
 

@@ -19,4 +19,5 @@ public enum SchedulePeriod {
     CONSTANT,
 
     ONE_DAY,
+
 }

@@ -15,6 +15,7 @@ import java.util.Arrays;
 @EqualsAndHashCode(of = {"lon", "lat"})
 @ToString(of = {"lon", "lat", "order"})
 public class Border implements Comparable<Border> {
+
     @Id
     @SequenceGenerator(name = "bordersSequence", sequenceName = "borders_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "bordersSequence")

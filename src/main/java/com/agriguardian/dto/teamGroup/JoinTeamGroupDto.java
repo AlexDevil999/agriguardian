@@ -7,6 +7,7 @@ import java.util.Set;
 
 @Getter
 public class JoinTeamGroupDto {
+
     @NotBlank(message = "field 'invitationCode' is mandatory")
     private String invitationCode;
 

@@ -39,4 +39,5 @@ public class ZoneSchedulingRule {
 
     @Enumerated(EnumType.STRING)
     private SchedulePeriod schedulePeriod;
+
 }

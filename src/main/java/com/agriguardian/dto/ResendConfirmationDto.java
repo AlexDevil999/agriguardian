@@ -12,4 +12,5 @@ import javax.validation.constraints.NotBlank;
 public class ResendConfirmationDto {
     @NotBlank(message = "field 'username' is mandatory")
     private String username;
+
 }

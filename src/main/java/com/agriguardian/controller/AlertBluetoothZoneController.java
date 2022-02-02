@@ -40,6 +40,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/alert-bluetooth-zones")
 public class AlertBluetoothZoneController {
+
     private final AppUserService appUserService;
     private final TeamGroupService teamGroupService;
     private final AlertBluetoothZoneService bluetoothZoneService;

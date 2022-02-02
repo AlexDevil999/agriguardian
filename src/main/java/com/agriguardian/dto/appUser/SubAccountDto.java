@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Getter
 public class SubAccountDto implements Serializable {
+
     private Long id;
     private String username;
     private Long ownerOfGroup;

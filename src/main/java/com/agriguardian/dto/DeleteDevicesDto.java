@@ -11,6 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeleteDevicesDto {
+
     @NotNull(message = "field 'macAddresses' may not be null")
     private Set<String> macAddresses;
 }

@@ -30,4 +30,5 @@ public class UserInfoDto {
                         .phoneNumber(ui.getPhoneNumber())
                         .build();
     }
+
 }

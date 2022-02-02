@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration;
 @Setter
 @Configuration
 public class Props {
+
     @Value("${device.password}")
     private String devicePass;
 }

@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 public class EditUserFollowerSelfDto {
+
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
     @NotNull(message = "field 'userAvatar' is mandatory")

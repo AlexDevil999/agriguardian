@@ -19,6 +19,7 @@ public class RandomCodeGenerator {
     }
 
     public static String generateRandomNumbers(int length) {
+
         Random random = new Random(System.nanoTime());
         StringBuilder stringBuilder = new StringBuilder("");
 

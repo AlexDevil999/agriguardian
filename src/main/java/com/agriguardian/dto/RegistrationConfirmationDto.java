@@ -15,4 +15,5 @@ public class RegistrationConfirmationDto {
 
     @NotBlank(message = "field 'confirmationCode' is mandatory")
     private String confirmationCode;
+
 }

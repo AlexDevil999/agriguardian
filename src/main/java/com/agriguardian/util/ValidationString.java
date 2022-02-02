@@ -9,4 +9,5 @@ public class ValidationString {
     public static boolean isBlank(String str) {
         return !isNotBlank(str);
     }
+
 }

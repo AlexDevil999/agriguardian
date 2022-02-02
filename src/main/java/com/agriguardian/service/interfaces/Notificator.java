@@ -7,6 +7,5 @@ import java.util.List;
 import java.util.Set;
 
 public interface Notificator {
-
     void notifyUsers(Set<AppUser> recipients, MessageDto message);
 }

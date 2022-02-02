@@ -23,6 +23,7 @@ import java.util.Date;
 @Log4j2
 @RequiredArgsConstructor
 public class HealthCheckController {
+
     private Socket clientSocket;
     private PrintWriter out;
     private BufferedReader in;

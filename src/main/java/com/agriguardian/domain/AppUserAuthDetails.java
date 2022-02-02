@@ -17,6 +17,7 @@ public class AppUserAuthDetails extends AppUser implements UserDetails {
     private Collection<GrantedAuthority> authorities;
 
     public static AppUserAuthDetails build(String username, String role) {
+
         AppUserAuthDetails details = new AppUserAuthDetails();
         details.setUsername(username);
         details.authorities = defineAuthorities(role);

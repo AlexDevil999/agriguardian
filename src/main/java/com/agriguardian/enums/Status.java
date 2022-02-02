@@ -7,4 +7,5 @@ public enum Status {
     SUBSCRIPTION,
     NEED_PAYMENT,
     DEACTIVATED;
+
 }

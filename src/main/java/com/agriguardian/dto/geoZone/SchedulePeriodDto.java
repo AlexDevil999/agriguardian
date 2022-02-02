@@ -15,6 +15,7 @@ import java.util.Optional;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SchedulePeriodDto {
+
     private Long startsToWorkAtMillis;
     private SchedulePeriod schedulePeriod;
     private String timeZone;

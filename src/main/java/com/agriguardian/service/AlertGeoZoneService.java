@@ -31,7 +31,6 @@ public class AlertGeoZoneService {
     private final AppUserGeoZoneRepository appUserGeoZoneRepository;
     private final ZoneSchedulingRuleRepository zoneSchedulingRuleRepository;
 
-
     @Transactional
     public AlertGeoZone createNew(
             ZoneRule rule,

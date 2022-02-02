@@ -22,4 +22,5 @@ public interface AppUserRepository extends CrudRepository<AppUser, Long> {
     void deleteByMacAddress(String macAddress);
 
     Optional<AppUser> findByRefreshToken(String refreshToken);
+
 }

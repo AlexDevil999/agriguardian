@@ -16,7 +16,6 @@ import java.util.Objects;
 @AllArgsConstructor
 @IdClass(RelationId.class)
 public class AppUserRelations {
-
     @Id
     @ManyToOne(optional = false ,fetch = FetchType.EAGER)
     @JoinColumn(name="controller_id")

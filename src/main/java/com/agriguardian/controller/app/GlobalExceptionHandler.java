@@ -34,6 +34,7 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Collections.singletonMap(ERROR, e.getMessage()));
     }
 
+
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<?> handleAccessDeniedException(AccessDeniedException e) {
         log.warn("[handleAccessDeniedException]: response 'FORBIDDEN'; rsn: " + e.getMessage());

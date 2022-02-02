@@ -12,6 +12,7 @@ import javax.validation.constraints.NotNull;
 @NoArgsConstructor
 @ToString
 public class AuthRequestDto {
+
     @NotBlank(message = "username/email is mandatory")
     private String username;
     @NotNull(message = "password is mandatory")

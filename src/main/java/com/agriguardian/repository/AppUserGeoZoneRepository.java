@@ -7,4 +7,5 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface AppUserGeoZoneRepository extends CrudRepository<AppUserGeoZone, Long> {
     void deleteAppUserGeoZoneByAlertGeoZoneId(Long id);
+
 }

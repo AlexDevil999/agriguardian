@@ -34,7 +34,6 @@ public class JwtRequestFilter extends OncePerRequestFilter {
     private final HandlerExceptionResolver resolver;
     private final AppUserService userService;
 
-
     public JwtRequestFilter(JwtProvider jwtProvider,
                             AppUserService userService,
                             @Lazy @Qualifier(value = "handlerExceptionResolver") HandlerExceptionResolver resolver) {

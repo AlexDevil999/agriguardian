@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 @ToString
 @NoArgsConstructor
 public class ResponseSubAccountsDto {
+
    private List<SubAccountDto> subAccounts;
 
    public ResponseSubAccountsDto(Map<AppUser, String> subAccountsAndRelations){

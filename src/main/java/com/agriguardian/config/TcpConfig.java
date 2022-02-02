@@ -32,6 +32,7 @@ public class TcpConfig {
     private String ip;
 
 
+
 //    @Bean
 //    @ServiceActivator(inputChannel="toTcp")
 //    public MessageHandler tcpOutGate(AbstractClientConnectionFactory connectionFactory) {

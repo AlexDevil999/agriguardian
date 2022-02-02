@@ -18,5 +18,6 @@ public interface EmailSender {
     static String buildEmailWithTemporaryPassword(String name, String otp){
         return "<div>" + otp + "</div>";
     }
+
 }
 

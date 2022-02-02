@@ -38,6 +38,7 @@ class AuthController {
 
     @PostMapping(value = "/login")
     public AuthResponseDto generateTokens(@Valid @RequestBody AuthRequestDto request, Errors errors) throws NoSuchPaddingException, NoSuchAlgorithmException {
+        
         log.debug("[generateTokens] login attemp: {}", request);
         ValidationDto.handleErrors(errors);
 

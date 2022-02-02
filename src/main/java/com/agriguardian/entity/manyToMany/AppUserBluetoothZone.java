@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Builder
 @EqualsAndHashCode(of = {"appUser", "alertBluetoothZone"})
 public class AppUserBluetoothZone {
+
     @Id
     @SequenceGenerator(name = "AppUserBluetoothZoneSequence", sequenceName = "app_user_bluetooth_zones_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AppUserBluetoothZoneSequence")

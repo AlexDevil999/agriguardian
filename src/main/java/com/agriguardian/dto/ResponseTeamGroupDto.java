@@ -33,4 +33,5 @@ public class ResponseTeamGroupDto {
                 .vulnerableInvitationCode(tg.getVulnerableInvitationCode())
                 .build();
     }
+
 }

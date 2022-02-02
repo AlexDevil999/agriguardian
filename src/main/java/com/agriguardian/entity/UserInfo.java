@@ -51,4 +51,5 @@ public class UserInfo {
         this.phoneCode= editedInfo.getPhoneCode();
         this.phoneNumber= editedInfo.phoneNumber;
     }
+
 }

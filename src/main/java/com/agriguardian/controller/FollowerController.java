@@ -26,6 +26,7 @@ import java.security.Principal;
 @RestController
 @RequestMapping("/api/v1/follower")
 public class FollowerController {
+
     private final TeamGroupService teamGroupService;
     private final AppUserService appUserService;
 

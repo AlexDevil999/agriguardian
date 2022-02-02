@@ -60,6 +60,7 @@ public class JwtProvider {
         return new AuthResponseDto(access, refresh, accessExpiresAt, refreshExpiresAt);
     }
 
+
     private Claims extractClaim(String token) {
         return Jwts.parser().setSigningKey(jwtSecret).parseClaimsJws(token).getBody();
     }

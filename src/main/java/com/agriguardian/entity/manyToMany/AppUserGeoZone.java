@@ -15,6 +15,7 @@ import javax.persistence.*;
 @Builder
 @EqualsAndHashCode(of = {"appUser", "alertGeoZone"})
 public class AppUserGeoZone {
+
     @Id
     @SequenceGenerator(name = "AppUserGeoZoneSequence", sequenceName = "app_user_geo_zones_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "AppUserGeoZoneSequence")

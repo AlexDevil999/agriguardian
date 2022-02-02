@@ -43,6 +43,7 @@ public class TeamGroupController {
     @PreAuthorize("hasAuthority('USER_MASTER')")
     @PostMapping("/create")
     public ResponseUserDto createGroup(Principal principal) {
+
         AppUser thisUser = appUserService.findByUsernameOrThrowNotFound(principal.getName());
         teamGroupService.createTeamGroupForUser(thisUser);
 

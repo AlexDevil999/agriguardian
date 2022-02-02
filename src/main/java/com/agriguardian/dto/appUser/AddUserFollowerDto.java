@@ -10,6 +10,7 @@ import java.util.Set;
 
 @Getter
 public class AddUserFollowerDto {
+
     @NotBlank(message = "field 'username' is mandatory")
     private String username;
     @NotNull(message = "field 'password' may not be null")

@@ -31,6 +31,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v1/locations")
 public class LocationController {
+    
     private final AppUserService userService;
     private final UserMonitor userMonitoringService;
     private final Notificator notificator;

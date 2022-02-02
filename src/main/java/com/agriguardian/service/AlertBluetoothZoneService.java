@@ -24,7 +24,6 @@ public class AlertBluetoothZoneService {
     private final AlertBluetoothZoneRepository alertBluetoothZoneRepository;
     private final AppUserBluetoothZoneRepository userZoneRepository;
 
-
     @Transactional
     public AlertBluetoothZone createNew(AppUser anchor, TeamGroup group, ZoneRule rule, Set<AppUser> vulnerables, String name) {
 

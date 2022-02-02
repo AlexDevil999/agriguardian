@@ -8,4 +8,5 @@ package com.agriguardian.enums;
 public enum ZoneRule {
     KEEP_IN,
     KEEP_OUT;
+
 }

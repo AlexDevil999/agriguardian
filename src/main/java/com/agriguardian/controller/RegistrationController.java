@@ -37,6 +37,7 @@ public class RegistrationController {
     @PostMapping("/resend")
     public ResponseUserDto resendConfirmation
             (@RequestBody @Valid ResendConfirmationDto dto, Errors errors) {
+
         ValidationDto.handleErrors(errors);
 
         log.debug("user {} requesting resending of an email confirmation", dto.getUsername());

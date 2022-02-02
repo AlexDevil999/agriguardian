@@ -7,7 +7,6 @@ import com.agriguardian.entity.AppUser;
 import java.util.List;
 
 public interface UserMonitor {
-
     /**
      * Monitors user's location and defines if the user is restricting any GeoZone
      *

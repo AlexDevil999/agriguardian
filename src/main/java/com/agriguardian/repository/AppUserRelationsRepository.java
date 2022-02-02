@@ -19,4 +19,5 @@ public interface AppUserRelationsRepository extends CrudRepository<AppUserRelati
     Optional<AppUserRelations> findByControllerAndUserFollowerAndRelation(AppUser controller, AppUser follower, Relation relation);
 
     List<AppUserRelations> findByControllerAndRelation(AppUser controller , Relation relation);
+
 }

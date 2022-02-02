@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @ToString
 public class EditUserMasterDto {
+
     @NotBlank(message = "field 'name' is mandatory")
     private String name;
     @NotBlank(message = "field 'country' is mandatory")

@@ -19,6 +19,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class EditGeoZoneDto {
+
     @NotNull(message = "field 'geoZoneId' may not be null")
     private Long geoZoneId;
     @NotNull(message = "field 'teamGroupId' may not be null")

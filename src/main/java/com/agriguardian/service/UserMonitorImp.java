@@ -30,7 +30,6 @@ import java.util.stream.Collectors;
 @Log4j2
 public class UserMonitorImp implements UserMonitor {
 
-
     @Override
     public List<AlertGeoZone> monitor(AppUser user, Point point) {
 

@@ -15,6 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 public class AddUserDeviceDto {
     @NotBlank(message = "field 'macAddress' is mandatory")
+
     private String macAddress;
     @NotBlank(message = "field 'name' is mandatory")
     private String name;

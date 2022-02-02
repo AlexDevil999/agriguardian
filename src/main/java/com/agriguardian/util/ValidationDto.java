@@ -10,4 +10,5 @@ public class ValidationDto {
             throw new BadRequestException(errors.getAllErrors().get(0).getDefaultMessage());
         }
     }
+
 }

@@ -31,7 +31,6 @@ public class FcmNotificator implements Notificator {
     private final FirebaseMessaging firebaseMessaging;
     private final ObjectMapper mapper;
 
-
     @Override
     public void notifyUsers(Set<AppUser> recipients, MessageDto message) {
         log.debug("messageIs: " + mapper.convertValue(message, Map.class));

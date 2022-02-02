@@ -13,6 +13,7 @@ import java.util.List;
 @Builder
 @ToString
 public class GeoMonitoringDto {
+
     @NotNull(message = "field 'locations' is mandatory")
     private List<LocationDto> locations;
 

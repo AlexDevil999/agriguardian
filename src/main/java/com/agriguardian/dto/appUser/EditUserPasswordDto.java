@@ -13,6 +13,7 @@ import javax.validation.constraints.NotNull;
 @Getter
 @Setter
 public class EditUserPasswordDto {
+
     @NotNull(message = "field 'newPassword' is mandatory")
     private String newPassword;
     @NotNull(message = "field 'oldPassword' is mandatory")

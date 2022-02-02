@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 @Service
 @AllArgsConstructor
 public class BCryptEncryptor implements PasswordEncryptor {
-
     @Override
     public String encode(String strToEncrypt) {
         return new BCryptPasswordEncoder().encode(strToEncrypt);

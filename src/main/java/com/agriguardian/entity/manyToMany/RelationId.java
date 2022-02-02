@@ -30,4 +30,5 @@ public class RelationId implements Serializable {
     private long controller;
 
     private long userFollower;
+
 }

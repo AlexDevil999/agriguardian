@@ -13,4 +13,5 @@ public class SubscriptionDto {
                         .id(subscription.getId())
                         .build();
     }
+
 }

@@ -19,6 +19,7 @@ public class Point {
 
 
     public static Point of(Border border) {
+
         return Point.builder()
                 .lat(border.getLat())
                 .lon(border.getLon())

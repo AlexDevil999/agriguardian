@@ -12,4 +12,5 @@ public class RefreshCodesDto {
 
     @NotNull(message = "field 'vulnerableCode' may not be null")
     private Boolean vulnerableCode;
+
 }

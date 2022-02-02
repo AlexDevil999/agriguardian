@@ -13,6 +13,7 @@ import javax.validation.constraints.NotBlank;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PasswordDto {
+
     @NotBlank(message = "password is mandatory")
     private String password;
 }

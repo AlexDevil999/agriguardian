@@ -15,6 +15,7 @@ import java.io.IOException;
 @Configuration
 public class FirebaseMessagingConfig {
 
+
     @Bean
     public FirebaseMessaging firebaseMessaging() {
         try {

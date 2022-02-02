@@ -21,7 +21,6 @@ public class ResponseAlertBluetoothZoneDto {
     private Long teamGroup;
     private Set<Long> vulnerables;
 
-
     public static ResponseAlertBluetoothZoneDto of(AlertBluetoothZone zone) {
         return ResponseAlertBluetoothZoneDto.builder()
                 .id(zone.getId())

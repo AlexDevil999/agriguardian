@@ -93,4 +93,5 @@ public class AlertBluetoothZone {
     public Set<Long> extractIdsOfVulnerables() {
         return extractVulnerables().stream().map(AppUser::getId).collect(Collectors.toSet());
     }
+
 }

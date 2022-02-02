@@ -7,9 +7,7 @@ import org.springframework.integration.config.EnableIntegration;
 @SpringBootApplication
 @EnableIntegration
 public class AgriguardianApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(AgriguardianApplication.class, args);
     }
-
 }

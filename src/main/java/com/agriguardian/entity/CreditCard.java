@@ -12,6 +12,7 @@ import javax.persistence.*;
 @AllArgsConstructor
 @Builder
 public class CreditCard {
+
     @Id
     @SequenceGenerator(name = "creditCardsSequence", sequenceName = "credit_cards_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "creditCardsSequence")

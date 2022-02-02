@@ -22,4 +22,5 @@ public class MessageDto {
     private String lon;
     private String lat;
     private String violatedZoneRule;
+
 }

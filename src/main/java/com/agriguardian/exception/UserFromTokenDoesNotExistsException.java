@@ -7,4 +7,5 @@ public class UserFromTokenDoesNotExistsException extends RuntimeException {
     public UserFromTokenDoesNotExistsException(String msg) {
         super(msg);
     }
+
 }

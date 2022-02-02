@@ -13,6 +13,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class DeleteFollowerDto {
+
     @NotNull(message = "field 'username' may not be null")
     private String username;
 }

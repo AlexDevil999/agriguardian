@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 @Builder
 @Getter
 public class ResponseUserDto {
+
     private Long id;
     private String username;
     private Long ownerOfGroup;

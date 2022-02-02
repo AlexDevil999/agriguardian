@@ -17,6 +17,7 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @EqualsAndHashCode(of = "id")
 public class TeamGroup {
+
     @Id
     @SequenceGenerator(name = "teamGroupsSequence", sequenceName = "team_groups_id_seq", allocationSize = 1)
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "teamGroupsSequence")

@@ -17,7 +17,6 @@ import javax.mail.internet.MimeMessage;
 @AllArgsConstructor
 @Slf4j
 public class EmailSenderService implements EmailSender {
-
     private final JavaMailSender mailSender;
 
     @Override

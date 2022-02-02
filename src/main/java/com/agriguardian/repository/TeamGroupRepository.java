@@ -19,4 +19,5 @@ public interface TeamGroupRepository extends CrudRepository<TeamGroup, Long> {
     Optional<TeamGroup> findByVulnerableInvitationCode(String code);
 
     boolean existsByOwner(AppUser appUser);
+
 }

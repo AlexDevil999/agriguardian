@@ -8,4 +8,5 @@ import org.springframework.stereotype.Repository;
 public interface UserInfoRepository extends CrudRepository<UserInfo, Long> {
     void deleteByAppUserId(Long appUserId);
     UserInfo getUserInfoByAppUserId(Long appUserId);
+
 }

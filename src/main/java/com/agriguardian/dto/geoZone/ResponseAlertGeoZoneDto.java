@@ -18,6 +18,7 @@ import java.util.stream.Collectors;
 @Setter
 @Builder
 public class ResponseAlertGeoZoneDto {
+
     private Long id;
     private String name;
     private ZoneRule rule;

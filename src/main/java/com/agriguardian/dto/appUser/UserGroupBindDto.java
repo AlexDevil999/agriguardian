@@ -9,6 +9,7 @@ import lombok.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class UserGroupBindDto {
+
     private Long groupId;
     private String groupName;
     private Long userId;

@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 @Service
 @RequiredArgsConstructor
 public class AppUserService {
+
     @Value("${code.lifetime}")
     private long lifetimeMs;
     @Value("${temporaryPassword.lifetime}")

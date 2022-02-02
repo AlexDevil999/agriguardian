@@ -66,6 +66,7 @@ public class TeamGroupService {
             }
         }
 
+
         if(!editedTeamGroup.getOwner().equals(deleter)) {
             if (appUserToDelete.getUserRole().equals(UserRole.USER_FOLLOWER)) {
                 if (!appUserRelationsRepository.findByControllerAndUserFollower(deleter, appUserToDelete).isPresent()){

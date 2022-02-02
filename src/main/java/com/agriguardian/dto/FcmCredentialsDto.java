@@ -10,6 +10,7 @@ import javax.validation.constraints.NotBlank;
 @NoArgsConstructor
 @AllArgsConstructor
 public class FcmCredentialsDto {
+
     @NotBlank(message = "token is mandatory")
     private String token;
 }
