@@ -78,8 +78,10 @@ public class AppUserService {
 
             AppUser thisUser = appUser.get();
 
-            if(!thisUser.getStatus().equals(Status.ACTIVATED))
+            if(thisUser.getStatus().equals(Status.REGISTRATION)){
+                sendEmailWithRequestForEndingRegistration(thisUser.getUsername());
                 return;
+            }
 
             String tempPass = RandomCodeGenerator.generateTemporaryPassword();
             thisUser.setOtp(tempPass);
@@ -400,8 +402,12 @@ public class AppUserService {
         }
     }
 
-    private void sendEmailWithTemporaryPassword(String email, String tempPass){
-        emailSenderService.send(email,tempPass);
+    private void sendEmailWithTemporaryPassword(String receiver, String tempPass){
+        emailSenderService.send(receiver,EmailSender.buildEmailWithTemporaryPassword(receiver,tempPass));
+    }
+
+    private void sendEmailWithRequestForEndingRegistration(String receiver){
+        emailSenderService.send(receiver,EmailSender.buildEmailWithInstructions(receiver));
     }
 
     private boolean usersOtpCodeIsValid(AppUser appUser){

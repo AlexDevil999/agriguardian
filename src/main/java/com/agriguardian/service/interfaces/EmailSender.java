@@ -20,5 +20,9 @@ public interface EmailSender {
         return "<div>" + otp + "</div>";
     }
 
+    static String buildEmailWithInstructions(String name){
+        return "<div>" + "please, activate your account first </div>";
+    }
+
 }
 
