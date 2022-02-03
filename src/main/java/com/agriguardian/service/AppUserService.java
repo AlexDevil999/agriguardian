@@ -168,7 +168,7 @@ public class AppUserService {
         }
 
         try {
-            List<AppUser> created = appUserRelationsRepository.findByControllerAndRelation(userRepo.findByUsername(username).get(), Relation.created).stream().map(appUserRelations -> appUserRelations.getUserFollower()).collect(Collectors.toList());
+            List<AppUser> created = appUserRelationsRepository.findByControllerAndRelation(userRepo.findByUsername(username).get(), Relation.created).stream().map(AppUserRelations::getUserFollower).collect(Collectors.toList());
 
             if(created.size()!=0) {
                 created.stream().forEach(appUser -> userRepo.delete(appUser));
@@ -349,7 +349,7 @@ public class AppUserService {
         List<AppUserRelations> userRelations = getAllUserRelations(master);
         Map<AppUser, String> subAccountIdAndRelation =
                 userRelations.stream().collect(Collectors.
-                        toMap(appUserRelations -> appUserRelations.getUserFollower(),
+                        toMap(AppUserRelations::getUserFollower,
                                 appUserRelations -> appUserRelations.getRelation().name()));
 
         return subAccountIdAndRelation;
@@ -383,14 +383,13 @@ public class AppUserService {
     }
 
     public Boolean badPassword(AppUser user, String passwordFromRequest){
-        if(!passwordEncryptor.matches(passwordFromRequest, user.getPassword())){
-            if(!passwordFromRequest.equals(user.getOtp()))
-                return true;
-            if((Long.sum(user.getOtpCreatedOnMs(),recoveredPasswordLifetime)<System.currentTimeMillis()))
-                return true;
+        if(passwordEncryptor.matches(passwordFromRequest, user.getPassword())){
+            return false;
         }
+        if(!passwordFromRequest.equals(user.getOtp()))
+            return true;
 
-        return false;
+        return Long.sum(user.getOtpCreatedOnMs(), recoveredPasswordLifetime) < System.currentTimeMillis();
     }
 
     private boolean existsByMacAddress(String macAddress) {

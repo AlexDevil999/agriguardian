@@ -36,7 +36,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
         httpSecurity
                 .cors()
                 .and()
-                //todo decide if csrf needed or not
                 .csrf().disable()
                 .authorizeRequests()
                 .anyRequest().permitAll()
@@ -82,8 +81,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter implements WebM
                 "https://localhost:8080"
                 )
         );
-        config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE"));
-        config.setAllowedHeaders(Arrays.asList("authorization", "content-type"));
+        config.setAllowedMethods(Arrays.asList("*"));
+        config.setAllowedHeaders(Arrays.asList("*"));
         config.setAllowCredentials(true);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", config);
