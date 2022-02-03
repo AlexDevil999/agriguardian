@@ -15,6 +15,8 @@ public class MailSenderConfig {
     private String username;
     @Value("${mail.password}")
     private String password;
+    @Value("${mail.protocol}")
+    private String protocol;
     @Bean
     public JavaMailSender getJavaMailSender() {
         JavaMailSenderImpl mailSender = new JavaMailSenderImpl();
@@ -30,7 +32,7 @@ public class MailSenderConfig {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.ssl.trust", "smtp1r.cp.blacknight.com");
         props.put("mail.debug", "true");
-        props.put("mail.smtp.ssl.protocols", "TLSv1");
+        props.put("mail.smtp.ssl.protocols",protocol);
 
         return mailSender;
     }
