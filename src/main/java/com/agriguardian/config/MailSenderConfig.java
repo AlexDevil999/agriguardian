@@ -30,7 +30,7 @@ public class MailSenderConfig {
         props.put("mail.smtp.starttls.enable", "true");
         props.put("mail.smtp.ssl.trust", "smtp1r.cp.blacknight.com");
         props.put("mail.debug", "true");
-        props.put("mail.smtp.ssl.protocols", "TLSv12");
+        props.put("mail.smtp.ssl.protocols", "TLSv1");
 
         return mailSender;
     }
