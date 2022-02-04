@@ -338,7 +338,7 @@ public class AppUserService {
             }
 
         log.debug("[sendEmailConfirmationForUser] trying to send an email for user: {}", appUser.getUsername());
-        emailSenderService.send(appUser.getUsername(),EmailSender.buildEmailForAccountConfirmation(appUser.getUsername(), appUser.getOtp()));
+        emailSenderService.send(appUser.getUsername(),EmailSender.buildEmailForAccountConfirmation(appUser.getUsername(), appUser.getOtp()),"Confirm your email");
     }
 
     public List<AppUserRelations> getAllUserRelations(AppUser master){
@@ -402,11 +402,11 @@ public class AppUserService {
     }
 
     private void sendEmailWithTemporaryPassword(String receiver, String tempPass){
-        emailSenderService.send(receiver,EmailSender.buildEmailWithTemporaryPassword(receiver,tempPass));
+        emailSenderService.send(receiver,EmailSender.buildEmailWithTemporaryPassword(receiver,tempPass), "temporary password");
     }
 
     private void sendEmailWithRequestForEndingRegistration(String receiver){
-        emailSenderService.send(receiver,EmailSender.buildEmailWithInstructions(receiver));
+        emailSenderService.send(receiver,EmailSender.buildEmailWithInstructions(receiver), "temporary password");
     }
 
     private boolean usersOtpCodeIsValid(AppUser appUser){
