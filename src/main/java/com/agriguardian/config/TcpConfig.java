@@ -61,6 +61,7 @@ public class TcpConfig {
 
         @Transformer(inputChannel="fromTcp", outputChannel="toEcho")
         public String convert(byte[] bytes) {
+            log.debug("FROM TCP convert : " + new String(bytes));
             return new String(bytes);
         }
 
@@ -72,6 +73,8 @@ public class TcpConfig {
 
         @Transformer(inputChannel="resultToString")
         public String convertResult(byte[] bytes) {
+
+            log.debug("FROM TCP convertResult : " + new String(bytes));
             return new String(bytes);
         }
 

@@ -29,7 +29,7 @@ public class EmailSenderService implements EmailSender {
             helper.setText(email, true);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setFrom("authforagriguardian@gmail.com");
+            helper.setFrom("noreply@agriguardian.farm");
 
             log.debug("[send] mailSender is sending message for {}", to);
 

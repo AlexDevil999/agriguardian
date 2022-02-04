@@ -26,6 +26,7 @@ public class MailSenderConfig {
         mailSender.setUsername(username);
         mailSender.setPassword(password);
 
+        /**For this blacknight.com file java.security should be overwritten as client accepts only deprecated in java 11 protocol TLSv1 **/
         Properties props = mailSender.getJavaMailProperties();
         props.put("mail.transport.protocol", "smtp");
         props.put("mail.smtp.auth", "true");
