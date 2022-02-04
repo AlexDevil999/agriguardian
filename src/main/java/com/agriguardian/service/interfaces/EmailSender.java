@@ -33,7 +33,7 @@ public interface EmailSender {
     static String buildEmailWithInstructions(String name){
         return "<div style=\"margin-bottom: 40px\">Hi " + name + "</div>\n" +
                 "<div style=\"margin-bottom: 5px\">You have requested temporary password but your account is not activated yet</div>\n" +
-                "<div style=\"border-left: 4px solid gray;\">please activate your account first</div>\n" +
+                "<div>please activate your account first</div>\n" +
                 "<div style=\"margin-top:10px\">Please ignore this message if this was not you</div>\n" +
                 "<div style=\"margin-top:20px\">Email us at <a href=\"mailto:info@agriguardian.farm\">info@agriguardian.farm</a> if you require any assistance</div>\n" +
                 "<div style=\"margin-top:40px\">Regards,</div>\n" +
