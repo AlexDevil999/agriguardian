@@ -31,17 +31,6 @@ public class TcpConfig {
     @Value("${tcp.ip}")
     private String ip;
 
-
-
-//    @Bean
-//    @ServiceActivator(inputChannel="toTcp")
-//    public MessageHandler tcpOutGate(AbstractClientConnectionFactory connectionFactory) {
-//        TcpOutboundGateway gate = new TcpOutboundGateway();
-//        gate.setConnectionFactory(connectionFactory);
-//        gate.setOutputChannelName("resultToString");
-//        return gate;
-//    }
-
     @Bean
     public TcpInboundGateway tcpInGate(AbstractServerConnectionFactory connectionFactory)  {
         TcpInboundGateway inGate = new TcpInboundGateway();
@@ -61,20 +50,19 @@ public class TcpConfig {
 
         @Transformer(inputChannel="fromTcp", outputChannel="toEcho")
         public String convert(byte[] bytes) {
-            log.debug("FROM TCP convert : " + new String(bytes));
+            log.debug("tcp :" + new String(bytes));
             return new String(bytes);
         }
 
         @ServiceActivator(inputChannel="toEcho")
         public String upCase(String in) {
-            log.debug("TCPESTABLISHED : " + in + " connected");
+            log.debug("tcp : " + in + " connected");
             return in.toUpperCase();
         }
 
         @Transformer(inputChannel="resultToString")
         public String convertResult(byte[] bytes) {
-
-            log.debug("FROM TCP convertResult : " + new String(bytes));
+            log.debug("tcp :" + new String(bytes));
             return new String(bytes);
         }
 
@@ -82,14 +70,12 @@ public class TcpConfig {
 
 //    @Bean
 //    public AbstractClientConnectionFactory clientCF() {
-//        return new TcpNetClientConnectionFactory(ip, this.port);
+//        return new TcpNetClientConnectionFactory("localhost", this.port);
 //    }
 
     @Bean
     public AbstractServerConnectionFactory serverCF() {
-        TcpNetServerConnectionFactory tcpNetServerConnectionFactory= new TcpNetServerConnectionFactory(this.port);
-        tcpNetServerConnectionFactory.setDeserializer(TcpCodecs.lengthHeader4());
-        return tcpNetServerConnectionFactory;
+        return new TcpNetServerConnectionFactory(this.port);
     }
 
 }

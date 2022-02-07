@@ -23,7 +23,7 @@ create table if not exists app_users_relations
     PRIMARY KEY (controller_id, follower_id),
     foreign key (controller_id) references app_users (id),
     foreign key (follower_id) references app_users (id)
-);
+    );
 
 
 create table if not exists credit_cards
@@ -32,14 +32,14 @@ create table if not exists credit_cards
     number      text,
     app_user_id bigint not null,
     foreign key (app_user_id) references app_users (id)
-);
+    );
 
 create table if not exists subscriptions
 (
     id          serial primary key,
     app_user_id bigint not null,
     foreign key (app_user_id) references app_users (id)
-);
+    );
 
 create table if not exists user_info
 (
@@ -55,7 +55,7 @@ create table if not exists user_info
     avatar        integer,
     app_user_id   bigint not null,
     foreign key (app_user_id) references app_users (id)
-);
+    );
 
 create table if not exists team_groups
 (
@@ -65,7 +65,7 @@ create table if not exists team_groups
     vulnerable_code text   unique,
     owner_id        bigint not null,
     foreign key (owner_id) references app_users (id)
-);
+    );
 
 create table if not exists app_user_team_groups
 (
@@ -75,7 +75,7 @@ create table if not exists app_user_team_groups
     group_role    text,
     foreign key (app_user_id) references app_users (id),
     foreign key (team_group_id) references team_groups (id)
-);
+    );
 
 create table if not exists bluetooth_zones
 (
@@ -86,7 +86,7 @@ create table if not exists bluetooth_zones
     name          text,
     foreign key (app_user_id) references app_users (id),
     foreign key (team_group_id) references team_groups (id)
-);
+    );
 
 create table if not exists app_user_bluetooth_zones
 (
@@ -95,7 +95,7 @@ create table if not exists app_user_bluetooth_zones
     bluetooth_zone_id bigint not null,
     foreign key (app_user_id) references app_users (id),
     foreign key (bluetooth_zone_id) references bluetooth_zones (id)
-);
+    );
 
 
 create table if not exists geo_zones
@@ -109,7 +109,7 @@ create table if not exists geo_zones
     figure        text,
     name          text,
     foreign key (team_group_id) references team_groups (id)
-);
+    );
 
 create table if not exists app_users_relations
 (
@@ -119,22 +119,22 @@ create table if not exists app_users_relations
     PRIMARY KEY (controller_id, follower_id),
     foreign key (controller_id) references app_users (id),
     foreign key (follower_id) references app_users (id)
-);
+    );
 
 create table if not exists zone_scheduling_rule
 (
     id                  serial primary key,
     day_start           text,
     day_end             text,
-    timeStart           TIME,
-    timeEnd             TIME,
-    timeZone            text,
-    schedulePeriod      text,
+    time_start           TIME,
+    time_end             TIME,
+    time_zone            text,
+    schedule_period      text,
     alert_geo_zone_id   bigint not null,
-    relu_starts_to_work bigint,
+    rule_starts_to_work bigint,
 
     foreign key (alert_geo_zone_id) references geo_zones (id)
-);
+    );
 
 create table if not exists app_user_geo_zones
 (
@@ -143,7 +143,7 @@ create table if not exists app_user_geo_zones
     alert_geo_zone_id bigint not null,
     foreign key (app_user_id) references app_users (id),
     foreign key (alert_geo_zone_id) references geo_zones (id)
-);
+    );
 
 create table if not exists borders
 (
@@ -153,7 +153,7 @@ create table if not exists borders
     position    int,
     geo_zone_id bigint not null,
     foreign key (geo_zone_id) references geo_zones (id)
-);
+    );
 
 create table if not exists registration_code
 (
