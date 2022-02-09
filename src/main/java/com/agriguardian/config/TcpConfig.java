@@ -21,6 +21,8 @@ import org.springframework.integration.ip.tcp.serializer.TcpCodecs;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import java.util.Arrays;
+
 @EnableIntegration
 @IntegrationComponentScan
 @Configuration
@@ -50,7 +52,8 @@ public class TcpConfig {
 
         @Transformer(inputChannel="fromTcp", outputChannel="toEcho")
         public String convert(byte[] bytes) {
-            log.debug("tcp :" + new String(bytes));
+            log.debug("tcp [convert] (bytes):" + Arrays.toString(bytes));
+            log.debug("tcp [convert]:" + new String(bytes));
             return new String(bytes);
         }
 
@@ -62,7 +65,7 @@ public class TcpConfig {
 
         @Transformer(inputChannel="resultToString")
         public String convertResult(byte[] bytes) {
-            log.debug("tcp :" + new String(bytes));
+            log.debug("tcp [convertResult]:" + new String(bytes));
             return new String(bytes);
         }
 
