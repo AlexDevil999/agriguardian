@@ -21,6 +21,7 @@ import org.springframework.integration.ip.tcp.serializer.TcpCodecs;
 import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.MessageHandler;
 
+import java.io.IOException;
 import java.util.Arrays;
 
 @EnableIntegration
@@ -35,11 +36,22 @@ public class TcpConfig {
 
     @Bean
     public TcpInboundGateway tcpInGate(AbstractServerConnectionFactory connectionFactory)  {
-        TcpInboundGateway inGate = new TcpInboundGateway();
-        inGate.setConnectionFactory(connectionFactory);
-        inGate.setRequestChannel(fromTcp());
+        try {
+            TcpInboundGateway inGate = new TcpInboundGateway();
+            inGate.setConnectionFactory(connectionFactory);
+            inGate.setRequestChannel(fromTcp());
 
-        return inGate;
+            return inGate;
+        }
+        catch (Throwable e){
+            log.error("tcp error catch " + e.getMessage());
+
+            TcpInboundGateway inGate = new TcpInboundGateway();
+            inGate.setConnectionFactory(connectionFactory);
+            inGate.setRequestChannel(fromTcp());
+
+            return inGate;
+        }
     }
 
     @Bean
@@ -52,21 +64,40 @@ public class TcpConfig {
 
         @Transformer(inputChannel="fromTcp", outputChannel="toEcho")
         public String convert(byte[] bytes) {
-            log.debug("tcp [convert] (bytes):" + Arrays.toString(bytes));
-            log.debug("tcp [convert]:" + new String(bytes));
-            return new String(bytes);
+            try {
+                log.debug("tcp [convert] (bytes):" + Arrays.toString(bytes));
+                log.debug("tcp [convert]:" + new String(bytes));
+                return new String(bytes);
+            }
+            catch (Throwable e){
+                log.error("[convert] tcp error catch " + e.getMessage());
+                return new String(bytes);
+            }
         }
 
         @ServiceActivator(inputChannel="toEcho")
         public String upCase(String in) {
-            log.debug("tcp : " + in + " connected");
-            return in.toUpperCase();
+            try {
+                log.debug("tcp : " + in + " connected");
+                return in.toUpperCase();
+            }
+            catch (Throwable e){
+                log.error("[upCase] tcp error catch " + e.getMessage());
+                return in.toUpperCase();
+            }
         }
 
         @Transformer(inputChannel="resultToString")
         public String convertResult(byte[] bytes) {
-            log.debug("tcp [convertResult]:" + new String(bytes));
-            return new String(bytes);
+            try {
+
+                log.debug("tcp [convertResult]:" + new String(bytes));
+                return new String(bytes);
+            }
+            catch (Throwable e){
+                log.error("[convertResult] tcp error catch " + e.getMessage());
+                return new String(bytes);
+            }
         }
 
     }
