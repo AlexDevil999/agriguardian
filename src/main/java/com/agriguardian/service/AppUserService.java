@@ -41,6 +41,7 @@ public class AppUserService {
     private final TeamGroupService teamGroupService;
     private final AppUserRelationsRepository appUserRelationsRepository;
     private final UserInfoRepository userInfoRepository;
+    private final LocationDataRepository locationDataRepository;
 
 
     public AppUser save(AppUser appUser) {
@@ -49,6 +50,15 @@ public class AppUserService {
         } catch (Exception e) {
             log.error("[save] failed to save a user {}; rsn: {}", appUser, e.getMessage());
             throw new InternalErrorException("failed to save user; rsn: " + e.getMessage());
+        }
+    }
+
+    public LocationData save(LocationData locationData) {
+        try {
+            return locationDataRepository.save(locationData);
+        } catch (Exception e) {
+            log.error("[save] failed to save a location data {}; rsn: {}", locationData, e.getMessage());
+            throw new InternalErrorException("failed to save location data; rsn: " + e.getMessage());
         }
     }
 
@@ -396,6 +406,7 @@ public class AppUserService {
         locationData.setLastOnline(locationDto.getTime());
         user.setLocationData(locationData);
         save(user);
+        save(locationData);
     }
 
     private AppUser setPasswordForUser(AppUser appUser, String password){

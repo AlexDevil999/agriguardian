@@ -88,6 +88,11 @@ public class AppUser {
         ui.setAppUser(this);
     }
 
+    public void addLocationData(LocationData ld) {
+        this.setLocationData(ld);
+        ld.setAppUser(this);
+    }
+
     public void addSubscription(Subscription subscription) {
         this.setSubscription(subscription);
         subscription.setAppUser(this);

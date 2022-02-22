@@ -50,7 +50,7 @@ public class UserController {
         AppUser appUser = dto.buildUser();
         appUser.addUserInfo(dto.buildUserInfo());
         appUser.addCreditCard(dto.buildCreditCard());
-        appUser.setLocationData(dto.buildLocationData());
+        appUser.addLocationData(dto.buildLocationData());
 
         AppUser saved = appUserService.saveUserMasterIfNotExist(appUser, Status.REGISTRATION, dto.getWithTeamGroup());
 
@@ -146,6 +146,7 @@ public class UserController {
 
         AppUser vulnerable = dto.buildUser();
         vulnerable.addUserInfo(dto.buildUserInfo());
+        vulnerable.addLocationData(dto.buildLocationData());
 
         AppUser saved = appUserService.saveUserFollowerIfNotExist(vulnerable, Status.ACTIVATED, teamGroups, admin);
 
@@ -167,6 +168,7 @@ public class UserController {
         AppUser vulnerable = dto.buildUser();
         vulnerable.setPassword(props.getDevicePass());
         vulnerable.addUserInfo(dto.buildUserInfo());
+        vulnerable.addLocationData(dto.buildLocationData());
 
         AppUser saved = appUserService.saveUserDeviceIfNotExist(vulnerable, Status.ACTIVATED, teamGroups, admin);
 

@@ -1,6 +1,7 @@
 package com.agriguardian.dto.appUser;
 
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.LocationData;
 import com.agriguardian.entity.UserInfo;
 import lombok.*;
 
@@ -36,5 +37,9 @@ public class AddUserDeviceDto {
                 .name(name)
                 .userAvatar(userAvatar)
                 .build();
+    }
+
+    public LocationData buildLocationData() {
+        return LocationData.builder().lastOnline(0l).build();
     }
 }

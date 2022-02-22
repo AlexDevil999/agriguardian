@@ -68,6 +68,6 @@ public class AddUserMasterDto {
     }
 
     public LocationData buildLocationData() {
-        return LocationData.builder().build();
+        return LocationData.builder().lastOnline(0l).build();
     }
 }
