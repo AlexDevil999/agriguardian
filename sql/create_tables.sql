@@ -15,6 +15,16 @@ create table if not exists app_users
     mac_address    text
 );
 
+create table if not exists location_data
+(
+    id                          serial primary key,
+    lon                         double precision,
+    lat                         double precision,
+    last_online                 bigint,
+    app_user_id                 bigint not null,
+    foreign key (app_user_id)   references app_users (id)
+);
+
 create table if not exists app_users_relations
 (
     controller_id  bigint not null,

@@ -1,8 +1,8 @@
 package com.agriguardian.dto.appUser;
 
 import com.agriguardian.dto.SubscriptionDto;
-import com.agriguardian.dto.UserInfoDto;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.LocationData;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.enums.Status;
 import com.agriguardian.enums.UserRole;
@@ -28,6 +28,7 @@ public class ResponseUserDto {
     private SubscriptionDto subscription;
     private Integer userAvatar;
     private String macAddress;
+    private LocationDataDto locationData;
 
 
     public static ResponseUserDto of(AppUser u) {
@@ -42,6 +43,7 @@ public class ResponseUserDto {
                     .status(u.getStatus())
                     .userRole(u.getUserRole())
                     .userInfo(UserInfoDto.of(u.getUserInfo()))
+                    .locationData(LocationDataDto.of(u.getLocationData()))
                     .macAddress(u.getMacAddress())
                     .build();
         }

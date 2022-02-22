@@ -1,6 +1,8 @@
 package com.agriguardian.service;
 
+import com.agriguardian.dto.LocationDto;
 import com.agriguardian.entity.AppUser;
+import com.agriguardian.entity.LocationData;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.entity.manyToMany.AppUserRelations;
 import com.agriguardian.enums.Relation;
@@ -377,11 +379,6 @@ public class AppUserService {
         return relation.isPresent();
     }
 
-    public AppUser setPasswordForUser(AppUser appUser, String password){
-        appUser.setPassword(passwordEncryptor.encode(password));
-        return appUser;
-    }
-
     public Boolean badPassword(AppUser user, String passwordFromRequest){
         if(passwordEncryptor.matches(passwordFromRequest, user.getPassword())){
             return false;
@@ -390,6 +387,20 @@ public class AppUserService {
             return true;
 
         return Long.sum(user.getOtpCreatedOnMs(), recoveredPasswordLifetime) < System.currentTimeMillis();
+    }
+
+    public void setUserLocationData(AppUser user, LocationDto locationDto) {
+        LocationData locationData = user.getLocationData();
+        locationData.setLon(locationDto.getPoint().getLon());
+        locationData.setLat(locationDto.getPoint().getLat());
+        locationData.setLastOnline(locationDto.getTime());
+        user.setLocationData(locationData);
+        save(user);
+    }
+
+    private AppUser setPasswordForUser(AppUser appUser, String password){
+        appUser.setPassword(passwordEncryptor.encode(password));
+        return appUser;
     }
 
     private boolean existsByMacAddress(String macAddress) {

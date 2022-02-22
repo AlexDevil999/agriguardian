@@ -1,7 +1,6 @@
 package com.agriguardian.dto.appUser;
 
 import com.agriguardian.dto.SubscriptionDto;
-import com.agriguardian.dto.UserInfoDto;
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.TeamGroup;
 import com.agriguardian.enums.Status;

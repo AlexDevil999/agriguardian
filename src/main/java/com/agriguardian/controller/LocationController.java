@@ -60,6 +60,7 @@ public class LocationController {
         log.debug("[notifyLocation] {} notifies location {}", user.getUsername(), geo);
 
         List<AlertGeoZone> violatedZones = userMonitoringService.monitor(user, geo.findLastLocation().getPoint());
+        userService.setUserLocationData(user,geo.findLastLocation());
 
         log.trace("violatedZones for user {} has been extracted", principal.getName());
 

@@ -1,6 +1,7 @@
 package com.agriguardian.service.interfaces;
 
 import com.agriguardian.domain.Point;
+import com.agriguardian.dto.LocationDto;
 import com.agriguardian.entity.AlertGeoZone;
 import com.agriguardian.entity.AppUser;
 

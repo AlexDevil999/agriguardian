@@ -50,6 +50,7 @@ public class UserController {
         AppUser appUser = dto.buildUser();
         appUser.addUserInfo(dto.buildUserInfo());
         appUser.addCreditCard(dto.buildCreditCard());
+        appUser.setLocationData(dto.buildLocationData());
 
         AppUser saved = appUserService.saveUserMasterIfNotExist(appUser, Status.REGISTRATION, dto.getWithTeamGroup());
 

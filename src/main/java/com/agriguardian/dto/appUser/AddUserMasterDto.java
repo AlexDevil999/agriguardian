@@ -2,6 +2,7 @@ package com.agriguardian.dto.appUser;
 
 import com.agriguardian.entity.AppUser;
 import com.agriguardian.entity.CreditCard;
+import com.agriguardian.entity.LocationData;
 import com.agriguardian.entity.UserInfo;
 import com.agriguardian.util.ValidationString;
 import lombok.Getter;
@@ -64,5 +65,9 @@ public class AddUserMasterDto {
                 .phoneNumber(phoneNumber)
                 .userAvatar(userAvatar)
                 .build();
+    }
+
+    public LocationData buildLocationData() {
+        return LocationData.builder().build();
     }
 }
