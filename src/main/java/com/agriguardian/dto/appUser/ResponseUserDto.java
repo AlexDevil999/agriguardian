@@ -57,6 +57,7 @@ public class ResponseUserDto {
                 .status(u.getStatus())
                 .userRole(u.getUserRole())
                 .userInfo(UserInfoDto.of(u.getUserInfo()))
+                .locationData(LocationDataDto.of(u.getLocationData()))
                 .userAvatar(u.getUserInfo().getUserAvatar())
                 .macAddress(u.getMacAddress())
                 .build();
