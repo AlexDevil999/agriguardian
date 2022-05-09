@@ -11,9 +11,9 @@ import org.springframework.stereotype.Service;
 @Service
 @RequiredArgsConstructor
 public class HealthCheckService {
-    @Value("${emails.first}")
+//    @Value("${emails.first}")
     private String email;
-    @Value("${emails.second}")
+//    @Value("${emails.second}")
     private String additionalEmail;
     private Long currentUsers;
     private final AppUserRepository userRepository;

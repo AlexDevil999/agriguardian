@@ -1,0 +1,40 @@
+spring:
+  datasource:
+    url: jdbc:postgresql://aaccq9qplv20pk.c8tawybceufo.us-west-2.rds.amazonaws.com:5432/ebdb
+    username: postgres
+    password: vGM7!9CvxvSrmDa
+
+tcp:
+  ip: localhost
+
+jwt:
+  token:
+    secret: jwt_secret_key
+    ttl_ms:
+      access: 864_000_000
+      refresh: 864_000_000
+
+
+aes:
+  key: verysecret
+
+device:
+  password: se1dkl4rfv3f4h7fgs98h2q96sjk
+
+mail:
+  username: noreply@agriguardian.farm
+  password: Smellies@123.ie
+  protocol: TLSv1
+
+temporaryPassword:
+  lifetime: 1800000
+
+code:
+  lifetime: 3600000
+
+logging:
+  config: ./logback.xml
+
+flyway:
+  user: postgres
+  password: postgres
